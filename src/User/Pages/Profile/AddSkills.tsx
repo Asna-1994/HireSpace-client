@@ -1,10 +1,19 @@
+
 import React, { useEffect, useState } from "react";
 import Header from "../../Components/Header/Header";
 import axiosInstance from "../../../Utils/Instance/axiosInstance";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { toast } from "react-toastify";
+import * as Yup from "yup"; 
 import { motion } from "framer-motion";
+
+
+const validationSchema = Yup.object({
+  softSkills: Yup.array().of(Yup.string().min(2, "Skill must be at least 2 characters")),
+  hardSkills: Yup.array().of(Yup.string().min(2, "Skill must be at least 2 characters")),
+  technicalSkills: Yup.array().of(Yup.string().min(2, "Skill must be at least 2 characters")),
+});
 
 export interface Skills {
   softSkills?: string[];
@@ -25,6 +34,7 @@ const AddSkills: React.FC = () => {
     hardSkills: [],
     technicalSkills: [],
   });
+  const [errors, setErrors] = useState<any>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,8 +44,31 @@ const AddSkills: React.FC = () => {
     }));
   };
 
+
+  const validate = async () => {
+    try {
+      await validationSchema.validate(skills, { abortEarly: false });  
+      setErrors({});  
+      return true;
+    } catch (err  :any) {
+      const validationErrors: any = {};
+      err.inner.forEach((error: any) => {
+        validationErrors[error.path] = error.message;
+      });
+      setErrors(validationErrors);  
+      return false;
+    }
+  };
+
   const handleAddOrUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+
+    const isValid = await validate();
+    if (!isValid) {
+      return;
+    }
+
     try {
       const res = await axiosInstance.patch(
         `/user/add-or-update-skills/${user?._id}`,
@@ -93,14 +126,12 @@ const AddSkills: React.FC = () => {
     return "";
   };
 
-
   const handleDeleteSkill = async (skillName: string) => {
     try {
       const res = await axiosInstance.delete(`/user/${user?._id}/delete-skills`, {
-        data: {  skillName }
+        data: { skillName },
       });
       if (res.data.success) {
-        res.data.data.skills
         toast.success("Skill deleted successfully");
         getSkills();
       } else {
@@ -110,31 +141,47 @@ const AddSkills: React.FC = () => {
       toast.error("Error deleting skill");
     }
   };
+
   return (
     <>
       <Header />
       <div className="min-h-screen bg-gradient-to-r from-blue-100 to-blue-200 p-6">
         <motion.div
-          className="bg-gradient-to-r from-purple-500 to-indigo-600 shadow-lg text-white rounded-lg p-6"
+          className="bg-gradient-to-r from-purple-400 to-blue-500 shadow-lg text-white rounded-lg p-6"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-4xl font-bold">Manage Your Skills</h2>
+          <h2 className="text-3xl font-semibold">Manage Skills</h2>
         </motion.div>
         <div className="max-w-6xl mx-auto mt-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="bg-white p-8 rounded-lg shadow-md">
-            <h3 className="text-2xl font-bold text-blue-600 mb-4 text-center">
+            <h3 className="text-2xl font-semibold text-blue-700 mb-6 text-center">
               Add or Edit Skills
             </h3>
             <form onSubmit={handleAddOrUpdate} className="space-y-6">
               {[
-                { label: "Soft Skills", name: "softSkills", placeholder: "e.g., Communication, Leadership" },
-                { label: "Hard Skills", name: "hardSkills", placeholder: "e.g., Project Management" },
-                { label: "Technical Skills", name: "technicalSkills", placeholder: "e.g., JavaScript, React" },
+                {
+                  label: "Soft Skills",
+                  name: "softSkills",
+                  placeholder: "e.g., Communication, Leadership",
+                },
+                {
+                  label: "Hard Skills",
+                  name: "hardSkills",
+                  placeholder: "e.g., Project Management",
+                },
+                {
+                  label: "Technical Skills",
+                  name: "technicalSkills",
+                  placeholder: "e.g., JavaScript, React",
+                },
               ].map((field, idx) => (
                 <div key={idx}>
-                  <label htmlFor={field.name} className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor={field.name}
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     {field.label}
                   </label>
                   <input
@@ -144,14 +191,17 @@ const AddSkills: React.FC = () => {
                     value={getArrayValue(skills[field.name as keyof Skills])}
                     onChange={handleChange}
                     placeholder={field.placeholder}
-                    className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    className="mt-1 w-full px-1 py-1 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                   />
+                  {errors[field.name] && (
+                    <div className="text-red-500 text-sm">{errors[field.name]}</div>
+                  )}
                 </div>
               ))}
               <div className="text-center">
                 <button
                   type="submit"
-                  className="mb-2 bg-indigo-600 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-indigo-700 transition"
+                  className="mb-2 bg-indigo-600 text-white py-2 px-3 rounded-lg shadow-lg hover:bg-indigo-700 transition"
                 >
                   Save Skills
                 </button>
@@ -162,7 +212,9 @@ const AddSkills: React.FC = () => {
             <h3 className="text-2xl font-bold text-blue-600 mb-4 text-center">
               Skills Details
             </h3>
-            {!skillsList.softSkills?.length && !skillsList.hardSkills?.length && !skillsList.technicalSkills?.length ? (
+            {!skillsList.softSkills?.length &&
+            !skillsList.hardSkills?.length &&
+            !skillsList.technicalSkills?.length ? (
               <p className="text-gray-600 text-center">No skills added yet.</p>
             ) : (
               <div className="max-h-64 overflow-y-auto">
@@ -173,19 +225,21 @@ const AddSkills: React.FC = () => {
                     { label: "Technical Skills", skills: skillsList.technicalSkills },
                   ].map((category, idx) => (
                     <li key={idx} className="bg-gray-50 p-4 rounded-lg shadow-sm">
-                        <div className="flex justify-between">
-                        <h4 className="text-xl font-semibold text-gray-800">{category.label}</h4>
+                      <div className="flex justify-between">
+                        <h4 className="text-xl font-semibold text-gray-800">
+                          {category.label}
+                        </h4>
                         {category.skills && category?.skills?.length > 0 && (
-        <button
-          onClick={() => handleDeleteSkill(category.label.toLowerCase().replace(' ', ''))}
-          className="text-red-500 ml-4"
-        >
-          Delete
-        </button>
-      )}
-                        </div>
-           
-                      
+                          <button
+                            onClick={() =>
+                              handleDeleteSkill(category.label.toLowerCase().replace(" ", ""))
+                            }
+                            className="text-red-500 ml-4"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
                       <ul className="list-disc list-inside ml-4">
                         {category.skills?.map((skill, index) => (
                           <li key={index} className="text-gray-600">{skill}</li>
@@ -212,3 +266,4 @@ const AddSkills: React.FC = () => {
 };
 
 export default AddSkills;
+

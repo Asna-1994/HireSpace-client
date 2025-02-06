@@ -9,7 +9,6 @@ import UserList from "../Admin/Pages/UsersList/UserList";
 import CompanyList from "../Admin/Pages/CompanyList/CompanyList";
 import AdminProfile from "../Admin/Pages/Profile/EditBasicDetails";
 import ManagePlans from "../Admin/Pages/ManagePlans/ManagePlans";
-import EditOrCreatePlan from "../Admin/Pages/ManagePlans/EditOrCreatePlan";
 import PremiumUserList from "../Admin/Pages/PremiumUsers/PremiumUsers";
 import SpamList from "../Admin/Pages/Spam/SpamList";
 
@@ -38,7 +37,6 @@ const AdminRoutes = () => {
           <Route path="all-companies" element={<CompanyList />} />
           <Route path="edit-profile/:adminId" element={<AdminProfile/>} />
           <Route path="manage-plans/:adminId" element={<ManagePlans/>} />
-          <Route path="manage-plans/edit-or-create" element={<EditOrCreatePlan/>} />
           <Route path="all-premium-users" element={<PremiumUserList/>} />
           <Route path="spam-reports" element={<SpamList/>} />
         </Route>

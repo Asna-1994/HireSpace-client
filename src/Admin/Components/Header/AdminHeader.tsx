@@ -29,7 +29,7 @@ const AdminHeader: FC = () => {
   };
 
   return (
-    <header className="  w-full shadow z-50  flex items-center px-6 bg-gradient-to-r from-indigo-600 to-purple-600 ">
+    <header className="  w-full shadow  flex items-center px-6 bg-gradient-to-r from-indigo-600 to-purple-600 ">
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
 
         <Link

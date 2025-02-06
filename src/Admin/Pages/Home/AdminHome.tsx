@@ -113,9 +113,11 @@ const AdminHome = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <AdminHeader />
+       <div className="fixed top-0 w-full z-50 ">
+        <AdminHeader />
+      </div>
       <div className="flex">
-        <div className="fixed top-16 left-0 w-64 h-[calc(100vh-4rem)]">
+      <div className="lg:fixed top-16 left-0 lg:w-64 h-auto lg:h-[calc(100vh-4rem)]">
           <SideBar />
         </div>
         

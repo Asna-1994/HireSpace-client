@@ -193,7 +193,7 @@ const ManagePlans = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Plan Type</label>
+            <label className="block text-sm font-medium text-gray-700">Price</label>
             <input
               type="text"
               name="price"
@@ -242,8 +242,10 @@ const ManagePlans = () => {
         </form>
       </Modal>
 
-      <AdminHeader />
-      <div className="flex flex-col lg:flex-row h-auto bg-gray-100 min-h-screen">
+      <div className="fixed top-0 w-full z-50 ">
+        <AdminHeader />
+      </div>
+      <div className="flex flex-col lg:flex-row h-auto bg-gray-100 min-h-screen mt-16">
         <div className="lg:fixed top-16 left-0 lg:w-64 h-auto lg:h-[calc(100vh-4rem)]">
           <SideBar />
         </div>
@@ -309,7 +311,7 @@ const ManagePlans = () => {
           </div>
         </div>
       </div>
-      <Footer />
+
     </>
   );
 };

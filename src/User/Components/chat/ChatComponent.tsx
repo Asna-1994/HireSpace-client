@@ -9,8 +9,6 @@ import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { IoSendSharp } from 'react-icons/io5';
 import { BsCameraVideo } from 'react-icons/bs';
 import VideoCall from './VideoCall';
-import IncomingCall from './IncomingCall';
-import VideoCallComponent from './VideoCall';
 const ChatComponent: React.FC = () => {
 
     const location = useLocation();
@@ -34,29 +32,25 @@ const [callerId, setCallerId] = useState('');
 
   const [isVideoCallActive, setIsVideoCallActive] = useState(false);
 
-  const handleEndCall = () => {
-    setIsVideoCallActive(false);
-  };
-  
 
-  
-  // Modified reject call handler
+
   const handleAcceptCall = () => {
-    console.log('Accepting call from:', callerId);
     socket.emit('acceptCall', {
       roomId,
-      accepterId: user?._id,
-      targetUserId: callerId
+      callerId, 
+      receiverId: user?._id,
+      answer: true  
     });
     setIsVideoCallActive(true);
     setIncomingCall(false);
+    setIsCaller(false); 
   };
 
   const handleRejectCall = () => {
     socket.emit('rejectCall', {
       roomId,
-      rejecterId: user?._id,
-      targetUserId: callerId
+      callerId,
+    receiverId: user?._id, 
     });
     setIncomingCall(false);
   };
@@ -69,9 +63,13 @@ const [callerId, setCallerId] = useState('');
         connectSocket();
       }
 
+      if (socket && user?._id) {
+        socket.emit('registerUser', user._id);
+      }
+
       socket.emit('joinChat', { senderId: user?._id, receiverId });
 
-      // Mark all unread messages as read when entering chat
+    
       const unreadMessages = messages.filter(
         msg => msg.status !== 'read' && msg.senderId !== user?._id
       );
@@ -84,7 +82,7 @@ const [callerId, setCallerId] = useState('');
           setMessages(chatHistory);
           scrollToBottom();
           
-          // Mark messages as read when loading chat history
+     
           chatHistory.forEach((message : Message) => {
             if (message.status !== 'read' && message.senderId !== user?._id) {
               socket.emit('readMessage', { messageId: message._id, roomId });
@@ -117,19 +115,19 @@ const [callerId, setCallerId] = useState('');
         setCallerName(data.callerName);
       });
       
-      socket.on('callAccepted', ({ accepterId }) => {
-        console.log('Call accepted by:', accepterId);
-        // Only set video call active if we're the caller
-        if (user?._id !== accepterId) {
+      socket.on('callAccepted', ({receiverId, answer }) => {
+        console.log('Call accepted by:', receiverId);
+        if (user?._id !== receiverId) {
           setIsVideoCallActive(true);
         }
       });
-  
-      socket.on('callRejected', () => {
+      
+      socket.on('callRejected', ({ receiverId}) => {
+        console.log("call rejected by ", receiverId)
         setIsVideoCallActive(false);
         setIsCaller(false);
       });
-  
+      
       socket.on('callEnded', () => {
         setIsVideoCallActive(false);
         setIsCaller(false);
@@ -201,6 +199,8 @@ const [callerId, setCallerId] = useState('');
     }
   };
 
+
+
   const groupMessagesByDate = (messages: Message[]) => {
     const groups: { [key: string]: Message[] } = {};
     messages.forEach(message => {
@@ -217,11 +217,13 @@ const [callerId, setCallerId] = useState('');
       roomId,
       callerId: user?._id,
       callerName: user?.userName,
-      receiverId
+      receiverId,
+      receiverName: receiver.userName
     });
     setIsVideoCallActive(true);
     setIsCaller(true);
   };
+
 
   return (
     <>
@@ -233,7 +235,7 @@ const [callerId, setCallerId] = useState('');
           {/* Chat Header */}
           <div className="flex  justify-between px-6 py-4 bg-gradient-to-r from-green-400 to-blue-500 border-b border-gray-200 rounded-t-lg">
             <div className="flex items-center space-x-4">
-              {receiver.profilePhoto ? (
+              {receiver.profilePhoto  ? (
                 <img 
                   src={receiver.profilePhoto.url} 
                   alt={receiver.userName}
@@ -363,6 +365,7 @@ const [callerId, setCallerId] = useState('');
             <h3 className="text-xl font-semibold mb-4">
               Incoming call from {callerName}
             </h3>
+
             <div className="flex justify-center space-x-4">
               <button
                 onClick={handleAcceptCall}
@@ -382,18 +385,22 @@ const [callerId, setCallerId] = useState('');
       )}
 
 
-    {isVideoCallActive && (
+{isVideoCallActive && (
   <VideoCall
     roomId={roomId || ''}
-    receiverId= {receiver._id}
-    receiverName ={receiver.userName}
-    callerId={isCaller ? receiver._id : user?._id}
-    callerName={isCaller ? receiver.userName : user?.userName}
+    receiverId={receiver._id}
+    receiverName={receiver.userName}
+    callerId={isCaller ? user?._id : receiver._id}
+    callerName={isCaller ? user?.userName : receiver.userName}
     onEndCall={() => {
       setIsVideoCallActive(false);
       setIsCaller(false);
+      socket.emit('endCall', { roomId, callerId :isCaller ? user?._id : receiver._id , receiverId : receiver._id });
     }}
-    isCaller={isCaller}  // Add this prop
+    isCaller={isCaller}
+    isVideoCallActive={isVideoCallActive}
+    setIsVideoCallActive={setIsVideoCallActive}  // <-- Pass as prop
+    setIsCaller={setIsCaller}  
   />
 )}
 

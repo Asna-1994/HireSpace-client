@@ -210,8 +210,10 @@ const CompanyList = () => {
         )}
       </Modal>
 
-      <AdminHeader />
-      <div className="flex flex-col lg:flex-row h-auto bg-gray-100 min-h-screen">
+      <div className="fixed top-0 w-full z-50">
+        <AdminHeader />
+      </div>
+      <div className="flex flex-col lg:flex-row h-auto bg-gray-100 min-h-screen mt-16">
         <div className="lg:fixed top-16 left-0 lg:w-64 h-auto lg:h-[calc(100vh-4rem)]">
           <SideBar />
         </div>
@@ -287,7 +289,7 @@ const CompanyList = () => {
 </div>
         </div>
       </div>
-      <Footer />
+   
     </>
   );
 };

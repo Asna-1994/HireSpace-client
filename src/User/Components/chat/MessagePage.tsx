@@ -34,13 +34,17 @@ const MessagesPage: React.FC = () => {
         connectSocket();
       }
 
-      // Initial data fetch
+      if (socket && user?._id) {
+        socket.emit('registerUser', user._id);
+      }
+
+
       socket.emit('getRecentChats', { userId: user._id });
       socket.emit('getUnreadCount', { userId: user._id });
 
-      // Handle unread counts update
+ 
       socket.on('unreadCounts', ({ counts }: { counts: { [roomId: string]: number } }) => {
-        // Update chat unread counts
+     
         setChats(prevChats =>
           prevChats.map(chat => ({
             ...chat,
@@ -48,19 +52,19 @@ const MessagesPage: React.FC = () => {
           }))
         );
 
-        // Calculate total unread chats for the nav link
+
         const totalUnreadChats = Object.values(counts).reduce((total, count) => total + (count > 0 ? 1 : 0), 0);
         dispatch(setTotalUnreadChats(totalUnreadChats));
       });
 
-      // Handle recent chats update
+    
       socket.on('recentChats', (data: { chats: RecentChat[] }) => {
         setChats(data.chats);
-        // After getting chats, fetch latest unread counts
+   
         socket.emit('getUnreadCount', { userId: user._id });
       });
 
-      // Handle new message
+
       socket.on('message', (message: {senderId : string, roomId: string; content: string; createdAt: string }) => {
         setChats(prevChats =>
           prevChats.map(chat =>
@@ -74,14 +78,14 @@ const MessagesPage: React.FC = () => {
           )
         );
         
-        // Fetch updated unread counts
+  
         // socket.emit('getUnreadCount', { userId: user._id });
         if (message.senderId !== user._id) {
           socket.emit('getUnreadCount', { userId: user._id });
         }
       });
 
-      // Handle message read
+
       socket.on('messageRead', ({ messageId, roomId }) => {
         socket.emit('getUnreadCount', { userId: user._id });
       });
@@ -93,7 +97,7 @@ const MessagesPage: React.FC = () => {
         socket.off('messageRead');
       };
     }
-  }, [user, dispatch]);
+  }, [user,socket, dispatch]);
 
   const openChat = (roomId: string, receiverId: string, receiver: any) => {
     navigate(`/user/messages/chats/${roomId}/${receiverId}`, {

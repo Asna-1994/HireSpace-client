@@ -155,10 +155,12 @@ console.log(spams)
           </button>
         </div>
       </Modal>
-      <AdminHeader />
-      <div className="flex h-screen bg-gray-100">
+      <div className="fixed top-0 w-full z-50 ">
+        <AdminHeader />
+      </div>
+      <div className="flex  pt-16 h-screen bg-gray-100">
         {/* Sidebar */}
-        <div className="fixed top-16 left-0 w-64 h-[calc(100vh-4rem)]">
+        <div className="lg:fixed top-16 left-0 lg:w-64 h-auto lg:h-[calc(100vh-4rem)]">
           <SideBar />
         </div>
         <div className="flex-grow ml-64  p-6 bg-white rounded-lg shadow-md">
@@ -252,7 +254,7 @@ console.log(spams)
           </div>
         </div>
       </div>
-      <Footer />
+   
     </>
   );
 };

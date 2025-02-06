@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import Header from "../../Components/Header/Header";
 import axiosInstance from "../../../Utils/Instance/axiosInstance";
@@ -5,6 +6,17 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
+import * as Yup from 'yup';
+
+
+const experienceValidationSchema = Yup.object().shape({
+  company: Yup.string().required("Company name is required"),
+  designation: Yup.string().required("Designation is required"),
+  yearCompleted: Yup.string().required("Year completed is required").matches(/^\d{4}$/, "Year must be a valid 4-digit year"),
+  dateFrom: Yup.string().required("Start date is required"),
+  dateTo: Yup.string().required("End date is required"),
+  skillsGained: Yup.array().of(Yup.string()).min(1, "At least one skill is required"),
+});
 
 export interface ExperienceObject {
   company: string;
@@ -21,7 +33,7 @@ const AddWorkExperience: React.FC = () => {
   const [experiences, setExperiences] = useState<ExperienceObject[]>([]);
   const [form, setForm] = useState<ExperienceObject>({
     company: "",
-    designation : "",
+    designation: "",
     yearCompleted: "",
     dateFrom: "",
     dateTo: "",
@@ -29,6 +41,7 @@ const AddWorkExperience: React.FC = () => {
   });
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [experienceId, setExperienceId] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -38,8 +51,28 @@ const AddWorkExperience: React.FC = () => {
     }));
   };
 
+  const validateForm = async () => {
+    try {
+      await experienceValidationSchema.validate(form, { abortEarly: false });
+      setErrors({});
+      return true;
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const newErrors: Record<string, string> = {};
+        err.inner.forEach((error) => {
+          if (error.path) newErrors[error.path] = error.message;
+        });
+        setErrors(newErrors);
+      }
+      return false;
+    }
+  };
+
   const handleAddOrUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const isValid = await validateForm();
+    if (!isValid) return;
+
     try {
       const res = await axiosInstance.patch(
         `/user/add-or-update-experience/${user?._id}`,
@@ -48,8 +81,7 @@ const AddWorkExperience: React.FC = () => {
       );
       if (res.data.success) {
         toast.success("Work experience updated successfully");
-        getExperiences()
-        // setExperiences(res.data.data.experience);
+        getExperiences();
         resetForm();
       } else {
         toast.error(res.data.message);
@@ -68,7 +100,7 @@ const AddWorkExperience: React.FC = () => {
   const resetForm = () => {
     setForm({
       company: "",
-      designation : "",
+      designation: "",
       yearCompleted: "",
       dateFrom: "",
       dateTo: "",
@@ -113,8 +145,7 @@ const AddWorkExperience: React.FC = () => {
     <>
       <Header />
       <div className="min-h-screen bg-gradient-to-r from-blue-100 to-blue-200 p-6">
-      
-      <motion.div
+        <motion.div
           className="bg-gradient-to-r from-purple-400 to-blue-500 shadow-lg text-white rounded-lg p-6"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -143,20 +174,21 @@ const AddWorkExperience: React.FC = () => {
                   </label>
                   <input
                     id={field.name}
-                    type='text'
+                    type="text"
                     name={field.name}
                     value={form[field.name as keyof ExperienceObject]}
                     onChange={handleChange}
                     placeholder={field.placeholder}
-                    className="mt-1 w-full px-2 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="mt-1 w-full px-1 py-1 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     required
                   />
+                  {errors[field.name] && <p className="text-red-500 text-xs mt-1">{errors[field.name]}</p>}
                 </div>
               ))}
               <div className="text-center">
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white py-2 px-8 rounded-lg shadow-md hover:bg-blue-700 transition"
+                  className="bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition"
                 >
                   {editIndex !== null ? "Update" : "Add"} Experience
                 </button>

@@ -132,10 +132,11 @@ overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center it
           </button>
 </div>
 </Modal>
-      <AdminHeader />
-      <div className="flex h-screen bg-gray-100">
-        {/* Sidebar */}
-        <div className="fixed top-16 left-0 w-64 h-[calc(100vh-4rem)]">
+<div className="fixed top-0 w-full z-50">
+        <AdminHeader />
+      </div>
+      <div className="flex flex-col lg:flex-row h-auto bg-gray-100 min-h-screen mt-16">
+        <div className="lg:fixed top-16 left-0 lg:w-64 h-auto lg:h-[calc(100vh-4rem)]">
           <SideBar />
         </div>
         <div className="flex-grow ml-64  p-6 bg-white rounded-lg shadow-md">
@@ -202,13 +203,12 @@ overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center it
 </div>
 
         </div>
+        
       </div>
-      <Footer/>
+
     </>
   );
 };
 
 export default UserList;
-
-
 
