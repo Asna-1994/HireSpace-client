@@ -4,30 +4,31 @@ import { toast } from "react-toastify";
 import store from "../../redux/store";
 import { logout } from "../../redux/slices/authSlice";
 
+
+
+
+const BASE_URL =
+import.meta.env.MODE === "production"
+? "https://hirespace.site" 
+: `${import.meta.env.VITE_BACKEND_URL}/api`; 
+
 const axiosInstance = axios.create({
-  
-  baseURL: `${import.meta.env.VITE_BACKEND_URL}/api`, 
+  baseURL: BASE_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
+// const axiosInstance = axios.create({
+  
+//   baseURL: `${import.meta.env.VITE_BACKEND_URL}/api`, 
+//   withCredentials: true,
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+// });
 
-
-
-// axiosInstance.interceptors.response.use(
-//   response => response,
-//   error => {
-//       if (error.response && ((error.response.status === 403 && error.response.data.message === 'Account is blocked, Please contact admin') || (error.response.status === 401 && error.response.data.message === 'Token expired, please login again'))) {
-//         store.dispatch(logout());
-//         window.location.href = '/';
-//          toast.error('Your account is blocked. You have been logged out.');
-     
-//       }
-//       return Promise.reject(error);
-//   }
-// );
 
 axiosInstance.interceptors.response.use(
   response => response,
