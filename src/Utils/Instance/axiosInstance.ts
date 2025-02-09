@@ -9,7 +9,7 @@ import { logout } from "../../redux/slices/authSlice";
 
 const BASE_URL =
 import.meta.env.MODE === "production"
-? "https://hirespace.site" 
+? import.meta.env.VITE_BACKEND_URL 
 : `${import.meta.env.VITE_BACKEND_URL}/api`; 
 
 const axiosInstance = axios.create({
