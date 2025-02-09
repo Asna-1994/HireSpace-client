@@ -32,14 +32,19 @@ const MessagesPage: React.FC = () => {
     if (user?._id) {
       if (!socket.connected) {
         connectSocket();
+        console.log("Attempting to connect socket");
       }
-
+      
+      socket.on('connect', () => {
+        console.log('Socket connected successfully');
+      });
       if (socket && user?._id) {
         socket.emit('registerUser', user._id);
       }
 
 
       socket.emit('getRecentChats', { userId: user._id });
+      console.log('Requesting recent chats for user:', user._id);
       socket.emit('getUnreadCount', { userId: user._id });
 
  
@@ -60,7 +65,8 @@ const MessagesPage: React.FC = () => {
     
       socket.on('recentChats', (data: { chats: RecentChat[] }) => {
         setChats(data.chats);
-   
+        console.log('Received recent chats:', data.chats);
+
         socket.emit('getUnreadCount', { userId: user._id });
       });
 
@@ -88,6 +94,14 @@ const MessagesPage: React.FC = () => {
 
       socket.on('messageRead', ({ messageId, roomId }) => {
         socket.emit('getUnreadCount', { userId: user._id });
+      });
+
+      socket.on('error', (error) => {
+        console.error('Socket error:', error);
+      });
+      
+      socket.on('connect_error', (error) => {
+        console.error('Connection error:', error);
       });
 
       return () => {

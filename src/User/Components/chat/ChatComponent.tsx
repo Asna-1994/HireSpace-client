@@ -82,7 +82,7 @@ const [callerId, setCallerId] = useState('');
           setMessages(chatHistory);
           scrollToBottom();
           
-     
+     console.log('chat history', chatHistory)
           chatHistory.forEach((message : Message) => {
             if (message.status !== 'read' && message.senderId !== user?._id) {
               socket.emit('readMessage', { messageId: message._id, roomId });
