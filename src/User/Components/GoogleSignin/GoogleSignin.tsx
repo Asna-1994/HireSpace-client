@@ -19,6 +19,7 @@ const GoogleSignInButton: React.FC = () => {
 
       if (res.data.success) {
         const { token, user } = res.data.data;
+        console.log(token)
         dispatch(userLogin({ user, token }));
         console.log("User details:", user);
         navigate(`/user/home/${user._id}`);
