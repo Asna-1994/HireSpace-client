@@ -60,12 +60,15 @@ const Connections = () => {
     try {
       const limit = 8;
       const response = await axiosInstance.get(
-        `/connection-request/to-user/${user?._id}?page=${page}&limit=${limit}`
+        `/connection-request/to-user/${user?._id}`,{params:{
+page, limit
+        }}
       );
       if (response.data.success) {
         const requests = response.data.data.pendingRequests.map(
           (request: any) => request._doc || request
         );
+        console.log("request", requests)
         setPendingRequests(requests);
         setPendingTotalPages(response.data.data.totalPages);
       } else {
@@ -115,8 +118,10 @@ const Connections = () => {
   useEffect(() => {
     if (user?._id) {
       fetchConnections(connectionsPage, debouncedSearchTerm);
+      fetchPendingRequests(pendingPage); 
     }
-  }, [debouncedSearchTerm, connectionsPage, user?._id]);
+
+  }, [debouncedSearchTerm, connectionsPage,pendingPage, user?._id]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
