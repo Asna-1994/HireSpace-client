@@ -1,13 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
-import { toast } from 'react-toastify';
-import { FaUserPlus, FaEnvelope, FaUser, FaSpinner, FaTrashAlt } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import CompanyHeader from '../../Components/Header/Header';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import { motion } from 'framer-motion';
-import Footer from '../../../User/Components/Footer/Footer';
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../../../Utils/Instance/axiosInstance";
+import { toast } from "react-toastify";
+import {
+  FaUserPlus,
+  FaEnvelope,
+  FaUser,
+  FaSpinner,
+  FaTrashAlt,
+} from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import CompanyHeader from "../../Components/Header/Header";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import { motion } from "framer-motion";
+import Footer from "../../../User/Components/Footer/Footer";
 
 interface Member {
   _id: string;
@@ -17,9 +23,11 @@ interface Member {
 }
 
 const AddMembers = () => {
-  const { company, user, isAuthenticated } = useSelector((state: RootState) => state.auth);
-  const [email, setEmail] = useState('');
-  const [role, setRole] = useState('member');
+  const { company, user, isAuthenticated } = useSelector(
+    (state: RootState) => state.auth,
+  );
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("member");
   const [loading, setLoading] = useState(false);
   const [members, setMembers] = useState<Member[]>([]);
   const navigate = useNavigate();
@@ -27,7 +35,9 @@ const AddMembers = () => {
   // Fetching member details
   const fetchMembers = async () => {
     try {
-      const response = await axiosInstance.get(`/company/${company?._id}/all-members`);
+      const response = await axiosInstance.get(
+        `/company/${company?._id}/all-members`,
+      );
       setMembers(response.data.data.members);
     } catch (error) {
       console.log(error);
@@ -43,18 +53,21 @@ const AddMembers = () => {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.patch(`/company/${company?._id}/add-member`, { userEmail: email, userRole: role });
+      const response = await axiosInstance.patch(
+        `/company/${company?._id}/add-member`,
+        { userEmail: email, userRole: role },
+      );
 
       if (response.data.success) {
         toast.success(response.data.message);
         setMembers([...members, response.data.data.newMember]);
-        setEmail('');
-        setRole('member');
+        setEmail("");
+        setRole("member");
       } else {
         toast.error(response.data.message);
       }
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Failed to add member');
+      toast.error(err?.response?.data?.message || "Failed to add member");
     } finally {
       setLoading(false);
     }
@@ -62,20 +75,24 @@ const AddMembers = () => {
 
   const handleRemove = async (memberId: string) => {
     try {
-      const response = await axiosInstance.delete(`/company/${company?._id}/remove-member/${memberId}`);
+      const response = await axiosInstance.delete(
+        `/company/${company?._id}/remove-member/${memberId}`,
+      );
 
       if (response.data.success) {
-        toast.success('Member removed successfully');
-        setMembers(members.filter(member => member._id !== memberId));
+        toast.success("Member removed successfully");
+        setMembers(members.filter((member) => member._id !== memberId));
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      toast.error('Failed to remove member');
+      toast.error("Failed to remove member");
     }
   };
 
-  const isAdmin = members.some(member => member.email === user?.email && member.role === 'companyAdmin');
+  const isAdmin = members.some(
+    (member) => member.email === user?.email && member.role === "companyAdmin",
+  );
 
   return (
     <>
@@ -99,10 +116,18 @@ const AddMembers = () => {
               <table className="w-full min-w-[400px] leading-normal">
                 <thead>
                   <tr className="bg-gray-100">
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">Name</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">Email</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">Role</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">Actions</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
+                      Name
+                    </th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
+                      Email
+                    </th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
+                      Role
+                    </th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -110,7 +135,9 @@ const AddMembers = () => {
                     <tr key={index} className="hover:bg-gray-100">
                       <td className="px-4 py-3 border-b">{member.userName}</td>
                       <td className="px-4 py-3 border-b">{member.email}</td>
-                      <td className="px-4 py-3 border-b">{member.role === 'companyAdmin' ? 'Admin' : 'Member'}</td>
+                      <td className="px-4 py-3 border-b">
+                        {member.role === "companyAdmin" ? "Admin" : "Member"}
+                      </td>
                       <td className="px-4 py-3 border-b">
                         <button
                           onClick={() => handleRemove(member._id)}
@@ -131,7 +158,10 @@ const AddMembers = () => {
           {/* Add Member Form */}
           <div className="w-full lg:w-1/2 p-4">
             <h3 className="text-xl font-bold mb-4 p-4">Add New Member</h3>
-            <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-md">
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-4 bg-white p-6 rounded-lg shadow-md"
+            >
               <div className="flex items-center border-b-2 border-gray-300 mb-4">
                 <FaEnvelope className="text-gray-600 mr-3" />
                 <input
@@ -157,9 +187,13 @@ const AddMembers = () => {
               <button
                 type="submit"
                 disabled={loading || !isAdmin}
-                className={`w-full py-3 text-white bg-blue-600 rounded-md ${loading ? 'opacity-50' : ''}`}
+                className={`w-full py-3 text-white bg-blue-600 rounded-md ${loading ? "opacity-50" : ""}`}
               >
-                {loading ? <FaSpinner className="animate-spin mx-auto" /> : 'Add Member'}
+                {loading ? (
+                  <FaSpinner className="animate-spin mx-auto" />
+                ) : (
+                  "Add Member"
+                )}
               </button>
             </form>
           </div>

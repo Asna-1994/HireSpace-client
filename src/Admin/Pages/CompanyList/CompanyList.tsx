@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Modal from 'react-modal';
+import Modal from "react-modal";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../Utils/Instance/axiosInstance";
 import AdminHeader from "../../Components/Header/AdminHeader";
@@ -15,25 +15,27 @@ const CompanyList = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [verifyModalIsOpen, setVerifyModalIsOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
- const [totalPages, setTotalPages] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
-  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
+    null,
+  );
   const [selectedAction, setSelectedAction] = useState<string>("");
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const navigate = useNavigate();
 
-  const fetchCompanies = async (query: string = '') => {
+  const fetchCompanies = async (query: string = "") => {
     try {
       const response = await axiosInstance.get(`/admin/all-companies`, {
         params: { search: query, page, limit },
       });
       const { companies, totalPages, currentPage } = response.data.data;
       setCompanies(companies);
-      setTotalPages(totalPages)
-      setPage(currentPage)
+      setTotalPages(totalPages);
+      setPage(currentPage);
     } catch (err: any) {
       toast.error(err?.response?.data?.message);
       console.error(err);
@@ -50,11 +52,11 @@ const CompanyList = () => {
     if (!selectedCompanyId) return;
     try {
       const response = await axiosInstance.patch(
-        `/admin/block-or-unblock-company/${selectedCompanyId}/${selectedAction}`
+        `/admin/block-or-unblock-company/${selectedCompanyId}/${selectedAction}`,
       );
       if (response.data.success) {
         toast.success(
-          `Company successfully ${selectedAction === "block" ? "blocked" : "unblocked"}`
+          `Company successfully ${selectedAction === "block" ? "blocked" : "unblocked"}`,
         );
         fetchCompanies();
       }
@@ -92,7 +94,9 @@ const CompanyList = () => {
 
   const verifyCompany = async (companyId: string) => {
     try {
-      const res = await axiosInstance.patch(`/admin/${companyId}/verify-company`);
+      const res = await axiosInstance.patch(
+        `/admin/${companyId}/verify-company`,
+      );
       if (res.data.success) {
         toast.success(res.data.message);
         fetchCompanies();
@@ -130,7 +134,10 @@ const CompanyList = () => {
         overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
       >
         <h2 className="text-lg font-bold mb-4">Confirm Action</h2>
-        <p>Are you sure you want to {selectedAction === "block" ? "block" : "unblock"} this company?</p>
+        <p>
+          Are you sure you want to{" "}
+          {selectedAction === "block" ? "block" : "unblock"} this company?
+        </p>
         <div className="mt-4 flex justify-end space-x-4">
           <button
             onClick={closeModal}
@@ -156,14 +163,25 @@ const CompanyList = () => {
       >
         {selectedCompany ? (
           <div>
-            <h2 className="text-xl text-center font-bold mb-4">{selectedCompany.companyName}</h2>
-            <p><strong>Email:</strong> {selectedCompany.email}</p>
-            <p><strong>Industry:</strong> {selectedCompany.industry}</p>
-            <p><strong>Address:</strong> {selectedCompany.address}</p>
-            <p><strong>Phone:</strong> {selectedCompany.phone}</p>
+            <h2 className="text-xl text-center font-bold mb-4">
+              {selectedCompany.companyName}
+            </h2>
+            <p>
+              <strong>Email:</strong> {selectedCompany.email}
+            </p>
+            <p>
+              <strong>Industry:</strong> {selectedCompany.industry}
+            </p>
+            <p>
+              <strong>Address:</strong> {selectedCompany.address}
+            </p>
+            <p>
+              <strong>Phone:</strong> {selectedCompany.phone}
+            </p>
             {selectedCompany.establishedDate ? (
               <p>
-                <strong>Founded:</strong> {new Date(selectedCompany.establishedDate).toLocaleDateString()}
+                <strong>Founded:</strong>{" "}
+                {new Date(selectedCompany.establishedDate).toLocaleDateString()}
               </p>
             ) : (
               <p>
@@ -257,7 +275,12 @@ const CompanyList = () => {
                     </td>
                     <td className="px-4 py-2">
                       <button
-                        onClick={() => openModal(company._id, company.isBlocked ? "unblock" : "block")}
+                        onClick={() =>
+                          openModal(
+                            company._id,
+                            company.isBlocked ? "unblock" : "block",
+                          )
+                        }
                         className="text-white text-sm w-20 hover:bg-blue-500 border bg-blue-700 px-3 py-1 rounded-md"
                       >
                         {company.isBlocked ? "Unblock" : "Block"}
@@ -269,27 +292,26 @@ const CompanyList = () => {
             </table>
           </div>
           <div className="mt-4 flex justify-between items-center">
-  <button
-    onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-    disabled={page === 1}
-    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-  >
-    Previous
-  </button>
-  <span>
-    Page {page} of {totalPages}
-  </span>
-  <button
-    onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-    disabled={page === totalPages}
-    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-  >
-    Next
-  </button>
-</div>
+            <button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span>
+              Page {page} of {totalPages}
+            </span>
+            <button
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={page === totalPages}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
-   
     </>
   );
 };

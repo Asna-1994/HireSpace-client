@@ -1,12 +1,11 @@
-
-import React, { useEffect, useRef, useState } from 'react';
-import { socket } from '../../../services/socket';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import { BsCameraVideo, BsCameraVideoOff } from 'react-icons/bs';
-import { BiMicrophone, BiMicrophoneOff } from 'react-icons/bi';
-import { MdCallEnd } from 'react-icons/md';
-import { toast } from 'react-toastify';
+import React, { useEffect, useRef, useState } from "react";
+import { socket } from "../../../services/socket";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import { BsCameraVideo, BsCameraVideoOff } from "react-icons/bs";
+import { BiMicrophone, BiMicrophoneOff } from "react-icons/bi";
+import { MdCallEnd } from "react-icons/md";
+import { toast } from "react-toastify";
 
 interface VideoCallProps {
   roomId: string;
@@ -31,13 +30,20 @@ const VideoCall: React.FC<VideoCallProps> = ({
   isCaller = true,
   isVideoCallActive,
   setIsVideoCallActive,
-  setIsCaller
+  setIsCaller,
 }) => {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
-  const [callStatus, setCallStatus] = useState<'waiting' | 'call ended' | 'initiating' | 'connecting' | 'connected' | 'failed'>('waiting');
+  const [callStatus, setCallStatus] = useState<
+    | "waiting"
+    | "call ended"
+    | "initiating"
+    | "connecting"
+    | "connected"
+    | "failed"
+  >("waiting");
   const [error, setError] = useState<string | null>(null);
   const [isReconnecting, setIsReconnecting] = useState(false);
 
@@ -48,46 +54,49 @@ const VideoCall: React.FC<VideoCallProps> = ({
   const { user } = useSelector((state: RootState) => state.auth);
 
   const ICE_SERVERS = [
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun1.l.google.com:19302" },
     {
-      urls: 'turn:numb.viagenie.ca',
-      username: 'webrtc@live.com',
-      credential: 'muazkh'
-    }
+      urls: "turn:numb.viagenie.ca",
+      username: "webrtc@live.com",
+      credential: "muazkh",
+    },
   ];
 
   const createPeerConnection = async () => {
     try {
-      const pc = new RTCPeerConnection({ 
+      const pc = new RTCPeerConnection({
         iceServers: ICE_SERVERS,
-        iceCandidatePoolSize: 10
+        iceCandidatePoolSize: 10,
       });
 
       pc.onicecandidate = (event) => {
         if (event.candidate) {
-          socket.emit('ice-candidate', {
+          socket.emit("ice-candidate", {
             candidate: event.candidate,
             senderId: user?._id,
             receiverId: isCaller ? receiverId : callerId,
-            roomId
+            roomId,
           });
         }
       };
 
       pc.oniceconnectionstatechange = () => {
-        console.log('ICE Connection State:', pc.iceConnectionState);
-        if (pc.iceConnectionState === 'failed' || pc.iceConnectionState === 'disconnected') {
+        console.log("ICE Connection State:", pc.iceConnectionState);
+        if (
+          pc.iceConnectionState === "failed" ||
+          pc.iceConnectionState === "disconnected"
+        ) {
           setIsReconnecting(true);
           handleReconnection();
-        } else if (pc.iceConnectionState === 'connected') {
+        } else if (pc.iceConnectionState === "connected") {
           setIsReconnecting(false);
-          setCallStatus('connected');
+          setCallStatus("connected");
         }
       };
 
       pc.ontrack = (event) => {
-        console.log('Remote track received:', event.streams[0]?.getTracks());
+        console.log("Remote track received:", event.streams[0]?.getTracks());
         if (event.streams && event.streams[0]) {
           setRemoteStream(event.streams[0]);
           if (remoteVideoRef.current) {
@@ -98,8 +107,8 @@ const VideoCall: React.FC<VideoCallProps> = ({
 
       return pc;
     } catch (error) {
-      console.error('Error creating peer connection:', error);
-      throw new Error('Failed to create peer connection');
+      console.error("Error creating peer connection:", error);
+      throw new Error("Failed to create peer connection");
     }
   };
 
@@ -107,7 +116,7 @@ const VideoCall: React.FC<VideoCallProps> = ({
     try {
       const existingStream = await navigator.mediaDevices.getUserMedia({
         video: true,
-        audio: true
+        audio: true,
       });
 
       if (localVideoRef.current) {
@@ -117,15 +126,27 @@ const VideoCall: React.FC<VideoCallProps> = ({
       setLocalStream(existingStream);
       return existingStream;
     } catch (error: any) {
-      console.error('Media access error:', error);
-      let errorMessage = 'Cannot access camera or microphone';
-      
-      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-        errorMessage = 'Please grant camera and microphone permissions and try again';
-      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
-        errorMessage = 'Camera or microphone not found. Please check your device connections';
-      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
-        errorMessage = 'Camera or microphone is already in use by another application';
+      console.error("Media access error:", error);
+      let errorMessage = "Cannot access camera or microphone";
+
+      if (
+        error.name === "NotAllowedError" ||
+        error.name === "PermissionDeniedError"
+      ) {
+        errorMessage =
+          "Please grant camera and microphone permissions and try again";
+      } else if (
+        error.name === "NotFoundError" ||
+        error.name === "DevicesNotFoundError"
+      ) {
+        errorMessage =
+          "Camera or microphone not found. Please check your device connections";
+      } else if (
+        error.name === "NotReadableError" ||
+        error.name === "TrackStartError"
+      ) {
+        errorMessage =
+          "Camera or microphone is already in use by another application";
       }
 
       throw new Error(errorMessage);
@@ -137,12 +158,12 @@ const VideoCall: React.FC<VideoCallProps> = ({
       if (peerConnectionRef.current) {
         peerConnectionRef.current.close();
       }
-      
+
       const pc = await createPeerConnection();
       peerConnectionRef.current = pc;
 
       if (localStream) {
-        localStream.getTracks().forEach(track => {
+        localStream.getTracks().forEach((track) => {
           pc.addTrack(track, localStream);
         });
       }
@@ -150,52 +171,52 @@ const VideoCall: React.FC<VideoCallProps> = ({
       if (isCaller) {
         const offer = await pc.createOffer({
           offerToReceiveAudio: true,
-          offerToReceiveVideo: true
+          offerToReceiveVideo: true,
         });
         await pc.setLocalDescription(offer);
-        socket.emit('videoSignal', {
+        socket.emit("videoSignal", {
           roomId,
           callerId: user?._id,
           receiverId,
-          type: 'offer',
-          data: offer
+          type: "offer",
+          data: offer,
         });
       }
     } catch (error) {
-      console.error('Reconnection failed:', error);
-      setError('Connection failed. Please try again.');
+      console.error("Reconnection failed:", error);
+      setError("Connection failed. Please try again.");
     }
   };
 
   const initializeCall = async () => {
     try {
-      setCallStatus('initiating');
+      setCallStatus("initiating");
       const stream = await startLocalStream();
       const pc = await createPeerConnection();
       peerConnectionRef.current = pc;
 
-      stream.getTracks().forEach(track => {
+      stream.getTracks().forEach((track) => {
         pc.addTrack(track, stream);
       });
 
       if (isCaller) {
         const offer = await pc.createOffer({
           offerToReceiveAudio: true,
-          offerToReceiveVideo: true
+          offerToReceiveVideo: true,
         });
         await pc.setLocalDescription(offer);
-        socket.emit('videoSignal', {
+        socket.emit("videoSignal", {
           roomId,
           callerId: user?._id,
           receiverId,
-          type: 'offer',
-          data: offer
+          type: "offer",
+          data: offer,
         });
       }
 
-      setCallStatus('connecting');
+      setCallStatus("connecting");
     } catch (error: any) {
-      console.error('Call initialization error:', error);
+      console.error("Call initialization error:", error);
       setError(error.message);
       cleanup();
     }
@@ -206,9 +227,9 @@ const VideoCall: React.FC<VideoCallProps> = ({
       const pc = peerConnectionRef.current;
       if (!pc) return;
 
-      if (signal.type === 'offer') {
+      if (signal.type === "offer") {
         await pc.setRemoteDescription(new RTCSessionDescription(signal.data));
-        
+
         // Process any queued ICE candidates
         while (iceCandidatesQueue.current.length) {
           const candidate = iceCandidatesQueue.current.shift();
@@ -219,16 +240,16 @@ const VideoCall: React.FC<VideoCallProps> = ({
 
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
-        socket.emit('videoSignal', {
+        socket.emit("videoSignal", {
           roomId,
           callerId,
           receiverId,
-          type: 'answer',
-          data: answer
+          type: "answer",
+          data: answer,
         });
-      } else if (signal.type === 'answer') {
+      } else if (signal.type === "answer") {
         await pc.setRemoteDescription(new RTCSessionDescription(signal.data));
-        
+
         // Process any queued ICE candidates
         while (iceCandidatesQueue.current.length) {
           const candidate = iceCandidatesQueue.current.shift();
@@ -238,8 +259,8 @@ const VideoCall: React.FC<VideoCallProps> = ({
         }
       }
     } catch (error) {
-      console.error('Error handling video signal:', error);
-      setError('Connection error occurred');
+      console.error("Error handling video signal:", error);
+      setError("Connection error occurred");
     }
   };
 
@@ -276,7 +297,7 @@ const VideoCall: React.FC<VideoCallProps> = ({
     }
 
     // Reset all states
-    setCallStatus('call ended');
+    setCallStatus("call ended");
     setIsVideoEnabled(true);
     setIsAudioEnabled(true);
     setError(null);
@@ -284,21 +305,22 @@ const VideoCall: React.FC<VideoCallProps> = ({
     iceCandidatesQueue.current = [];
 
     // Request permission cleanup
-    navigator.mediaDevices.getUserMedia({ audio: true, video: true })
-      .then(stream => {
-        stream.getTracks().forEach(track => {
+    navigator.mediaDevices
+      .getUserMedia({ audio: true, video: true })
+      .then((stream) => {
+        stream.getTracks().forEach((track) => {
           track.stop();
           track.enabled = false;
         });
       })
       .catch(() => {});
 
-    console.log('Cleanup completed');
+    console.log("Cleanup completed");
   };
 
   useEffect(() => {
     if (!user?._id) {
-      setError('User ID not found');
+      setError("User ID not found");
       return;
     }
 
@@ -306,7 +328,7 @@ const VideoCall: React.FC<VideoCallProps> = ({
       socket.connect();
     }
 
-    socket.on('callRejected', ({ receiverId: rejectedReceiverId }) => {
+    socket.on("callRejected", ({ receiverId: rejectedReceiverId }) => {
       if (isVideoCallActive && rejectedReceiverId === receiverId) {
         setIsVideoCallActive(false);
         setIsCaller(false);
@@ -315,19 +337,19 @@ const VideoCall: React.FC<VideoCallProps> = ({
       }
     });
 
-    socket.on('videoSignal', handleVideoSignal);
-    
-    socket.on('callEnded', () => {
+    socket.on("videoSignal", handleVideoSignal);
+
+    socket.on("callEnded", () => {
       cleanup();
       onEndCall();
-      setCallStatus('call ended');
+      setCallStatus("call ended");
     });
 
-    socket.on('ice-candidate', async ({ candidate, senderId }) => {
+    socket.on("ice-candidate", async ({ candidate, senderId }) => {
       try {
         const pc = peerConnectionRef.current;
         const iceCandidate = new RTCIceCandidate(candidate);
-        
+
         if (pc && pc.remoteDescription && pc.remoteDescription.type) {
           await pc.addIceCandidate(iceCandidate);
         } else {
@@ -335,14 +357,14 @@ const VideoCall: React.FC<VideoCallProps> = ({
           iceCandidatesQueue.current.push(iceCandidate);
         }
       } catch (error) {
-        console.error('Error adding ICE candidate:', error);
+        console.error("Error adding ICE candidate:", error);
       }
     });
 
     initializeCall();
 
     if (!isCaller) {
-      socket.emit('acceptCall', {
+      socket.emit("acceptCall", {
         roomId,
         callerId,
         receiverId: user?._id,
@@ -351,131 +373,138 @@ const VideoCall: React.FC<VideoCallProps> = ({
 
     // Cleanup function
     return () => {
-      socket.off('videoSignal');
-      socket.off('callEnded');
-      socket.off('ice-candidate');
-      socket.off('callRejected');
+      socket.off("videoSignal");
+      socket.off("callEnded");
+      socket.off("ice-candidate");
+      socket.off("callRejected");
       cleanup();
     };
   }, []);
 
-    const toggleVideo = () => {
-        if (localStream) {
-          localStream.getVideoTracks().forEach(track => {
-            track.enabled = !isVideoEnabled;
-          });
-          setIsVideoEnabled(!isVideoEnabled);
-        }
-      };
-    
-      const toggleAudio = () => {
-        if (localStream) {
-          localStream.getAudioTracks().forEach(track => {
-            track.enabled = !isAudioEnabled;
-          });
-          setIsAudioEnabled(!isAudioEnabled);
-        }
-      };
-    
-      const endCall = () => {
-        socket.emit('endCall', {
-          roomId,
-          callerId: user?._id,
-          receiverId: isCaller ? receiverId : callerId
-        });
-        cleanup();
-        onEndCall();
-        setIsVideoCallActive(false);
-        setIsCaller(false);
-      };
-  
+  const toggleVideo = () => {
+    if (localStream) {
+      localStream.getVideoTracks().forEach((track) => {
+        track.enabled = !isVideoEnabled;
+      });
+      setIsVideoEnabled(!isVideoEnabled);
+    }
+  };
+
+  const toggleAudio = () => {
+    if (localStream) {
+      localStream.getAudioTracks().forEach((track) => {
+        track.enabled = !isAudioEnabled;
+      });
+      setIsAudioEnabled(!isAudioEnabled);
+    }
+  };
+
+  const endCall = () => {
+    socket.emit("endCall", {
+      roomId,
+      callerId: user?._id,
+      receiverId: isCaller ? receiverId : callerId,
+    });
+    cleanup();
+    onEndCall();
+    setIsVideoCallActive(false);
+    setIsCaller(false);
+  };
+
   return (
-<>
-   <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-       <div className="bg-white rounded-lg p-6 w-full max-w-4xl">
-         {error ? (
-           <div className="text-center p-4">
-             <p className="text-red-500">{error}</p>
-             <button
-               onClick={onEndCall}
-               className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-             >
-               Close
-             </button>
-           </div>
-         ) : (
-           <>
-             <div className="text-center mb-4">
-                <span className="text-gray-600">
-                  {isReconnecting && 'Reconnecting...'}
-                  {!isReconnecting && (
-                    <>
-                      {callStatus === 'waiting' && `Calling ${receiverName}...`}
-                      {callStatus === 'initiating' && 'Starting call...'}
-                      {callStatus === 'connecting' && 'Connecting...'}
-                      {callStatus === 'connected' && `Connected with ${isCaller ? receiverName : callerName}`}
-                      {callStatus === 'failed' && 'Connection failed'}
-                   </>
-                 )}
-               </span>
-             </div>
-             <div className="grid grid-cols-2 gap-4">
-               <div className="relative">
-                 <video
-                   ref={localVideoRef}
-                   autoPlay
-                   playsInline
-                   muted
-                   className="w-full h-64 bg-black rounded-lg object-cover"
-                 />
-                 <span className="absolute bottom-2 left-2 text-white bg-black bg-opacity-50 px-2 py-1 rounded">
-                   You
-                 </span>
-               </div>
-               <div className="relative">
-                 <video
-                   ref={remoteVideoRef}
-                   autoPlay
-                   playsInline
-                   className="w-full h-64 bg-black rounded-lg object-cover"
-                 />
-                 <span className="absolute bottom-2 left-2 text-white bg-black bg-opacity-50 px-2 py-1 rounded">
-                   {isCaller ? receiverName : callerName}
-                 </span>
-               </div>
-             </div>
-             <div className="flex justify-center space-x-4 mt-6">
-               <button
-                 onClick={toggleVideo}
-                 className="p-3 rounded-full bg-gray-200 hover:bg-gray-300"
-                 title={isVideoEnabled ? "Turn off camera" : "Turn on camera"}
-               >
-                 {isVideoEnabled ? <BsCameraVideo size={24} /> : <BsCameraVideoOff size={24} />}
-               </button>
-               <button
-                 onClick={toggleAudio}
-                 className="p-3 rounded-full bg-gray-200 hover:bg-gray-300"
-                 title={isAudioEnabled ? "Mute microphone" : "Unmute microphone"}
-               >
-                 {isAudioEnabled ? <BiMicrophone size={24} /> : <BiMicrophoneOff size={24} />}
-               </button>
-               <button
-                 onClick={endCall}
-                className="p-3 rounded-full bg-red-500 hover:bg-red-600 text-white"
-                title="End call"
+    <>
+      <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 w-full max-w-4xl">
+          {error ? (
+            <div className="text-center p-4">
+              <p className="text-red-500">{error}</p>
+              <button
+                onClick={onEndCall}
+                className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
               >
-                <MdCallEnd size={24} />
+                Close
               </button>
             </div>
-          </>
-        )}
+          ) : (
+            <>
+              <div className="text-center mb-4">
+                <span className="text-gray-600">
+                  {isReconnecting && "Reconnecting..."}
+                  {!isReconnecting && (
+                    <>
+                      {callStatus === "waiting" && `Calling ${receiverName}...`}
+                      {callStatus === "initiating" && "Starting call..."}
+                      {callStatus === "connecting" && "Connecting..."}
+                      {callStatus === "connected" &&
+                        `Connected with ${isCaller ? receiverName : callerName}`}
+                      {callStatus === "failed" && "Connection failed"}
+                    </>
+                  )}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="relative">
+                  <video
+                    ref={localVideoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className="w-full h-64 bg-black rounded-lg object-cover"
+                  />
+                  <span className="absolute bottom-2 left-2 text-white bg-black bg-opacity-50 px-2 py-1 rounded">
+                    You
+                  </span>
+                </div>
+                <div className="relative">
+                  <video
+                    ref={remoteVideoRef}
+                    autoPlay
+                    playsInline
+                    className="w-full h-64 bg-black rounded-lg object-cover"
+                  />
+                  <span className="absolute bottom-2 left-2 text-white bg-black bg-opacity-50 px-2 py-1 rounded">
+                    {isCaller ? receiverName : callerName}
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-center space-x-4 mt-6">
+                <button
+                  onClick={toggleVideo}
+                  className="p-3 rounded-full bg-gray-200 hover:bg-gray-300"
+                  title={isVideoEnabled ? "Turn off camera" : "Turn on camera"}
+                >
+                  {isVideoEnabled ? (
+                    <BsCameraVideo size={24} />
+                  ) : (
+                    <BsCameraVideoOff size={24} />
+                  )}
+                </button>
+                <button
+                  onClick={toggleAudio}
+                  className="p-3 rounded-full bg-gray-200 hover:bg-gray-300"
+                  title={
+                    isAudioEnabled ? "Mute microphone" : "Unmute microphone"
+                  }
+                >
+                  {isAudioEnabled ? (
+                    <BiMicrophone size={24} />
+                  ) : (
+                    <BiMicrophoneOff size={24} />
+                  )}
+                </button>
+                <button
+                  onClick={endCall}
+                  className="p-3 rounded-full bg-red-500 hover:bg-red-600 text-white"
+                  title="End call"
+                >
+                  <MdCallEnd size={24} />
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </div>
-
-</>
-    
-  )};
-  export default VideoCall
-
-
-
+    </>
+  );
+};
+export default VideoCall;

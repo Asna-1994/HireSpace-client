@@ -13,32 +13,32 @@ export interface Spam {
   reportedByUser: {
     userName: string;
     email: string;
-    phone : string;
+    phone: string;
   };
   companyId: {
     companyName: string;
     email: string;
-    isBlocked : boolean;
-_id : string;
-phone : string;
+    isBlocked: boolean;
+    _id: string;
+    phone: string;
   };
   _id: string;
-  createdAt :Date;
-  updatedAt : Date;
-  reason : string;
-  description : string;
-
+  createdAt: Date;
+  updatedAt: Date;
+  reason: string;
+  description: string;
 }
 
 const SpamList = () => {
-
   const [spams, setSpams] = useState<Spam[]>([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(8);
-  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
+    null,
+  );
   const [selectedAction, setSelectedAction] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -49,11 +49,11 @@ const SpamList = () => {
         params: { search: query, page, limit },
       });
 
-      const {  rawSpams, totalPages, currentPage } = response.data.data;
+      const { rawSpams, totalPages, currentPage } = response.data.data;
 
       // Extract data from `_doc`
       const spams = rawSpams.map((spam: any) => spam._doc);
-console.log(spams)
+      console.log(spams);
       setSpams(spams); // Set normalized spam data
       setTotalPages(totalPages);
       setPage(currentPage);
@@ -75,14 +75,14 @@ console.log(spams)
 
     try {
       const response = await axiosInstance.patch(
-        `/admin/block-or-unblock-company/${selectedCompanyId}/${selectedAction}`
+        `/admin/block-or-unblock-company/${selectedCompanyId}/${selectedAction}`,
       );
 
       if (response.status === 200) {
         toast.success(
           `Successfully ${
             selectedAction === "block" ? "blocked" : "unblocked"
-          }`
+          }`,
         );
         fetchSpams();
       }
@@ -90,7 +90,7 @@ console.log(spams)
       console.error(error.response?.data?.message);
       toast.error(
         error.response?.data?.message ||
-          "An error occurred while blocking the user"
+          "An error occurred while blocking the user",
       );
     } finally {
       setModalIsOpen(false);
@@ -184,7 +184,7 @@ console.log(spams)
                 <th className="px-4 py-2 text-left">Reason</th>
                 <th className="px-4 py-2 text-left">Description</th>
                 <th className="px-4 py-2 text-left">Date of Report</th>
-            <th className="px-4 py-2 text-left">Actions</th>
+                <th className="px-4 py-2 text-left">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -195,31 +195,35 @@ console.log(spams)
                     {(page - 1) * limit + index + 1}
                   </td>{" "}
                   {/* Serial number */}
-                  <td className="px-4 py-2"> <div className="flex flex-col">
-                    <span>  {spam.reportedByUser.userName}</span>
-                    <span>  {spam.reportedByUser.email}</span>
-                    <span>  {spam.reportedByUser.phone}</span>
-                    </div> </td>
-                  <td className="px-4 py-2"> <div className="flex flex-col">
-                    <span>  {spam.companyId.companyName}</span>
-                    <span>  {spam.companyId.email}</span>
-                    <span>  {spam.companyId.phone}</span>
-                    </div> </td>
+                  <td className="px-4 py-2">
+                    {" "}
+                    <div className="flex flex-col">
+                      <span> {spam.reportedByUser.userName}</span>
+                      <span> {spam.reportedByUser.email}</span>
+                      <span> {spam.reportedByUser.phone}</span>
+                    </div>{" "}
+                  </td>
+                  <td className="px-4 py-2">
+                    {" "}
+                    <div className="flex flex-col">
+                      <span> {spam.companyId.companyName}</span>
+                      <span> {spam.companyId.email}</span>
+                      <span> {spam.companyId.phone}</span>
+                    </div>{" "}
+                  </td>
                   <td className="px-4 py-2">{spam.reason}</td>
                   <td className="px-4 py-2">{spam.description}</td>
-      
                   <td className="px-4 py-2">
                     {spam.createdAt
                       ? new Date(spam.createdAt).toLocaleDateString()
                       : "N/A"}
                   </td>
-           
                   <td className="px-4 py-2">
                     <button
                       onClick={() =>
                         openModal(
                           spam.companyId._id,
-                          spam.companyId.isBlocked ? "unblock" : "block"
+                          spam.companyId.isBlocked ? "unblock" : "block",
                         )
                       }
                       className="text-white text-sm w-20 hover:underline border bg-blue-700 px-3 py-1 rounded-md"
@@ -254,7 +258,6 @@ console.log(spams)
           </div>
         </div>
       </div>
-   
     </>
   );
 };

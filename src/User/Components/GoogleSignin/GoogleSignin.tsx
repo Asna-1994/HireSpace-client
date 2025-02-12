@@ -2,7 +2,7 @@ import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import axiosInstance from "../../../Utils/Instance/axiosInstance";
 import { toast } from "react-toastify";
-import {  userLogin } from "../../../redux/slices/authSlice";
+import { userLogin } from "../../../redux/slices/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -19,7 +19,7 @@ const GoogleSignInButton: React.FC = () => {
 
       if (res.data.success) {
         const { token, user } = res.data.data;
-        console.log(token)
+        console.log(token);
         dispatch(userLogin({ user, token }));
         console.log("User details:", user);
         navigate(`/user/home/${user._id}`);

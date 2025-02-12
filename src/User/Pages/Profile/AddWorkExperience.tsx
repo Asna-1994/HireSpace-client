@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import Header from "../../Components/Header/Header";
 import axiosInstance from "../../../Utils/Instance/axiosInstance";
@@ -6,21 +5,24 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
-import * as Yup from 'yup';
-
+import * as Yup from "yup";
 
 const experienceValidationSchema = Yup.object().shape({
   company: Yup.string().required("Company name is required"),
   designation: Yup.string().required("Designation is required"),
-  yearCompleted: Yup.string().required("Year completed is required").matches(/^\d{4}$/, "Year must be a valid 4-digit year"),
+  yearCompleted: Yup.string()
+    .required("Year completed is required")
+    .matches(/^\d{4}$/, "Year must be a valid 4-digit year"),
   dateFrom: Yup.string().required("Start date is required"),
   dateTo: Yup.string().required("End date is required"),
-  skillsGained: Yup.array().of(Yup.string()).min(1, "At least one skill is required"),
+  skillsGained: Yup.array()
+    .of(Yup.string())
+    .min(1, "At least one skill is required"),
 });
 
 export interface ExperienceObject {
   company: string;
-  designation : string;
+  designation: string;
   yearCompleted: string;
   dateFrom: string;
   dateTo: string;
@@ -43,7 +45,9 @@ const AddWorkExperience: React.FC = () => {
   const [experienceId, setExperienceId] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setForm((prevForm) => ({
       ...prevForm,
@@ -77,7 +81,7 @@ const AddWorkExperience: React.FC = () => {
       const res = await axiosInstance.patch(
         `/user/add-or-update-experience/${user?._id}`,
         form,
-        { params: { experienceId } }
+        { params: { experienceId } },
       );
       if (res.data.success) {
         toast.success("Work experience updated successfully");
@@ -112,7 +116,9 @@ const AddWorkExperience: React.FC = () => {
 
   const handleDelete = async (index: number, experienceId: string) => {
     try {
-      const response = await axiosInstance.delete(`/user/${user?._id}/experience/${experienceId}`);
+      const response = await axiosInstance.delete(
+        `/user/${user?._id}/experience/${experienceId}`,
+      );
       if (response.data.success) {
         toast.success("Successfully deleted");
         setExperiences(response.data.data.experience);
@@ -126,7 +132,9 @@ const AddWorkExperience: React.FC = () => {
 
   const getExperiences = async () => {
     try {
-      const response = await axiosInstance.get(`/user/${user?._id}/all-experience`);
+      const response = await axiosInstance.get(
+        `/user/${user?._id}/all-experience`,
+      );
       if (response.data.success) {
         setExperiences(response.data.data.experience);
       } else {
@@ -157,19 +165,48 @@ const AddWorkExperience: React.FC = () => {
           {/* Form Section */}
           <div className="bg-gray-50 p-6 rounded-lg shadow-md">
             <h3 className="text-2xl font-semibold text-blue-700 mb-6 text-center">
-              {editIndex !== null ? "Update Work Experience" : "Add Work Experience"}
+              {editIndex !== null
+                ? "Update Work Experience"
+                : "Add Work Experience"}
             </h3>
             <form onSubmit={handleAddOrUpdate} className="space-y-6">
               {[
-                { label: "Company", name: "company", placeholder: "e.g., ABC Corp" },
-                { label: "Designation", name: "designation", placeholder: "e.g., Front End Developer" },
-                { label: "Year Completed", name: "yearCompleted", placeholder: "e.g., 2022" },
-                { label: "Start Date", name: "dateFrom", placeholder: "e.g., 2020-01-01" },
-                { label: "End Date", name: "dateTo", placeholder: "e.g., 2022-01-01" },
-                { label: "Skills Gained", name: "skillsGained", placeholder: "e.g., React, Node.js" },
+                {
+                  label: "Company",
+                  name: "company",
+                  placeholder: "e.g., ABC Corp",
+                },
+                {
+                  label: "Designation",
+                  name: "designation",
+                  placeholder: "e.g., Front End Developer",
+                },
+                {
+                  label: "Year Completed",
+                  name: "yearCompleted",
+                  placeholder: "e.g., 2022",
+                },
+                {
+                  label: "Start Date",
+                  name: "dateFrom",
+                  placeholder: "e.g., 2020-01-01",
+                },
+                {
+                  label: "End Date",
+                  name: "dateTo",
+                  placeholder: "e.g., 2022-01-01",
+                },
+                {
+                  label: "Skills Gained",
+                  name: "skillsGained",
+                  placeholder: "e.g., React, Node.js",
+                },
               ].map((field, idx) => (
                 <div key={idx}>
-                  <label htmlFor={field.name} className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor={field.name}
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     {field.label}
                   </label>
                   <input
@@ -182,7 +219,11 @@ const AddWorkExperience: React.FC = () => {
                     className="mt-1 w-full px-1 py-1 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     required
                   />
-                  {errors[field.name] && <p className="text-red-500 text-xs mt-1">{errors[field.name]}</p>}
+                  {errors[field.name] && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors[field.name]}
+                    </p>
+                  )}
                 </div>
               ))}
               <div className="text-center">
@@ -201,7 +242,9 @@ const AddWorkExperience: React.FC = () => {
               Work Experience Details
             </h3>
             {experiences?.length === 0 ? (
-              <p className="text-gray-600 text-center">No work experience details added yet.</p>
+              <p className="text-gray-600 text-center">
+                No work experience details added yet.
+              </p>
             ) : (
               <ul className="space-y-4">
                 {experiences?.map((exp, index) => (
@@ -210,12 +253,18 @@ const AddWorkExperience: React.FC = () => {
                     className="bg-white p-6 rounded-lg shadow-md flex justify-between items-start"
                   >
                     <div>
-                      <p className="text-lg font-semibold text-gray-800">{exp.company}</p>
-                      <p className="text-lg font-medium text-gray-800">{exp.designation}</p>
+                      <p className="text-lg font-semibold text-gray-800">
+                        {exp.company}
+                      </p>
+                      <p className="text-lg font-medium text-gray-800">
+                        {exp.designation}
+                      </p>
                       <p className="text-gray-600">
                         {exp.dateFrom} - {exp.dateTo} ({exp.yearCompleted})
                       </p>
-                      <p className="text-gray-600">Skills: {exp.skillsGained.join(", ")}</p>
+                      <p className="text-gray-600">
+                        Skills: {exp.skillsGained.join(", ")}
+                      </p>
                     </div>
                     <div className="flex space-x-4">
                       <button

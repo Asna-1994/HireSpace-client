@@ -11,9 +11,12 @@ const Home = () => {
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
         <div className="container mx-auto px-6 text-center">
-          <h1 className="text-5xl font-bold mb-4">Find Your Dream Job Today!</h1>
+          <h1 className="text-5xl font-bold mb-4">
+            Find Your Dream Job Today!
+          </h1>
           <p className="text-lg mb-6">
-            Discover life-changing opportunities and take the first step toward success.
+            Discover life-changing opportunities and take the first step toward
+            success.
           </p>
           <div className="flex gap-4 items-center justify-center">
             <Link
@@ -43,8 +46,9 @@ const Home = () => {
         <div className="container mx-auto px-6 text-center">
           <div className="bg-white rounded-lg shadow-lg p-6">
             <p className="text-lg text-gray-700">
-              <strong>Note:</strong> To register a company, first create a user account with the role <strong>Company Admin</strong>. 
-              Use the admin's email address when registering your company.
+              <strong>Note:</strong> To register a company, first create a user
+              account with the role <strong>Company Admin</strong>. Use the
+              admin's email address when registering your company.
             </p>
           </div>
         </div>
@@ -115,7 +119,8 @@ const Home = () => {
           Ready to Start Your Journey?
         </h2>
         <p className="text-lg mb-6">
-          Join thousands of successful job seekers today and take the first step toward your dream career.
+          Join thousands of successful job seekers today and take the first step
+          toward your dream career.
         </p>
         <Link
           to="/user/signup"

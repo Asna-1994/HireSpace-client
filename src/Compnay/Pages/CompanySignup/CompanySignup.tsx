@@ -2,13 +2,15 @@ import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { AxiosResponse} from "axios";
+import { AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { ApiResponse, CompanyFormData } from "../../../Utils/Interfaces/interface";
+import {
+  ApiResponse,
+  CompanyFormData,
+} from "../../../Utils/Interfaces/interface";
 import CompanyHeader from "../../Components/Header/Header";
-
 
 const schema = yup.object().shape({
   companyName: yup
@@ -24,39 +26,31 @@ const schema = yup.object().shape({
     .min(8, "Password must be at least 8 characters")
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[a-zA-Z\d@$!%*?&]+$/,
-      "Password must contain uppercase, lowercase, number, and special character"
+      "Password must contain uppercase, lowercase, number, and special character",
     )
     .required("Password is required"),
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password")], "Passwords must match")
     .required("Confirm Password is required"),
-  establishedDate: yup
-    .date()
-    .required("Established year is required"),
-industry: yup
+  establishedDate: yup.date().required("Established year is required"),
+  industry: yup
     .string()
-   .min(3, "Industry must be at least 3 characters")
+    .min(3, "Industry must be at least 3 characters")
     .required("Industry is required"),
   phone: yup
     .string()
     .matches(
       /^(?:(?!^[012345])[6-9]\d{9})$/,
-      "Phone number must not start with 0, 1, 2, 3, 4, or 5 and cannot have all digits the same"
+      "Phone number must not start with 0, 1, 2, 3, 4, or 5 and cannot have all digits the same",
     )
     .required("Phone number is required"),
   address: yup.string().required("Address is required"),
   companyAdminEmail: yup
-  .string()
-  .email("Invalid email format")
-  .required("Admin Email is required"),
-  
+    .string()
+    .email("Invalid email format")
+    .required("Admin Email is required"),
 });
-
-
-
-
-
 
 const CompanySignup = () => {
   const {
@@ -68,35 +62,34 @@ const CompanySignup = () => {
   });
 
   useEffect(() => {
-
     document.body.classList.add("bg-slate-950");
     return () => {
       document.body.classList.remove("bg-slate-950");
     };
   }, []);
 
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const submitSignupForm = async (formData: CompanyFormData): Promise<void> => {
     try {
-      const response: AxiosResponse<ApiResponse> = await axiosInstance.post("/company/signup", formData);
-    console.log(response.data.data?.company)
-      toast.success(response.data.message)
-   
-      navigate("/company/otp-verification", { state: { company: response.data.data.company} });
+      const response: AxiosResponse<ApiResponse> = await axiosInstance.post(
+        "/company/signup",
+        formData,
+      );
+      console.log(response.data.data?.company);
+      toast.success(response.data.message);
+
+      navigate("/company/otp-verification", {
+        state: { company: response.data.data.company },
+      });
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 
-
-
-
-
   return (
     <>
-      <CompanyHeader/>
+      <CompanyHeader />
       <div className="max-w-md  mx-auto bg  bg-gradient-to-r from-blue-600 to-purple-600 p-8 rounded-xl shadow-lg mt-8 mb-8">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Sign Up as Company
@@ -108,7 +101,7 @@ const CompanySignup = () => {
               htmlFor="companyName"
               className="block text-sm font-medium text-gray-700"
             >
-            Company Name
+              Company Name
             </label>
             <Controller
               control={control}
@@ -162,13 +155,12 @@ const CompanySignup = () => {
             )}
           </div>
 
-        
           <div className="mb-4">
             <label
               htmlFor="establishedDate"
               className="block text-sm font-medium text-gray-700"
             >
-           Established Date
+              Established Date
             </label>
             <Controller
               control={control}
@@ -188,7 +180,7 @@ const CompanySignup = () => {
                       ? new Date(field.value).toISOString().split("T")[0]
                       : ""
                   }
-                  onChange={(e) => field.onChange(new Date(e.target.value))} 
+                  onChange={(e) => field.onChange(new Date(e.target.value))}
                 />
               )}
             />
@@ -265,7 +257,7 @@ const CompanySignup = () => {
               htmlFor="companyAdminEmail"
               className="block text-sm font-medium text-gray-700"
             >
-             Admin Email
+              Admin Email
             </label>
             <Controller
               control={control}
@@ -289,35 +281,34 @@ const CompanySignup = () => {
             )}
           </div>
 
-       
           <div className="mb-4">
-  <label
-    htmlFor="industry"
-    className="block text-sm font-medium text-gray-700"
-  >
-  Industry
-  </label>
-  <Controller
-    control={control}
-    name="industry"
-    render={({ field }) => (
-        <input
-        {...field}
-        className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
-          errors.industry
-            ? "border-red-500 focus:ring-red-500"
-            : "border-gray-300 focus:ring-blue-500"
-        }`}
-        placeholder="Enter your Industry"
-      />
-    )}
-  />
-  {errors.industry && (
-    <p className="text-sm text-red-500 mt-1">
-      {errors.industry.message as React.ReactNode}
-    </p>
-  )}
-</div>
+            <label
+              htmlFor="industry"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Industry
+            </label>
+            <Controller
+              control={control}
+              name="industry"
+              render={({ field }) => (
+                <input
+                  {...field}
+                  className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
+                    errors.industry
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-blue-500"
+                  }`}
+                  placeholder="Enter your Industry"
+                />
+              )}
+            />
+            {errors.industry && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.industry.message as React.ReactNode}
+              </p>
+            )}
+          </div>
 
           {/* Password */}
           <div className="mb-4">
@@ -390,14 +381,16 @@ const CompanySignup = () => {
               Sign Up
             </button>
           </div>
-
         </form>
-        <p className="text-center p-3">Already have account ? <Link className=" hover:text-gray-700" to={'/company/login'}>Login</Link></p>
+        <p className="text-center p-3">
+          Already have account ?{" "}
+          <Link className=" hover:text-gray-700" to={"/company/login"}>
+            Login
+          </Link>
+        </p>
       </div>
     </>
   );
 };
 
 export default CompanySignup;
-
-

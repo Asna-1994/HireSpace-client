@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from 'react';
-import Cropper from 'react-easy-crop';
-import { Area } from 'react-easy-crop/types';
-import { getCroppedImg } from '../../../Utils/helperFunctions/cropImage';
+import React, { useState, useCallback } from "react";
+import Cropper from "react-easy-crop";
+import { Area } from "react-easy-crop/types";
+import { getCroppedImg } from "../../../Utils/helperFunctions/cropImage";
 
 interface CropImageModalProps {
   image: string;
@@ -9,14 +9,21 @@ interface CropImageModalProps {
   onSave: (croppedImage: string) => void;
 }
 
-const CropImageModal: React.FC<CropImageModalProps> = ({ image, onCancel, onSave }) => {
+const CropImageModal: React.FC<CropImageModalProps> = ({
+  image,
+  onCancel,
+  onSave,
+}) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
-  const onCropComplete = useCallback((croppedArea: Area, croppedAreaPixels: Area) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
+  const onCropComplete = useCallback(
+    (croppedArea: Area, croppedAreaPixels: Area) => {
+      setCroppedAreaPixels(croppedAreaPixels);
+    },
+    [],
+  );
 
   const handleSave = async () => {
     try {
@@ -27,7 +34,7 @@ const CropImageModal: React.FC<CropImageModalProps> = ({ image, onCancel, onSave
         }
       }
     } catch (error) {
-      console.error('Error cropping image:', error);
+      console.error("Error cropping image:", error);
     }
   };
 
@@ -45,7 +52,7 @@ const CropImageModal: React.FC<CropImageModalProps> = ({ image, onCancel, onSave
             onCropComplete={onCropComplete}
           />
         </div>
-        
+
         <div className="mb-4">
           <label className="block text-sm mb-2">Zoom</label>
           <input
@@ -58,7 +65,7 @@ const CropImageModal: React.FC<CropImageModalProps> = ({ image, onCancel, onSave
             className="w-full"
           />
         </div>
-        
+
         <div className="flex justify-end gap-4">
           <button
             onClick={onCancel}

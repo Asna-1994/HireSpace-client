@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const ErrorPage = () => {
   return (
@@ -8,11 +8,10 @@ const ErrorPage = () => {
         <h1 className="text-8xl font-extrabold text-red-500 drop-shadow-lg">
           Oops!
         </h1>
-        <p className="text-2xl font-bold mt-4">
-          Something went wrong.
-        </p>
+        <p className="text-2xl font-bold mt-4">Something went wrong.</p>
         <p className="text-md text-gray-600 mt-2">
-          We're experiencing an issue right now. Please try again later or go back to the home page.
+          We're experiencing an issue right now. Please try again later or go
+          back to the home page.
         </p>
         <Link
           to="/"

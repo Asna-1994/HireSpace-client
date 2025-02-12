@@ -14,7 +14,9 @@ const UploadVerificationDocument = () => {
   const [documentNumber, setDocumentNumber] = useState<string>("");
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
+    null,
+  );
 
   const { company } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
@@ -22,7 +24,7 @@ const UploadVerificationDocument = () => {
   useEffect(() => {
     if (company?.verificationDocument) {
       setPreviewUrl(company.verificationDocument?.url);
-      console.log(company.verificationDocument?.url)
+      console.log(company.verificationDocument?.url);
     }
   }, [company?.verificationDocument]);
 
@@ -31,7 +33,7 @@ const UploadVerificationDocument = () => {
     if (file) {
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
-      setIsUploading(true); 
+      setIsUploading(true);
     }
   };
 
@@ -46,9 +48,17 @@ const UploadVerificationDocument = () => {
       return;
     }
 
-       const allowedTypes = ["application/pdf","application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
-       const maxFileSize = 5 * 1024 * 1024; // 5MB
-       const validationError =  validateFile(selectedFile, allowedTypes, maxFileSize);
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    const maxFileSize = 5 * 1024 * 1024; // 5MB
+    const validationError = validateFile(
+      selectedFile,
+      allowedTypes,
+      maxFileSize,
+    );
     if (validationError) {
       toast.error(validationError);
       return;
@@ -66,28 +76,33 @@ const UploadVerificationDocument = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       if (response.data.success) {
         toast.success(response.data.message);
         dispatch(companyUpdate(response.data.data.company));
-        console.log(response.data.data.company)
-        setIsUploading(false); 
+        console.log(response.data.data.company);
+        setIsUploading(false);
       } else {
         toast.error(response.data.message);
       }
     } catch (error: any) {
       console.error("Error uploading verification document:", error);
-      toast.error(error.response?.data?.message || "Error uploading verification document");
-      setIsUploading(false); 
+      toast.error(
+        error.response?.data?.message ||
+          "Error uploading verification document",
+      );
+      setIsUploading(false);
     }
   };
 
   const handleDeleteDocument = async () => {
     setModalIsOpen(false);
     try {
-      const res = await axiosInstance.patch(`/company/delete-document/${selectedCompanyId}`);
+      const res = await axiosInstance.patch(
+        `/company/delete-document/${selectedCompanyId}`,
+      );
       if (res.data.success) {
         toast.success(res.data.message);
         dispatch(companyUpdate(res.data.data.company));
@@ -95,10 +110,11 @@ const UploadVerificationDocument = () => {
         toast.error(res.data.message);
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Error deleting verification document");
+      toast.error(
+        error.response?.data?.message || "Error deleting verification document",
+      );
       console.error(error);
     } finally {
-
       setSelectedCompanyId(null);
     }
   };
@@ -125,7 +141,10 @@ const UploadVerificationDocument = () => {
         <h2 className="text-lg font-bold mb-4">Confirm Action</h2>
         <p>Are you sure you want to delete this document?</p>
         <div className="mt-4 flex justify-end space-x-4">
-          <button onClick={closeModal} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+          <button
+            onClick={closeModal}
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+          >
             Cancel
           </button>
           <button
@@ -145,7 +164,10 @@ const UploadVerificationDocument = () => {
           </h2>
 
           <div className="mb-4">
-            <label htmlFor="documentNumber" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="documentNumber"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Document Number
             </label>
             <input
@@ -158,25 +180,24 @@ const UploadVerificationDocument = () => {
             />
           </div>
           <div className="relative flex items-center justify-center mb-4 border-2 border-dashed border-gray-300 rounded-lg p-6">
-  {previewUrl ? (
-    <div className="relative">
-      {selectedFile?.type === "application/pdf" || previewUrl?.endsWith(".pdf") ? (
-        <iframe
-          src={previewUrl || company?.verificationDocument?.url}
-          title="PDF Preview"
-          className="w-full h-64 border rounded-md"
-        />
-      ) : (
-        <img
-          src={previewUrl}
-          alt="Uploaded Document"
-          className="w-40 h-40 object-cover rounded-md"
-        />
-      )}
+            {previewUrl ? (
+              <div className="relative">
+                {selectedFile?.type === "application/pdf" ||
+                previewUrl?.endsWith(".pdf") ? (
+                  <iframe
+                    src={previewUrl || company?.verificationDocument?.url}
+                    title="PDF Preview"
+                    className="w-full h-64 border rounded-md"
+                  />
+                ) : (
+                  <img
+                    src={previewUrl}
+                    alt="Uploaded Document"
+                    className="w-40 h-40 object-cover rounded-md"
+                  />
+                )}
 
-
-
-              {isUploading ? (
+                {isUploading ? (
                   <button
                     onClick={handleDelete}
                     className="absolute -top-2 -right-2 bg-red-600 text-white text-sm rounded-full p-2 hover:bg-red-700 transition duration-300"
@@ -185,18 +206,18 @@ const UploadVerificationDocument = () => {
                     ✕
                   </button>
                 ) : null}
-    </div>
-  ) : (
-    <div className="text-center">
-      <img
-        src="https://via.placeholder.com/150?text=Upload+Document"
-        alt="Placeholder"
-        className="w-40 h-40 object-cover rounded-md mb-2"
-      />
-      <p className="text-gray-500 text-sm">No document uploaded</p>
-    </div>
-  )}
-</div>
+              </div>
+            ) : (
+              <div className="text-center">
+                <img
+                  src="https://via.placeholder.com/150?text=Upload+Document"
+                  alt="Placeholder"
+                  className="w-40 h-40 object-cover rounded-md mb-2"
+                />
+                <p className="text-gray-500 text-sm">No document uploaded</p>
+              </div>
+            )}
+          </div>
 
           {/* <div className="relative flex items-center justify-center mb-4 border-2 border-dashed border-gray-300 rounded-lg p-6">
             {previewUrl ? (

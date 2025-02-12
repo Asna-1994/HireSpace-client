@@ -1,4 +1,3 @@
-
 import { FC, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,7 +23,7 @@ import { getCompanyInitials } from "../../../Utils/helperFunctions/companyName";
 
 const CompanyHeader: FC = () => {
   const { company, isAuthenticated, user } = useSelector(
-    (state: RootState) => state.auth
+    (state: RootState) => state.auth,
   );
   const [menuOpen, setMenuOpen] = useState(false);
   const [companyDropdownOpen, setCompanyDropdownOpen] = useState(false);
@@ -164,7 +163,9 @@ const CompanyHeader: FC = () => {
                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white text-sm font-bold">
                   {user.userName.slice(0, 2).toUpperCase()}
                 </span>
-                <span className="hidden sm:inline text-xs">{user.userName}</span>
+                <span className="hidden sm:inline text-xs">
+                  {user.userName}
+                </span>
               </button>
               {userDropdownOpen && (
                 <div
@@ -181,7 +182,9 @@ const CompanyHeader: FC = () => {
                         <h3 className="font-bold">{user.userName}</h3>
                         <p className="text-sm text-gray-500">{user.email}</p>
                         <p className="text-xs text-gray-400">
-                          {user.userRole === "companyAdmin" ? "Admin" : "Member"}
+                          {user.userRole === "companyAdmin"
+                            ? "Admin"
+                            : "Member"}
                         </p>
                       </div>
                     </div>
@@ -231,7 +234,9 @@ const CompanyHeader: FC = () => {
                     {getCompanyInitials(company.companyName)}
                   </div>
                 )}
-                <span className="hidden sm:inline text-xs">{company.companyName}</span>
+                <span className="hidden sm:inline text-xs">
+                  {company.companyName}
+                </span>
               </button>
               {companyDropdownOpen && (
                 <div
@@ -257,8 +262,12 @@ const CompanyHeader: FC = () => {
                         </div>
                       )}
                       <div>
-                        <h2 className="text-xl font-bold">{company.companyName}</h2>
-                        <h3 className="text-sm text-gray-500">{company.email}</h3>
+                        <h2 className="text-xl font-bold">
+                          {company.companyName}
+                        </h2>
+                        <h3 className="text-sm text-gray-500">
+                          {company.email}
+                        </h3>
                       </div>
                     </Link>
                     <hr className="border-gray-300 my-2" />
@@ -346,158 +355,167 @@ const CompanyHeader: FC = () => {
           {isAuthenticated ? (
             <>
               {/* Mobile: Show separate items for both profiles */}
-          {user && (
-            <div className="relative">
-              <button
-                onClick={toggleUserDropdown}
-                className="flex items-center space-x-2 focus:outline-none"
-              >
-                <span className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500 text-white text-sm font-bold">
-                  {user.userName.slice(0, 2).toUpperCase()}
-                </span>
-              </button>
-              {userDropdownOpen && (
-                <div
-                  className="absolute right-0 mt-2 w-56 bg-white text-black rounded shadow-lg border border-gray-300 z-20"
-                  role="menu"
-                  aria-label="User Dropdown Menu"
-                >
-                  <div className="py-2 px-4">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-800 text-white text-lg font-bold">
-                        {user.userName.slice(0, 2).toUpperCase()}
-                      </span>
-                      <div>
-                        <h3 className="font-bold">{user.userName}</h3>
-                        <p className="text-sm text-gray-500">{user.email}</p>
-                        <p className="text-xs text-gray-400">
-                          {user.userRole === "companyAdmin" ? "Admin" : "Member"}
-                        </p>
+              {user && (
+                <div className="relative">
+                  <button
+                    onClick={toggleUserDropdown}
+                    className="flex items-center space-x-2 focus:outline-none"
+                  >
+                    <span className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500 text-white text-sm font-bold">
+                      {user.userName.slice(0, 2).toUpperCase()}
+                    </span>
+                  </button>
+                  {userDropdownOpen && (
+                    <div
+                      className="absolute right-0 mt-2 w-56 bg-white text-black rounded shadow-lg border border-gray-300 z-20"
+                      role="menu"
+                      aria-label="User Dropdown Menu"
+                    >
+                      <div className="py-2 px-4">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <span className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-800 text-white text-lg font-bold">
+                            {user.userName.slice(0, 2).toUpperCase()}
+                          </span>
+                          <div>
+                            <h3 className="font-bold">{user.userName}</h3>
+                            <p className="text-sm text-gray-500">
+                              {user.email}
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              {user.userRole === "companyAdmin"
+                                ? "Admin"
+                                : "Member"}
+                            </p>
+                          </div>
+                        </div>
+                        <hr className="border-gray-300 mb-2" />
+                        {[
+                          {
+                            to: `/user/profile/${user._id}`,
+                            label: "View Profile",
+                            icon: FaCrown,
+                          },
+                          {
+                            to: `/user/edit-basic-details/${user._id}`,
+                            label: "Edit Profile",
+                            icon: FaEdit,
+                          },
+                        ].map(({ to, label, icon: Icon }, index) => (
+                          <Link
+                            key={index}
+                            to={to}
+                            className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
+                            role="menuitem"
+                          >
+                            <Icon className="mr-3 text-gray-600" />
+                            {label}
+                          </Link>
+                        ))}
                       </div>
                     </div>
-                    <hr className="border-gray-300 mb-2" />
-                    {[
-                      {
-                        to: `/user/profile/${user._id}`,
-                        label: "View Profile",
-                        icon: FaCrown,
-                      },
-                      {
-                        to: `/user/edit-basic-details/${user._id}`,
-                        label: "Edit Profile",
-                        icon: FaEdit,
-                      },
-                    ].map(({ to, label, icon: Icon }, index) => (
-                      <Link
-                        key={index}
-                        to={to}
-                        className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
-                        role="menuitem"
-                      >
-                        <Icon className="mr-3 text-gray-600" />
-                        {label}
-                      </Link>
-                    ))}
-                  </div>
+                  )}
                 </div>
               )}
-            </div>
-          )}
 
-
-{isAuthenticated && company && (
-            <div className="relative">
-              <button
-                onClick={toggleCompanyDropdown}
-                className="flex items-center space-x-2 focus:outline-none"
-              >
-                {company.companyLogo?.url ? (
-                  <img
-                    src={company.companyLogo.url}
-                    alt="Company Logo"
-                    className="w-10 h-10 rounded-full"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-xl font-bold text-white">
-                    {getCompanyInitials(company.companyName)}
-                  </div>
-                )}
-                <span className="hidden sm:inline">{company.companyName}</span>
-              </button>
-              {companyDropdownOpen && (
-                <div
-                  className="absolute right-0 mt-2 w-56 bg-white text-black rounded shadow-lg border border-gray-300 z-20"
-                  role="menu"
-                  aria-label="Company Dropdown Menu"
-                >
-                  <div className="py-2">
-                    <Link
-                      to={`/company/profile/${company._id}`}
-                      className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition-colors"
-                      role="menuitem"
-                    >
-                      {company.companyLogo?.url ? (
-                        <img
-                          src={company.companyLogo.url}
-                          alt="Company Logo"
-                          className="w-10 h-10 rounded-full"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-xl font-bold">
-                          {getCompanyInitials(company.companyName)}
-                        </div>
-                      )}
-                      <div>
-                        <h2 className="text-xl font-bold">{company.companyName}</h2>
-                        <h3 className="text-sm text-gray-500">{company.email}</h3>
+              {isAuthenticated && company && (
+                <div className="relative">
+                  <button
+                    onClick={toggleCompanyDropdown}
+                    className="flex items-center space-x-2 focus:outline-none"
+                  >
+                    {company.companyLogo?.url ? (
+                      <img
+                        src={company.companyLogo.url}
+                        alt="Company Logo"
+                        className="w-10 h-10 rounded-full"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-xl font-bold text-white">
+                        {getCompanyInitials(company.companyName)}
                       </div>
-                    </Link>
-                    <hr className="border-gray-300 my-2" />
-                    {[
-                      {
-                        to: `/company/edit-profile/${company._id}`,
-                        icon: FaEdit,
-                        label: "Edit Profile",
-                      },
-                      {
-                        to: `/company/upload-logo/${company._id}`,
-                        icon: FaUpload,
-                        label: "Upload Logo",
-                      },
-                      {
-                        to: `/company/${company._id}/add-members`,
-                        icon: FaUsers,
-                        label: "Add Members",
-                      },
-                      {
-                        to: `/company/document-upload/${company._id}`,
-                        icon: FaUpload,
-                        label: "Upload Document",
-                      },
-                    ].map(({ to, icon: Icon, label }, index) => (
-                      <Link
-                        key={index}
-                        to={to}
-                        className="flex items-center px-4 py-2 hover:bg-gray-100 transition-colors"
-                        role="menuitem"
-                      >
-                        <Icon className="mr-3 text-gray-600" />
-                        {label}
-                      </Link>
-                    ))}
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors"
-                      role="menuitem"
+                    )}
+                    <span className="hidden sm:inline">
+                      {company.companyName}
+                    </span>
+                  </button>
+                  {companyDropdownOpen && (
+                    <div
+                      className="absolute right-0 mt-2 w-56 bg-white text-black rounded shadow-lg border border-gray-300 z-20"
+                      role="menu"
+                      aria-label="Company Dropdown Menu"
                     >
-                      <FaSignOutAlt className="mr-3 text-gray-600" />
-                      Logout
-                    </button>
-                  </div>
+                      <div className="py-2">
+                        <Link
+                          to={`/company/profile/${company._id}`}
+                          className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition-colors"
+                          role="menuitem"
+                        >
+                          {company.companyLogo?.url ? (
+                            <img
+                              src={company.companyLogo.url}
+                              alt="Company Logo"
+                              className="w-10 h-10 rounded-full"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-xl font-bold">
+                              {getCompanyInitials(company.companyName)}
+                            </div>
+                          )}
+                          <div>
+                            <h2 className="text-xl font-bold">
+                              {company.companyName}
+                            </h2>
+                            <h3 className="text-sm text-gray-500">
+                              {company.email}
+                            </h3>
+                          </div>
+                        </Link>
+                        <hr className="border-gray-300 my-2" />
+                        {[
+                          {
+                            to: `/company/edit-profile/${company._id}`,
+                            icon: FaEdit,
+                            label: "Edit Profile",
+                          },
+                          {
+                            to: `/company/upload-logo/${company._id}`,
+                            icon: FaUpload,
+                            label: "Upload Logo",
+                          },
+                          {
+                            to: `/company/${company._id}/add-members`,
+                            icon: FaUsers,
+                            label: "Add Members",
+                          },
+                          {
+                            to: `/company/document-upload/${company._id}`,
+                            icon: FaUpload,
+                            label: "Upload Document",
+                          },
+                        ].map(({ to, icon: Icon, label }, index) => (
+                          <Link
+                            key={index}
+                            to={to}
+                            className="flex items-center px-4 py-2 hover:bg-gray-100 transition-colors"
+                            role="menuitem"
+                          >
+                            <Icon className="mr-3 text-gray-600" />
+                            {label}
+                          </Link>
+                        ))}
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors"
+                          role="menuitem"
+                        >
+                          <FaSignOutAlt className="mr-3 text-gray-600" />
+                          Logout
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
-            </div>
-          )}
               <NavItem
                 to={`/company/home/${company?._id}`}
                 icon={<FaHome />}
@@ -568,4 +586,3 @@ const CompanyHeader: FC = () => {
 };
 
 export default CompanyHeader;
-

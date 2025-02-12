@@ -1,9 +1,7 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import { toggleTheme } from '../../../redux/slices/themeSlice';
-
-
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import { toggleTheme } from "../../../redux/slices/themeSlice";
 
 const ThemeToggle = () => {
   const dispatch = useDispatch();
@@ -15,7 +13,7 @@ const ThemeToggle = () => {
       className="p-2 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700"
       aria-label="Toggle Theme"
     >
-      {theme === 'light' ? (
+      {theme === "light" ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

@@ -1,13 +1,10 @@
-import React, { FC } from 'react';
-
-
+import React, { FC } from "react";
 
 const Footer: FC = () => {
   return (
     <footer className="bg-gray-800 text-white py-6">
       <div className="container mx-auto px-6 md:px-12">
         <div className="flex flex-col md:flex-row justify-between items-center">
-    
           <div className="mb-4 md:mb-0 text-center md:text-left">
             <h5 className="text-2xl font-bold">HireSpace</h5>
             <p className="text-gray-400 mt-2">
@@ -36,7 +33,6 @@ const Footer: FC = () => {
             </a>
           </nav>
 
-  
           <div className="flex space-x-6">
             <a
               href="https://facebook.com"

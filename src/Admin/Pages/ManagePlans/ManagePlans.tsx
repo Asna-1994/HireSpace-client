@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Modal from 'react-modal';
+import Modal from "react-modal";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../Utils/Instance/axiosInstance";
 import AdminHeader from "../../Components/Header/AdminHeader";
@@ -12,34 +12,35 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 Modal.setAppElement("#root");
 
 const ManagePlans = () => {
-
-    const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [confirmationModalIsOpen, setConfirmationModalIsOpen] = useState(false); // Confirmation modal for delete
-    const [loading, setLoading] = useState<boolean>(true);
-    const [totalPages, setTotalPages] = useState<number>(0);
-    const [page, setPage] = useState<number>(1);
-    const [limit, setLimit] = useState<number>(10);
-    const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
-    const [selectedPlanData, setSelectedPlanData] = useState<Plans | null>(null);
-    const [formData, setFormData] = useState({
-      planType: '',
-      price : 0,
-      durationInDays: 0,
-      features: [] as string[],  // Array of features
-    });
-    const [searchTerm, setSearchTerm] = useState<string>("");
-    const [plans, setPlans] = useState<Plans[] | []>();
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [confirmationModalIsOpen, setConfirmationModalIsOpen] = useState(false); // Confirmation modal for delete
+  const [loading, setLoading] = useState<boolean>(true);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const [selectedPlanData, setSelectedPlanData] = useState<Plans | null>(null);
+  const [formData, setFormData] = useState({
+    planType: "",
+    price: 0,
+    durationInDays: 0,
+    features: [] as string[], // Array of features
+  });
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [plans, setPlans] = useState<Plans[] | []>();
 
   const navigate = useNavigate();
 
   const fetchPlans = async (searchTerm?: string) => {
-    console.log("search term",searchTerm)
+    console.log("search term", searchTerm);
     try {
-      const response = await axiosInstance.get('/plans/all-plans', { params: { page, limit , search : searchTerm} });
+      const response = await axiosInstance.get("/plans/all-plans", {
+        params: { page, limit, search: searchTerm },
+      });
       setPlans(response.data.data.plans);
       setTotalPages(response.data.data.totalPages);
     } catch (error: any) {
-      toast.error('Failed to fetch plans. Please try again.');
+      toast.error("Failed to fetch plans. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -57,14 +58,14 @@ const ManagePlans = () => {
         setSelectedPlanData(plan);
         setFormData({
           planType: plan.planType,
-          price : plan.price,
+          price: plan.price,
           durationInDays: plan.durationInDays,
           features: plan.features || [],
         });
       }
     } else {
       setSelectedPlanId(null);
-      setFormData({ planType: '',price : 0, durationInDays: 0, features: [] });
+      setFormData({ planType: "", price: 0, durationInDays: 0, features: [] });
     }
     setModalIsOpen(true);
   };
@@ -91,20 +92,25 @@ const ManagePlans = () => {
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
 
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
-  const handleFeatureChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleFeatureChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) => {
     const updatedFeatures = [...formData.features];
     updatedFeatures[index] = e.target.value;
     setFormData({ ...formData, features: updatedFeatures });
   };
 
   const handleAddFeature = () => {
-    setFormData({ ...formData, features: [...formData.features, ''] });
+    setFormData({ ...formData, features: [...formData.features, ""] });
   };
 
   const handleRemoveFeature = (index: number) => {
@@ -112,40 +118,43 @@ const ManagePlans = () => {
     setFormData({ ...formData, features: updatedFeatures });
   };
 
-
   const handleSubmit = async () => {
     try {
-        const response = await axiosInstance.post('/plans/create', formData,{params : {planId : selectedPlanId}});
-        if (response.data.success) {    
-          toast.success(selectedPlanId ? 'Plan Updated successfully!' : "Plan Created");
-          fetchPlans();
-        
-      }
-      closeModal();
-    } catch (error: any) {
-        console.log(error)
-
-           toast.error(error.response?.data?.message || "Something went wrong");
-    }
-  };
-
-
-  const handleDelete = async () => {
-    try {
-      const response = await axiosInstance.delete(`/plans/delete/${selectedPlanId}`);
+      const response = await axiosInstance.post("/plans/create", formData, {
+        params: { planId: selectedPlanId },
+      });
       if (response.data.success) {
-        toast.success('Plan deleted successfully.');
+        toast.success(
+          selectedPlanId ? "Plan Updated successfully!" : "Plan Created",
+        );
         fetchPlans();
       }
       closeModal();
     } catch (error: any) {
-      toast.error('Failed to delete plan. Please try again.');
+      console.log(error);
+
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await axiosInstance.delete(
+        `/plans/delete/${selectedPlanId}`,
+      );
+      if (response.data.success) {
+        toast.success("Plan deleted successfully.");
+        fetchPlans();
+      }
+      closeModal();
+    } catch (error: any) {
+      toast.error("Failed to delete plan. Please try again.");
     }
   };
 
   return (
     <>
- <Modal
+      <Modal
         isOpen={confirmationModalIsOpen}
         onRequestClose={closeModal}
         contentLabel="Delete Plan Confirmation"
@@ -170,7 +179,6 @@ const ManagePlans = () => {
         </div>
       </Modal>
 
-
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
@@ -178,10 +186,19 @@ const ManagePlans = () => {
         className="bg-white p-6 rounded shadow-md w-11/12 max-w-sm mx-auto"
         overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
       >
-        <h2 className="text-lg font-bold mb-4">{selectedPlanId ? "Edit Plan" : "Create New Plan"}</h2>
-        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+        <h2 className="text-lg font-bold mb-4">
+          {selectedPlanId ? "Edit Plan" : "Create New Plan"}
+        </h2>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+        >
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Plan Type</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Plan Type
+            </label>
             <input
               type="text"
               name="planType"
@@ -193,7 +210,9 @@ const ManagePlans = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Price</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Price
+            </label>
             <input
               type="text"
               name="price"
@@ -204,7 +223,9 @@ const ManagePlans = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Duration (in Days)</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Duration (in Days)
+            </label>
             <input
               type="number"
               name="durationInDays"
@@ -215,7 +236,9 @@ const ManagePlans = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Features</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Features
+            </label>
             <textarea
               name="features"
               value={formData.features}
@@ -311,7 +334,6 @@ const ManagePlans = () => {
           </div>
         </div>
       </div>
-
     </>
   );
 };

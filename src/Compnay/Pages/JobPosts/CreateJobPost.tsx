@@ -1,18 +1,20 @@
-export interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
+export interface InputFieldProps
+  extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
   label: string;
   id: string;
   name: string;
   type?: string;
   value: string | number;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
   required?: boolean;
   className?: string;
 }
 
-
 import { useState, FormEvent, ChangeEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { JobPost } from './AllJobPosts'
+import { JobPost } from "./AllJobPosts";
 import CompanyHeader from "../../Components/Header/Header";
 import Footer from "../../../User/Components/Footer/Footer";
 import axiosInstance from "../../../Utils/Instance/axiosInstance";
@@ -32,7 +34,10 @@ const InputField: React.FC<InputFieldProps> = ({
   ...props
 }) => (
   <div className="w-full">
-    <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+    <label
+      htmlFor={id}
+      className="block text-sm font-medium text-gray-700 mb-1"
+    >
       {label}
     </label>
     {type === "textarea" ? (
@@ -69,7 +74,7 @@ const CreateJobPostPage: React.FC = () => {
   const location = useLocation();
   const locationState = location.state as LocationState;
   const jobPost = locationState?.jobPost;
-  
+
   const { company, user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
 
@@ -80,30 +85,46 @@ const CreateJobPostPage: React.FC = () => {
     responsibilities: jobPost?.responsibilities ?? [],
     educationRequired: jobPost?.educationRequired ?? "",
     salaryRange: jobPost?.salaryRange ?? { min: "", max: "", currency: "INR" },
-    location: jobPost?.location ?? { city: "", state: "", country: "", remote: false },
+    location: jobPost?.location ?? {
+      city: "",
+      state: "",
+      country: "",
+      remote: false,
+    },
     jobType: jobPost?.jobType ?? "Full-time",
     workMode: jobPost?.workMode ?? "Remote",
-    employmentStartDate: jobPost?.employmentStartDate ? new Date(jobPost.employmentStartDate) : new Date(),
+    employmentStartDate: jobPost?.employmentStartDate
+      ? new Date(jobPost.employmentStartDate)
+      : new Date(),
     experienceLevel: jobPost?.experienceLevel ?? "",
     postedBy: jobPost?.postedBy ?? { userName: "", email: "", _id: "" },
-    applicationDeadline: jobPost?.applicationDeadline ? new Date(jobPost.applicationDeadline) : new Date(),
+    applicationDeadline: jobPost?.applicationDeadline
+      ? new Date(jobPost.applicationDeadline)
+      : new Date(),
     numberOfVacancies: jobPost?.numberOfVacancies ?? 1,
     benefits: jobPost?.benefits ?? [],
-    status: jobPost?.status ?? "Active"
+    status: jobPost?.status ?? "Active",
   };
 
   const [jobData, setJobData] = useState<JobPost>(initialJobData);
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    if (name === "skillsRequired" || name === "responsibilities" || name === "benefits") {
+    if (
+      name === "skillsRequired" ||
+      name === "responsibilities" ||
+      name === "benefits"
+    ) {
       setJobData({
         ...jobData,
         [name]: value.split(","),
       });
-    } else if (name === "employmentStartDate" || name === "applicationDeadline") {
+    } else if (
+      name === "employmentStartDate" ||
+      name === "applicationDeadline"
+    ) {
       setJobData({
         ...jobData,
         [name]: new Date(value),
@@ -122,7 +143,7 @@ const CreateJobPostPage: React.FC = () => {
       ...jobData,
       location: {
         ...jobData.location,
-        [name.replace('location', '').toLowerCase()]: value,
+        [name.replace("location", "").toLowerCase()]: value,
       },
     });
   };
@@ -133,19 +154,19 @@ const CreateJobPostPage: React.FC = () => {
       ...jobData,
       salaryRange: {
         ...jobData.salaryRange,
-        [name.replace('salaryRange', '').toLowerCase()]: value,
+        [name.replace("salaryRange", "").toLowerCase()]: value,
       },
     });
   };
 
-    const jobPostId = jobPost?._id;
+  const jobPostId = jobPost?._id;
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
       const response = await axiosInstance.post(
         `/company/job-post/${company?._id}/${user?._id}`,
         jobData,
-        { params: { jobPostId: jobPost?._id } }
+        { params: { jobPostId: jobPost?._id } },
       );
       if (response.data.success) {
         toast.success(response.data.message);
@@ -162,7 +183,7 @@ const CreateJobPostPage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <CompanyHeader />
-      
+
       <main className="flex-grow bg-gray-50">
         <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-8 sm:py-12 px-4 sm:px-6">
           <div className="max-w-4xl mx-auto text-center">
@@ -170,7 +191,8 @@ const CreateJobPostPage: React.FC = () => {
               {jobPost?._id ? "Update Job Post" : "Create a New Job Post"}
             </h1>
             <p className="text-base sm:text-lg opacity-90">
-              Fill in the details below to create a job post and attract top talent.
+              Fill in the details below to create a job post and attract top
+              talent.
             </p>
           </div>
         </section>
@@ -178,7 +200,7 @@ const CreateJobPostPage: React.FC = () => {
         <section className="py-8 sm:py-12 px-4 sm:px-6">
           <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-4 sm:p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <InputField
                   label="Job Title"
                   id="jobTitle"
@@ -228,10 +250,13 @@ const CreateJobPostPage: React.FC = () => {
                     id="salaryRangeMin"
                     name="salaryRangeMin"
                     value={jobData.salaryRange.min}
-                    onChange={(e :any) => {
+                    onChange={(e: any) => {
                       setJobData({
                         ...jobData,
-                        salaryRange: { ...jobData.salaryRange, min: e.target.value }
+                        salaryRange: {
+                          ...jobData.salaryRange,
+                          min: e.target.value,
+                        },
                       });
                     }}
                     required
@@ -242,10 +267,13 @@ const CreateJobPostPage: React.FC = () => {
                     id="salaryRangeMax"
                     name="salaryRangeMax"
                     value={jobData.salaryRange.max}
-                    onChange={(e :any) => {
+                    onChange={(e: any) => {
                       setJobData({
                         ...jobData,
-                        salaryRange: { ...jobData.salaryRange, max: e.target.value }
+                        salaryRange: {
+                          ...jobData.salaryRange,
+                          max: e.target.value,
+                        },
                       });
                     }}
                   />
@@ -257,10 +285,10 @@ const CreateJobPostPage: React.FC = () => {
                     id="locationCity"
                     name="locationCity"
                     value={jobData.location.city}
-                    onChange={(e :any) => {
+                    onChange={(e: any) => {
                       setJobData({
                         ...jobData,
-                        location: { ...jobData.location, city: e.target.value }
+                        location: { ...jobData.location, city: e.target.value },
                       });
                     }}
                   />
@@ -270,10 +298,13 @@ const CreateJobPostPage: React.FC = () => {
                     id="locationState"
                     name="locationState"
                     value={jobData.location.state}
-                    onChange={(e :any) => {
+                    onChange={(e: any) => {
                       setJobData({
                         ...jobData,
-                        location: { ...jobData.location, state: e.target.value }
+                        location: {
+                          ...jobData.location,
+                          state: e.target.value,
+                        },
                       });
                     }}
                   />
@@ -283,10 +314,13 @@ const CreateJobPostPage: React.FC = () => {
                     id="locationCountry"
                     name="locationCountry"
                     value={jobData.location.country}
-                    onChange={(e :any) => {
+                    onChange={(e: any) => {
                       setJobData({
                         ...jobData,
-                        location: { ...jobData.location, country: e.target.value }
+                        location: {
+                          ...jobData.location,
+                          country: e.target.value,
+                        },
                       });
                     }}
                   />
@@ -302,7 +336,10 @@ const CreateJobPostPage: React.FC = () => {
                 />
 
                 <div className="w-full">
-                  <label htmlFor="workMode" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="workMode"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Work Mode
                   </label>
                   <select
@@ -329,7 +366,10 @@ const CreateJobPostPage: React.FC = () => {
                 />
 
                 <div className="w-full">
-                  <label htmlFor="jobType" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="jobType"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Job Type
                   </label>
                   <select
@@ -352,11 +392,13 @@ const CreateJobPostPage: React.FC = () => {
                   id="applicationDeadline"
                   name="applicationDeadline"
                   type="date"
-                  value={jobData.applicationDeadline.toISOString().split("T")[0]}
-                  onChange={(e :any) => {
+                  value={
+                    jobData.applicationDeadline.toISOString().split("T")[0]
+                  }
+                  onChange={(e: any) => {
                     setJobData({
                       ...jobData,
-                      applicationDeadline: new Date(e.target.value)
+                      applicationDeadline: new Date(e.target.value),
                     });
                   }}
                   required
@@ -367,11 +409,13 @@ const CreateJobPostPage: React.FC = () => {
                   id="employmentStartDate"
                   name="employmentStartDate"
                   type="date"
-                  value={jobData.employmentStartDate.toISOString().split("T")[0]}
-                  onChange={(e :any) => {
+                  value={
+                    jobData.employmentStartDate.toISOString().split("T")[0]
+                  }
+                  onChange={(e: any) => {
                     setJobData({
                       ...jobData,
-                      employmentStartDate: new Date(e.target.value)
+                      employmentStartDate: new Date(e.target.value),
                     });
                   }}
                   required
@@ -400,7 +444,7 @@ const CreateJobPostPage: React.FC = () => {
           </div>
         </section>
       </main>
-      
+
       <Footer />
     </div>
   );

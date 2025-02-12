@@ -4,11 +4,15 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Header from "../../Components/Header/Header";
 import { subYears } from "date-fns";
-import  { AxiosResponse} from "axios";
+import { AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { ApiResponse, SignupFormData, User } from "../../../Utils/Interfaces/interface";
+import {
+  ApiResponse,
+  SignupFormData,
+  User,
+} from "../../../Utils/Interfaces/interface";
 
 import GoogleSignInButton from "../../Components/GoogleSignin/GoogleSignin";
 
@@ -26,7 +30,7 @@ const schema = yup.object().shape({
     .min(8, "Password must be at least 8 characters")
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[a-zA-Z\d@$!%*?&]+$/,
-      "Password must contain uppercase, lowercase, number, and special character"
+      "Password must contain uppercase, lowercase, number, and special character",
     )
     .required("Password is required"),
   confirmPassword: yup
@@ -41,17 +45,12 @@ const schema = yup.object().shape({
     .string()
     .matches(
       /^(?:(?!^[012345])[6-9]\d{9})$/,
-      "Phone number must not start with 0, 1, 2, 3, 4, or 5 and cannot have all digits the same"
+      "Phone number must not start with 0, 1, 2, 3, 4, or 5 and cannot have all digits the same",
     )
     .required("Phone number is required"),
   address: yup.string().required("Address is required"),
   userRole: yup.string().required("User role is required"),
 });
-
-
-
-
-
 
 const UserSignUp = () => {
   const [userRole, setUserRole] = useState<string>("");
@@ -63,27 +62,27 @@ const UserSignUp = () => {
     resolver: yupResolver(schema),
   });
 
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const submitSignupForm = async (formData: SignupFormData): Promise<void> => {
     try {
-      const response: AxiosResponse<ApiResponse> = await axiosInstance.post("/user/signup", formData);
-    console.log(response.data.data.user)
-    if (response.data.success && response.data.data?.user) {
-      const user = response.data.data.user;
-      toast.success(response.data.message);
-      navigate("/user/verify-otp", { state: { user } });
-    }else{
-      toast.error(response.data.message)
-    }
+      const response: AxiosResponse<ApiResponse> = await axiosInstance.post(
+        "/user/signup",
+        formData,
+      );
+      console.log(response.data.data.user);
+      if (response.data.success && response.data.data?.user) {
+        const user = response.data.data.user;
+        toast.success(response.data.message);
+        navigate("/user/verify-otp", { state: { user } });
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (error: any) {
-      console.log(error)
+      console.log(error);
       toast.error(error.response?.data?.message);
     }
   };
-
-
 
   return (
     <>
@@ -179,7 +178,7 @@ const UserSignUp = () => {
                       ? new Date(field.value).toISOString().split("T")[0]
                       : ""
                   }
-                  onChange={(e) => field.onChange(new Date(e.target.value))} 
+                  onChange={(e) => field.onChange(new Date(e.target.value))}
                 />
               )}
             />
@@ -253,43 +252,49 @@ const UserSignUp = () => {
 
           {/* User Role */}
           <div className="mb-4">
-  <label
-    htmlFor="userRole"
-    className="block text-sm font-medium text-gray-700"
-  >
-    User Role
-  </label>
-  <Controller
-    control={control}
-    name="userRole"
-    render={({ field }) => (
-      <select
-        {...field}
-        defaultValue="" 
-        className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
-          errors.userRole
-            ? "border-red-500 focus:ring-red-500"
-            : "border-gray-300 focus:ring-purple-700"
-        }`}
-        onChange={(e) => {
-          field.onChange(e);
-          setUserRole(e.target.value);
-        }}
-      >
-        <option value="" disabled>  Select Role</option>
-        <option value="jobSeeker">Job Seeker</option>
-        <option value="companyAdmin"> Company Admin</option>
-        <option value="companyMember">Company Member</option>
-        <option value="admin" disabled> Admin </option>
-      </select>
-    )}
-  />
-  {errors.userRole && (
-    <p className="text-sm text-red-500 mt-1">
-      {errors.userRole.message as React.ReactNode}
-    </p>
-  )}
-</div>
+            <label
+              htmlFor="userRole"
+              className="block text-sm font-medium text-gray-700"
+            >
+              User Role
+            </label>
+            <Controller
+              control={control}
+              name="userRole"
+              render={({ field }) => (
+                <select
+                  {...field}
+                  defaultValue=""
+                  className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
+                    errors.userRole
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-purple-700"
+                  }`}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    setUserRole(e.target.value);
+                  }}
+                >
+                  <option value="" disabled>
+                    {" "}
+                    Select Role
+                  </option>
+                  <option value="jobSeeker">Job Seeker</option>
+                  <option value="companyAdmin"> Company Admin</option>
+                  <option value="companyMember">Company Member</option>
+                  <option value="admin" disabled>
+                    {" "}
+                    Admin{" "}
+                  </option>
+                </select>
+              )}
+            />
+            {errors.userRole && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.userRole.message as React.ReactNode}
+              </p>
+            )}
+          </div>
 
           {/* Password */}
           <div className="mb-4">
@@ -363,10 +368,20 @@ const UserSignUp = () => {
             </button>
           </div>
           <h1 className="text-center p-2">OR</h1>
-          <GoogleSignInButton/>
+          <GoogleSignInButton />
         </form>
-        <p className="text-center p-3">Already have account ? <Link className=" hover:text-gray-700" to={'/user/login'}>Login</Link></p>
-        <p className="text-center ">Register for company ? <Link className=" hover:text-gray-700" to={'/company/signin'}>Click Here</Link></p>
+        <p className="text-center p-3">
+          Already have account ?{" "}
+          <Link className=" hover:text-gray-700" to={"/user/login"}>
+            Login
+          </Link>
+        </p>
+        <p className="text-center ">
+          Register for company ?{" "}
+          <Link className=" hover:text-gray-700" to={"/company/signin"}>
+            Click Here
+          </Link>
+        </p>
       </div>
     </>
   );

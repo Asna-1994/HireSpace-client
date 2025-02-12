@@ -9,7 +9,6 @@ import { userLogin } from "../../../redux/slices/authSlice";
 import * as yup from "yup";
 import Header from "../../../User/Components/Header/Header";
 
-
 const schema = yup.object().shape({
   email: yup
     .string()
@@ -20,7 +19,7 @@ const schema = yup.object().shape({
     .min(8, "Password must be at least 8 characters")
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[a-zA-Z\d@$!%*?&]+$/,
-      "Password must contain uppercase, lowercase, number, and special character"
+      "Password must contain uppercase, lowercase, number, and special character",
     )
     .required("Password is required"),
 });
@@ -29,13 +28,12 @@ const AdminLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(schema), 
+    resolver: yupResolver(schema),
   });
 
   const handleLogin = async (data: { email: string; password: string }) => {
@@ -51,7 +49,8 @@ const AdminLogin = () => {
         toast.error(response.data.message);
       }
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "Something went wrong";
+      const errorMessage =
+        error.response?.data?.message || "Something went wrong";
       toast.error(errorMessage);
       console.error("Login error:", error);
     }
@@ -62,9 +61,13 @@ const AdminLogin = () => {
       <Header />
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600">
         <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-3">Admin Login</h2>
-          <form onSubmit={handleSubmit(handleLogin)} className="flex flex-col gap-4">
-   
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-3">
+            Admin Login
+          </h2>
+          <form
+            onSubmit={handleSubmit(handleLogin)}
+            className="flex flex-col gap-4"
+          >
             <input
               type="email"
               {...register("email")}
@@ -79,7 +82,6 @@ const AdminLogin = () => {
               <p className="text-red-500 text-sm">{errors.email.message}</p>
             )}
 
-    
             <input
               type="password"
               {...register("password")}
@@ -101,7 +103,6 @@ const AdminLogin = () => {
               Login
             </button>
           </form>
-
         </div>
       </div>
     </>

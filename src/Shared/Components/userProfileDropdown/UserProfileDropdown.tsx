@@ -49,7 +49,6 @@
 //   )}
 // </button>
 
-
 //       {userProfileDropdownOpen && (
 //         <div
 //           className="absolute right-0 mt-2 w-56 bg-white text-black rounded shadow-lg border border-gray-300"
@@ -77,12 +76,10 @@
 //           </span>
 //         )}
 
-     
-
 //       {user.companyId &&     <p className="text-xs text-gray-400">
 //         {user?.userRole === 'companyAdmin' ? 'Admin' : 'Member'}
 //       </p>}
-  
+
 //     </div>
 //   </div>
 // </Link>
@@ -122,19 +119,30 @@
 
 // export default UserProfileDropdown;
 
-
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaPills } from 'react-icons/fa';
-import { FaCrown, FaEdit, FaCertificate, FaSignOutAlt, FaGraduationCap, FaBriefcase, FaFileUpload, FaSave } from 'react-icons/fa';
-import { User } from '../../../Utils/Interfaces/interface';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { FaPills } from "react-icons/fa";
+import {
+  FaCrown,
+  FaEdit,
+  FaCertificate,
+  FaSignOutAlt,
+  FaGraduationCap,
+  FaBriefcase,
+  FaFileUpload,
+  FaSave,
+} from "react-icons/fa";
+import { User } from "../../../Utils/Interfaces/interface";
 
 interface UserProfileDropdownProps {
   user: User;
   handleLogout?: () => void;
 }
 
-const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ user, handleLogout }) => {
+const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
+  user,
+  handleLogout,
+}) => {
   const [userProfileDropdownOpen, setUserProfileDropdownOpen] = useState(false);
 
   const toggleUserProfileDropdown = () => {
@@ -143,14 +151,38 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ user, handleL
 
   const dropdownOptions = [
     // { to: `/user/settings/${user._id}`, label: 'User Settings', icon: FaCrown },
-    { to: `/user/edit-basic-details/${user._id}`, label: 'Edit Profile', icon: FaEdit },
-    { to: `/user/add-education/${user._id}`, label: 'Add Education', icon: FaGraduationCap },
-    { to: `/user/add-work-experience/${user._id}`, label: 'Add Work Experience', icon: FaBriefcase },
-    { to: `/user/add-skills/${user._id}`, label: 'Add Skills', icon: FaPills },
-    { to: `/user/add-certificates/${user._id}`, label: 'Add Certificates', icon: FaCertificate },
-    { to: `/user/upload-resume/${user._id}`, label: 'Upload Resume', icon: FaFileUpload },
-    { to: `/user/saved-jobs/${user._id}`, label: 'Saved Jobs', icon: FaSave },
-    { to: `/user/${user._id}/try-premium`, label: 'Try Premium', icon: FaCrown },
+    {
+      to: `/user/edit-basic-details/${user._id}`,
+      label: "Edit Profile",
+      icon: FaEdit,
+    },
+    {
+      to: `/user/add-education/${user._id}`,
+      label: "Add Education",
+      icon: FaGraduationCap,
+    },
+    {
+      to: `/user/add-work-experience/${user._id}`,
+      label: "Add Work Experience",
+      icon: FaBriefcase,
+    },
+    { to: `/user/add-skills/${user._id}`, label: "Add Skills", icon: FaPills },
+    {
+      to: `/user/add-certificates/${user._id}`,
+      label: "Add Certificates",
+      icon: FaCertificate,
+    },
+    {
+      to: `/user/upload-resume/${user._id}`,
+      label: "Upload Resume",
+      icon: FaFileUpload,
+    },
+    { to: `/user/saved-jobs/${user._id}`, label: "Saved Jobs", icon: FaSave },
+    {
+      to: `/user/${user._id}/try-premium`,
+      label: "Try Premium",
+      icon: FaCrown,
+    },
   ];
 
   return (
@@ -181,7 +213,10 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ user, handleL
         >
           <div className="py-3 px-4">
             {/* User Details */}
-            <Link to={`/user/view-profile/${user._id}`} onClick={() => setUserProfileDropdownOpen(false)}>
+            <Link
+              to={`/user/view-profile/${user._id}`}
+              onClick={() => setUserProfileDropdownOpen(false)}
+            >
               <div className="flex items-center space-x-3 mb-3">
                 {/* User Avatar */}
                 <span className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-800 text-white text-lg font-bold">
@@ -191,7 +226,9 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ user, handleL
                   <h3 className="font-bold text-base sm:text-lg flex items-center space-x-2">
                     <span>{user?.userName}</span>
                   </h3>
-                  <p className="text-xs sm:text-sm text-gray-500">{user?.email}</p>
+                  <p className="text-xs sm:text-sm text-gray-500">
+                    {user?.email}
+                  </p>
                   {user?.isPremium && (
                     <span className="mt-1 inline-block bg-yellow-400 text-black text-xs px-1 py-0.5 rounded-full font-semibold">
                       Premium
@@ -199,7 +236,7 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ user, handleL
                   )}
                   {user.companyId && (
                     <p className="text-xs text-gray-400">
-                      {user?.userRole === 'companyAdmin' ? 'Admin' : 'Member'}
+                      {user?.userRole === "companyAdmin" ? "Admin" : "Member"}
                     </p>
                   )}
                 </div>
@@ -244,4 +281,3 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ user, handleL
 };
 
 export default UserProfileDropdown;
-

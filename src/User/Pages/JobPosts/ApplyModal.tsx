@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import { toast } from 'react-toastify';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import { toast } from "react-toastify";
+import axiosInstance from "../../../Utils/Instance/axiosInstance";
 
 interface ApplyModalProps {
   jobPostId: string;
@@ -17,24 +17,32 @@ interface CoverLetter {
   closing: string;
 }
 
-const ApplyModal: React.FC<ApplyModalProps> = ({ jobPostId, userId, companyId, onClose }) => {
+const ApplyModal: React.FC<ApplyModalProps> = ({
+  jobPostId,
+  userId,
+  companyId,
+  onClose,
+}) => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [coverLetter, setCoverLetter] = useState<CoverLetter>({
-    salutation: '',
-    body: '',
-    closing: ''
+    salutation: "",
+    body: "",
+    closing: "",
   });
 
   const handleApply = async () => {
     try {
-      const response = await axiosInstance.post(`/user/apply-for-job/${userId}/${jobPostId}/${companyId}`, { coverLetter });
+      const response = await axiosInstance.post(
+        `/user/apply-for-job/${userId}/${jobPostId}/${companyId}`,
+        { coverLetter },
+      );
       if (response.data.success) {
         toast.success("Successfully Applied");
       } else {
         toast.error(response.data.message);
       }
     } catch (err: any) {
-      toast.error(err?.response?.data.message || 'An error occurred');
+      toast.error(err?.response?.data.message || "An error occurred");
       console.error(err);
     }
     onClose();
@@ -57,21 +65,27 @@ const ApplyModal: React.FC<ApplyModalProps> = ({ jobPostId, userId, companyId, o
             type="text"
             placeholder="Salutation"
             value={coverLetter.salutation}
-            onChange={(e) => setCoverLetter({ ...coverLetter, salutation: e.target.value })}
+            onChange={(e) =>
+              setCoverLetter({ ...coverLetter, salutation: e.target.value })
+            }
             className="w-full p-2 border border-gray-300 rounded-md mb-4"
           />
-  <textarea
-  placeholder="Cover letter body..."
-  value={coverLetter.body}
-  onChange={(e) => setCoverLetter({ ...coverLetter, body: e.target.value })}
-  className="w-full p-3 border border-gray-300 rounded-md mb-4 overflow-y-auto resize-y min-h-[100px] max-h-[240px]"
-/>
+          <textarea
+            placeholder="Cover letter body..."
+            value={coverLetter.body}
+            onChange={(e) =>
+              setCoverLetter({ ...coverLetter, body: e.target.value })
+            }
+            className="w-full p-3 border border-gray-300 rounded-md mb-4 overflow-y-auto resize-y min-h-[100px] max-h-[240px]"
+          />
 
           <input
             type="text"
             placeholder="Closing"
             value={coverLetter.closing}
-            onChange={(e) => setCoverLetter({ ...coverLetter, closing: e.target.value })}
+            onChange={(e) =>
+              setCoverLetter({ ...coverLetter, closing: e.target.value })
+            }
             className="w-full p-2 border border-gray-300 rounded-md mb-4"
           />
         </div>
@@ -90,4 +104,3 @@ const ApplyModal: React.FC<ApplyModalProps> = ({ jobPostId, userId, companyId, o
 };
 
 export default ApplyModal;
-

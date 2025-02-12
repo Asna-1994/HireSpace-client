@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import Header from "../../Components/Header/Header";
 import Footer from "../../Components/Footer/Footer";
@@ -29,13 +28,15 @@ const AllConnections = () => {
   const fetchRecommendations = async (page: number) => {
     try {
       const response = await axiosInstance.get(
-        `/connection-request/recommendations/${user?._id}?page=${page}&limit=${limit}`
+        `/connection-request/recommendations/${user?._id}?page=${page}&limit=${limit}`,
       );
       if (response.data.success) {
         const connectedUserIds = new Set(user?.connections);
-        const filteredRecommendations = response.data.data.recommendations.filter(
-          (recommendation: Connections) => !connectedUserIds.has(recommendation._id)
-        );
+        const filteredRecommendations =
+          response.data.data.recommendations.filter(
+            (recommendation: Connections) =>
+              !connectedUserIds.has(recommendation._id),
+          );
         setRecommendations(filteredRecommendations);
         setRecommendationsTotalPages(response.data.data.totalPages);
       } else {
@@ -43,7 +44,7 @@ const AllConnections = () => {
       }
     } catch (error: any) {
       toast.error(
-        error?.response?.data?.message || "Failed to fetch recommendations"
+        error?.response?.data?.message || "Failed to fetch recommendations",
       );
     }
   };
@@ -72,7 +73,7 @@ const AllConnections = () => {
   // Handle Connect Request
   const handleSendRequestForConnection = async (
     sender: string,
-    receiver: string
+    receiver: string,
   ) => {
     try {
       const response = await axiosInstance.post(`/connection-request`, {
@@ -86,7 +87,7 @@ const AllConnections = () => {
       }
     } catch (error: any) {
       toast.error(
-        error?.response?.data?.message || "Failed to send connection request"
+        error?.response?.data?.message || "Failed to send connection request",
       );
     }
   };
@@ -166,7 +167,7 @@ const AllConnections = () => {
                           onClick={() =>
                             handleSendRequestForConnection(
                               user?._id as string,
-                              recommendation._id
+                              recommendation._id,
                             )
                           }
                           className="mt-2 sm:mt-0 bg-blue-500 text-white px-4 py-2 rounded-full text-sm hover:bg-blue-600 transition duration-300"
@@ -193,9 +194,7 @@ const AllConnections = () => {
                   <FaChevronLeft />
                 </button>
                 <button
-                  onClick={() =>
-                    setRecommendationsPage((prev) => prev + 1)
-                  }
+                  onClick={() => setRecommendationsPage((prev) => prev + 1)}
                   disabled={recommendationsPage === recommendationsTotalPages}
                   className="px-3 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 disabled:bg-gray-300"
                 >
@@ -219,9 +218,8 @@ const AllConnections = () => {
                 <h2 className="text-lg font-bold mb-4">Search Results</h2>
                 {loading ? (
                   <p className="text-center">Loading...</p>
-                ) : searchResult.filter(
-                    (result) => result._id !== user?._id
-                  ).length > 0 ? (
+                ) : searchResult.filter((result) => result._id !== user?._id)
+                    .length > 0 ? (
                   searchResult
                     .filter((result) => result._id !== user?._id)
                     .map((result) => (
@@ -242,7 +240,9 @@ const AllConnections = () => {
                         )}
                         <div className="flex-1">
                           <h3 className="font-semibold">{result.userName}</h3>
-                          <p className="text-sm text-gray-500">{result.email}</p>
+                          <p className="text-sm text-gray-500">
+                            {result.email}
+                          </p>
                         </div>
                         {user?.connections.includes(result._id) ? (
                           <button
@@ -258,7 +258,7 @@ const AllConnections = () => {
                             onClick={() =>
                               handleSendRequestForConnection(
                                 user?._id as string,
-                                result._id
+                                result._id,
                               )
                             }
                             className="mt-2 sm:mt-0 bg-blue-500 text-white px-4 py-2 rounded-full text-sm hover:bg-blue-600"

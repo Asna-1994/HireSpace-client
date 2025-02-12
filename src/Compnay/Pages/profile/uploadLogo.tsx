@@ -4,16 +4,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import axiosInstance from "../../../Utils/Instance/axiosInstance";
 import { toast } from "react-toastify";
-import { validateFile  } from "../../../Utils/helperFunctions/fileValidation";
+import { validateFile } from "../../../Utils/helperFunctions/fileValidation";
 import { companyUpdate } from "../../../redux/slices/authSlice";
-import Modal from 'react-modal';
+import Modal from "react-modal";
 
 const UploadLogo = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState<boolean>(false); 
-      const [modalIsOpen, setModalIsOpen] = useState(false);
-      const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
+    null,
+  );
 
   const { company } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
@@ -45,7 +47,11 @@ const UploadLogo = () => {
     }
     const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
     const maxFileSize = 5 * 1024 * 1024; // 5MB
-    const validationError =  validateFile(selectedFile, allowedTypes, maxFileSize);
+    const validationError = validateFile(
+      selectedFile,
+      allowedTypes,
+      maxFileSize,
+    );
     // const validationError = validateFileForLogoAndProfile(selectedFile);
     if (validationError) {
       toast.error(validationError);
@@ -63,7 +69,7 @@ const UploadLogo = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       if (response.data.success) {
@@ -82,73 +88,68 @@ const UploadLogo = () => {
     }
   };
 
-
-  const handleDeleteLogoFromProfile = async() => {
-try{
-    const res = await axiosInstance.patch(`/company/delete-logo/${selectedCompanyId}`)
-    if(res.data.success){
-        toast.success(res.data.message)
-        dispatch(companyUpdate(res.data.data.company))
-    }else{
-        toast.error(res.data.message)
+  const handleDeleteLogoFromProfile = async () => {
+    try {
+      const res = await axiosInstance.patch(
+        `/company/delete-logo/${selectedCompanyId}`,
+      );
+      if (res.data.success) {
+        toast.success(res.data.message);
+        dispatch(companyUpdate(res.data.data.company));
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Error deleting logo");
+      console.log(error);
+    } finally {
+      setModalIsOpen(false);
+      setSelectedCompanyId(null);
     }
-
-}
-catch(error : any){
-    toast.error(error.response?.data?.message || "Error deleting logo")
-    console.log(error)
-}
-finally {
-    setModalIsOpen(false);
-    setSelectedCompanyId(null);
-  
-}
-  }
-
+  };
 
   const openModal = (companyId: string) => {
     setSelectedCompanyId(companyId);
     setModalIsOpen(true);
   };
 
-  
   const closeModal = () => {
     setModalIsOpen(false);
     setSelectedCompanyId(null);
-
   };
 
   return (
     <>
-    <Modal
-    isOpen={modalIsOpen}
-    onRequestClose={closeModal}
-    contentLabel="Block User Confirmation"
-    className="bg-white p-6 rounded shadow-md max-w-sm mx-auto"
-    overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
-    >
-    <h2 className="text-lg font-bold mb-4">Confirm Action</h2>
-    <p>
-              Are you sure you want to delete this Logo?
-            </p>
-    <div className="mt-4 flex justify-end space-x-4">
-      <button
-        onClick={closeModal}
-        className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Block User Confirmation"
+        className="bg-white p-6 rounded shadow-md max-w-sm mx-auto"
+        overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
       >
-        Cancel
-      </button>
-      <button onClick={handleDeleteLogoFromProfile}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-              >
-                Delete
-              </button>
-    </div>
-    </Modal>
+        <h2 className="text-lg font-bold mb-4">Confirm Action</h2>
+        <p>Are you sure you want to delete this Logo?</p>
+        <div className="mt-4 flex justify-end space-x-4">
+          <button
+            onClick={closeModal}
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleDeleteLogoFromProfile}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Delete
+          </button>
+        </div>
+      </Modal>
       <CompanyHeader />
       <div className="flex flex-col items-center justify-center min-h-screen bg bg-gradient-to-r from-blue-600 to-purple-600 p-6">
         <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-          <h2 className="text-2xl font-semibold text-gray-800 text-center mb-4">Upload Company Logo</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 text-center mb-4">
+            Upload Company Logo
+          </h2>
 
           <div className="relative flex items-center justify-center mb-4 border-2 border-dashed border-gray-300 rounded-lg p-6">
             {previewUrl ? (
@@ -185,7 +186,7 @@ finally {
           {previewUrl && !isUploading && company?._id && (
             <div className="flex justify-center mb-4">
               <button
-               onClick={() => openModal(company?._id)}
+                onClick={() => openModal(company?._id)}
                 className="py-1 px-3 text-white text-sm bg-red-600 rounded-md hover:bg-red-700 transition duration-300"
               >
                 Delete Logo

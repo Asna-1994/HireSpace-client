@@ -1,19 +1,19 @@
-import  { useEffect, useState } from 'react';
-import axios from 'axios';
-import { motion } from 'framer-motion';
-import Header from '../../Components/Header/Header';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
-import { Education } from './AddEducation';
-import { Skills } from './AddSkills';
-import { ExperienceObject } from './AddWorkExperience';
-import { CertificateObject } from './AddCertificates';
-import { ImageObject } from '../../../Utils/Interfaces/interface';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { motion } from "framer-motion";
+import Header from "../../Components/Header/Header";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import axiosInstance from "../../../Utils/Instance/axiosInstance";
+import { Education } from "./AddEducation";
+import { Skills } from "./AddSkills";
+import { ExperienceObject } from "./AddWorkExperience";
+import { CertificateObject } from "./AddCertificates";
+import { ImageObject } from "../../../Utils/Interfaces/interface";
+import { Link } from "react-router-dom";
 
 const ViewProfile = () => {
-    const { user } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
   const [profile, setProfile] = useState({
     resume: {} as ImageObject,
     certificates: [] as CertificateObject[],
@@ -28,11 +28,13 @@ const ViewProfile = () => {
 
   const fetchProfileDetails = async () => {
     try {
-      const response = await axiosInstance.get(`/user/${user?._id}/complete-profile`)
+      const response = await axiosInstance.get(
+        `/user/${user?._id}/complete-profile`,
+      );
       setProfile(response.data.data.profile);
-      console.log(response.data.data.profile)
+      console.log(response.data.data.profile);
     } catch (error) {
-      console.error('Error fetching profile details', error);
+      console.error("Error fetching profile details", error);
     }
   };
 
@@ -62,15 +64,16 @@ const ViewProfile = () => {
 
           {/* Resume and Contact Info */}
           <div className="mt-6">
-            <Link to={profile.resume?.url}
-            //   href={profile.resume?.url}
+            <Link
+              to={profile.resume?.url}
+              //   href={profile.resume?.url}
               download={`resume_${user?.userName}.pdf`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 underline"
             >
               Download Resume
-              </Link>
+            </Link>
           </div>
         </motion.div>
 
@@ -79,11 +82,21 @@ const ViewProfile = () => {
           <h3 className="text-2xl font-semibold mb-4">Certificates</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {profile.certificates.map((cert, index) => (
-              <div key={index} className="p-4 bg-gradient-to-r from-purple-400 to-blue-500 text-white rounded-lg">
-                <h4 className="text-lg font-semibold">{cert.certificateTitle}</h4>
+              <div
+                key={index}
+                className="p-4 bg-gradient-to-r from-purple-400 to-blue-500 text-white rounded-lg"
+              >
+                <h4 className="text-lg font-semibold">
+                  {cert.certificateTitle}
+                </h4>
                 <p className="text-sm">Issuer: {cert.issuer}</p>
                 {cert.certificateUrl && (
-                  <a href={cert.certificateUrl} className="text-blue-300 underline" target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={cert.certificateUrl}
+                    className="text-blue-300 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     View Certificate
                   </a>
                 )}
@@ -99,9 +112,15 @@ const ViewProfile = () => {
           <ul>
             {profile.education.map((edu, index) => (
               <li key={index} className="mb-4">
-                <p className="font-semibold">{edu.educationName} - {edu.schoolOrCollege}</p>
-                <p className="font-semibold">{edu.subject} - {edu.subject}</p>
-                <p className="text-gray-600">{edu.markOrGrade} - {edu.yearOfPassing}</p>
+                <p className="font-semibold">
+                  {edu.educationName} - {edu.schoolOrCollege}
+                </p>
+                <p className="font-semibold">
+                  {edu.subject} - {edu.subject}
+                </p>
+                <p className="text-gray-600">
+                  {edu.markOrGrade} - {edu.yearOfPassing}
+                </p>
               </li>
             ))}
           </ul>
@@ -113,8 +132,12 @@ const ViewProfile = () => {
           <ul>
             {profile.workExperience.map((exp, index) => (
               <li key={index} className="mb-4">
-                <p className="font-semibold">{exp.designation} - {exp.company}</p>
-                <p className="text-gray-600">{exp.dateFrom} - {exp.dateTo}</p>
+                <p className="font-semibold">
+                  {exp.designation} - {exp.company}
+                </p>
+                <p className="text-gray-600">
+                  {exp.dateFrom} - {exp.dateTo}
+                </p>
                 <p>{exp.skillsGained}</p>
               </li>
             ))}
@@ -123,55 +146,64 @@ const ViewProfile = () => {
 
         {/* Skills */}
         <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">
-            Skills
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Soft Skills */}
-            <div className="bg-white shadow-md rounded-lg p-6 text-center">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                Soft Skills
-              </h3>
-              <ul className="text-gray-600">
-                {profile && profile.skills && profile?.skills.softSkills && profile?.skills.softSkills.map((skill, index) => (
-                  <li key={index} className="mb-2">
-                    {skill}
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="container mx-auto px-6">
+            <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">
+              Skills
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Soft Skills */}
+              <div className="bg-white shadow-md rounded-lg p-6 text-center">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                  Soft Skills
+                </h3>
+                <ul className="text-gray-600">
+                  {profile &&
+                    profile.skills &&
+                    profile?.skills.softSkills &&
+                    profile?.skills.softSkills.map((skill, index) => (
+                      <li key={index} className="mb-2">
+                        {skill}
+                      </li>
+                    ))}
+                </ul>
+              </div>
 
-            {/* Hard Skills */}
-            <div className="bg-white shadow-md rounded-lg p-6 text-center">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                Hard Skills
-              </h3>
-              <ul className="text-gray-600">
-                {profile && profile.skills && profile?.skills.hardSkills &&  profile.skills.hardSkills.map((skill, index) => (
-                  <li key={index} className="mb-2">
-                    {skill}
-                  </li>
-                ))}
-              </ul>
-            </div>
+              {/* Hard Skills */}
+              <div className="bg-white shadow-md rounded-lg p-6 text-center">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                  Hard Skills
+                </h3>
+                <ul className="text-gray-600">
+                  {profile &&
+                    profile.skills &&
+                    profile?.skills.hardSkills &&
+                    profile.skills.hardSkills.map((skill, index) => (
+                      <li key={index} className="mb-2">
+                        {skill}
+                      </li>
+                    ))}
+                </ul>
+              </div>
 
-            {/* Technical Skills */}
-            <div className="bg-white shadow-md rounded-lg p-6 text-center">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                Technical Skills
-              </h3>
-              <ul className="text-gray-600">
-                {profile && profile.skills && profile?.skills.technicalSkills &&  profile?.skills?.technicalSkills.map((skill, index) => (
-                  <li key={index} className="mb-2">
-                    {skill}
-                  </li>
-                ))}
-              </ul>
+              {/* Technical Skills */}
+              <div className="bg-white shadow-md rounded-lg p-6 text-center">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                  Technical Skills
+                </h3>
+                <ul className="text-gray-600">
+                  {profile &&
+                    profile.skills &&
+                    profile?.skills.technicalSkills &&
+                    profile?.skills?.technicalSkills.map((skill, index) => (
+                      <li key={index} className="mb-2">
+                        {skill}
+                      </li>
+                    ))}
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
       </div>
     </>
   );

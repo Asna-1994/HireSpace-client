@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import Header from "../../Components/Header/Header";
 import axiosInstance from "../../../Utils/Instance/axiosInstance";
@@ -33,17 +32,27 @@ const AddEducation: React.FC = () => {
   });
   const [errors, setErrors] = useState<any>({});
 
-
   const validationSchema = Yup.object().shape({
-    educationName: Yup.string().min(3, "Must be at least 3 characters").required("Required"),
-    subject: Yup.string().min(3, "Must be at least 3 characters").required("Required"),
-    schoolOrCollege: Yup.string().min(3, "Must be at least 3 characters").required("Required"),
+    educationName: Yup.string()
+      .min(3, "Must be at least 3 characters")
+      .required("Required"),
+    subject: Yup.string()
+      .min(3, "Must be at least 3 characters")
+      .required("Required"),
+    schoolOrCollege: Yup.string()
+      .min(3, "Must be at least 3 characters")
+      .required("Required"),
     yearOfPassing: Yup.string()
       .matches(/^\d{4}$/, "Enter a valid 4-digit year")
       .required("Required"),
-    universityOrBoard: Yup.string().min(3, "Must be at least 3 characters").required("Required"),
+    universityOrBoard: Yup.string()
+      .min(3, "Must be at least 3 characters")
+      .required("Required"),
     markOrGrade: Yup.string()
-      .matches(/^(\d{1,3}%|[A-F][+-]?)$/, "Enter a valid percentage (e.g., 85%) or grade (e.g., A+)")
+      .matches(
+        /^(\d{1,3}%|[A-F][+-]?)$/,
+        "Enter a valid percentage (e.g., 85%) or grade (e.g., A+)",
+      )
       .required("Required"),
   });
 
@@ -81,7 +90,7 @@ const AddEducation: React.FC = () => {
         formValues,
         {
           params: { educationId },
-        }
+        },
       );
       if (res.data.success) {
         toast.success("Education updated successfully");
@@ -113,7 +122,9 @@ const AddEducation: React.FC = () => {
 
   const handleDelete = async (index: number, eduId: string) => {
     try {
-      const response = await axiosInstance.delete(`/user/${user?._id}/education/${eduId}`);
+      const response = await axiosInstance.delete(
+        `/user/${user?._id}/education/${eduId}`,
+      );
       if (response.data.success) {
         toast.success("Education deleted successfully");
         setEducations(response.data.data.educations);
@@ -127,12 +138,17 @@ const AddEducation: React.FC = () => {
 
   const getEducations = async () => {
     try {
-      const response = await axiosInstance.get(`/user/${user?._id}/all-education`);
+      const response = await axiosInstance.get(
+        `/user/${user?._id}/all-education`,
+      );
       if (response.data.success) {
         setEducations(response.data.data.educations);
       }
     } catch (err: any) {
-      console.error("Error fetching education data:", err.response?.data?.message);
+      console.error(
+        "Error fetching education data:",
+        err.response?.data?.message,
+      );
     }
   };
 
@@ -160,15 +176,42 @@ const AddEducation: React.FC = () => {
             </h3>
             <form onSubmit={handleSubmit} className="space-y-6">
               {[
-                { label: "Education Name", name: "educationName", placeholder: "e.g., Bachelor's Degree" },
-                { label: "Subject", name: "subject", placeholder: "e.g., Computer Science" },
-                { label: "School or College", name: "schoolOrCollege", placeholder: "e.g., XYZ University" },
-                { label: "Year of Passing", name: "yearOfPassing", placeholder: "e.g., 2022" },
-                { label: "University or Board", name: "universityOrBoard", placeholder: "e.g., ABC Board" },
-                { label: "Mark or Grade", name: "markOrGrade", placeholder: "e.g., 85% or A+" },
+                {
+                  label: "Education Name",
+                  name: "educationName",
+                  placeholder: "e.g., Bachelor's Degree",
+                },
+                {
+                  label: "Subject",
+                  name: "subject",
+                  placeholder: "e.g., Computer Science",
+                },
+                {
+                  label: "School or College",
+                  name: "schoolOrCollege",
+                  placeholder: "e.g., XYZ University",
+                },
+                {
+                  label: "Year of Passing",
+                  name: "yearOfPassing",
+                  placeholder: "e.g., 2022",
+                },
+                {
+                  label: "University or Board",
+                  name: "universityOrBoard",
+                  placeholder: "e.g., ABC Board",
+                },
+                {
+                  label: "Mark or Grade",
+                  name: "markOrGrade",
+                  placeholder: "e.g., 85% or A+",
+                },
               ].map((field, idx) => (
                 <div key={idx}>
-                  <label htmlFor={field.name} className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor={field.name}
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     {field.label}
                   </label>
                   <input
@@ -181,7 +224,9 @@ const AddEducation: React.FC = () => {
                     className="mt-1 w-full px-1 py-1 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   {errors[field.name] && (
-                    <p className="text-red-500 text-sm mt-2">{errors[field.name]}</p>
+                    <p className="text-red-500 text-sm mt-2">
+                      {errors[field.name]}
+                    </p>
                   )}
                 </div>
               ))}
@@ -196,24 +241,45 @@ const AddEducation: React.FC = () => {
               </div>
             </form>
           </div>
-          
-          <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold text-blue-700 mb-4">Your Education</h3>
-            <div className="space-y-4">
 
-            {educations.map((edu, index) => (
-                  <li key={edu._id} className="bg-white p-6 rounded-lg shadow-md flex justify-between items-start">
-                    <div>
-                      <p className="text-lg font-semibold text-gray-800">{edu.educationName}</p>
-                      <p className="text-gray-600">{edu.universityOrBoard} - {edu?.subject} </p>
-                      <p className="text-gray-600">{edu?.schoolOrCollege} - {edu.yearOfPassing} - {edu.markOrGrade}</p>
-                    </div>
-                    <div className="flex space-x-4">
-                      <button onClick={() => handleEdit(index, edu._id as string)} className="text-blue-600 hover:text-blue-800">Edit</button>
-                      <button onClick={() => handleDelete(index, edu._id as string)} className="text-red-600 hover:text-red-800">Delete</button>
-                    </div>
-                  </li>
-                ))}
+          <div className="bg-gray-50 p-6 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold text-blue-700 mb-4">
+              Your Education
+            </h3>
+            <div className="space-y-4">
+              {educations.map((edu, index) => (
+                <li
+                  key={edu._id}
+                  className="bg-white p-6 rounded-lg shadow-md flex justify-between items-start"
+                >
+                  <div>
+                    <p className="text-lg font-semibold text-gray-800">
+                      {edu.educationName}
+                    </p>
+                    <p className="text-gray-600">
+                      {edu.universityOrBoard} - {edu?.subject}{" "}
+                    </p>
+                    <p className="text-gray-600">
+                      {edu?.schoolOrCollege} - {edu.yearOfPassing} -{" "}
+                      {edu.markOrGrade}
+                    </p>
+                  </div>
+                  <div className="flex space-x-4">
+                    <button
+                      onClick={() => handleEdit(index, edu._id as string)}
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(index, edu._id as string)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              ))}
             </div>
           </div>
         </div>
@@ -223,4 +289,3 @@ const AddEducation: React.FC = () => {
 };
 
 export default AddEducation;
-

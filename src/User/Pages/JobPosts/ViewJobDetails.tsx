@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { JobPost } from "../../../Compnay/Pages/JobPosts/AllJobPosts";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -11,7 +10,9 @@ import ApplyModal from "./ApplyModal";
 import ReportSpamModal from "../../../Shared/CompanyProfileUtilities/companyProfileUtilities";
 
 const ViewJobDetails: React.FC = () => {
-  const { company, user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { company, user, isAuthenticated } = useSelector(
+    (state: RootState) => state.auth,
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const location = useLocation();
@@ -124,9 +125,8 @@ const ViewJobDetails: React.FC = () => {
                 </h2>
                 <div className="mt-2 text-gray-600 text-sm sm:text-base space-y-2">
                   <p>
-                    <strong>Location:</strong>{" "}
-                    {jobPost.location.city}, {jobPost.location.state},{" "}
-                    {jobPost.location.country}
+                    <strong>Location:</strong> {jobPost.location.city},{" "}
+                    {jobPost.location.state}, {jobPost.location.country}
                   </p>
                   <p>
                     <strong>Work Mode:</strong> {jobPost.workMode}
@@ -176,29 +176,24 @@ const ViewJobDetails: React.FC = () => {
         </div>
 
         {/* Apply Modal */}
-        {isModalOpen &&
-          user?._id &&
-          jobPost._id &&
-          jobPost.companyId?._id && (
-            <ApplyModal
-              jobPostId={jobPost._id}
-              userId={user._id}
-              companyId={jobPost.companyId._id}
-              onClose={handleCloseModal}
-            />
-          )}
+        {isModalOpen && user?._id && jobPost._id && jobPost.companyId?._id && (
+          <ApplyModal
+            jobPostId={jobPost._id}
+            userId={user._id}
+            companyId={jobPost.companyId._id}
+            onClose={handleCloseModal}
+          />
+        )}
 
         {/* Report Spam Modal */}
-        {isReportModalOpen &&
-          user?._id &&
-          jobPost.companyId?._id && (
-            <ReportSpamModal
-              isOpen={isReportModalOpen}
-              onClose={() => setIsReportModalOpen(false)}
-              userId={user._id}
-              companyId={jobPost.companyId._id}
-            />
-          )}
+        {isReportModalOpen && user?._id && jobPost.companyId?._id && (
+          <ReportSpamModal
+            isOpen={isReportModalOpen}
+            onClose={() => setIsReportModalOpen(false)}
+            userId={user._id}
+            companyId={jobPost.companyId._id}
+          />
+        )}
       </div>
       <Footer />
     </>

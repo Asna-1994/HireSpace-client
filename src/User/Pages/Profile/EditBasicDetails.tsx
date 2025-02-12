@@ -13,22 +13,19 @@ import CompanyHeader from "../../../Compnay/Components/Header/Header";
 import { Area } from "react-easy-crop/types";
 import CropImageModal from "./CropImageModal";
 
-
-
-
 const UserProfileForm: React.FC = () => {
-  const { user , company} = useSelector((state: RootState) => state.auth);
+  const { user, company } = useSelector((state: RootState) => state.auth);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
-    user?.profilePhoto?.url || null
+    user?.profilePhoto?.url || null,
   );
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [form, setForm] = useState<{
     userName: string;
     dateOfBirth: string;
     phone: string;
     address: string;
-    userRole: 'jobSeeker' | 'companyMember' | 'companyAdmin' | 'admin';
+    userRole: "jobSeeker" | "companyMember" | "companyAdmin" | "admin";
   }>({
     userName: user?.userName || "",
     dateOfBirth: user?.dateOfBirth
@@ -36,15 +33,15 @@ const UserProfileForm: React.FC = () => {
       : "",
     phone: user?.phone || "",
     address: user?.address || "",
-    userRole: user?.userRole || 'jobSeeker',
+    userRole: user?.userRole || "jobSeeker",
   });
-  
 
-
-const [isCropping, setIsCropping] = useState(false);
+  const [isCropping, setIsCropping] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
     setForm((prevForm) => ({
@@ -52,74 +49,69 @@ const [isCropping, setIsCropping] = useState(false);
       [name]: value,
     }));
   };
-  
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
       const maxFileSize = 5 * 1024 * 1024;
-  
+
       const validationError = validateFile(file, allowedTypes, maxFileSize);
-  
+
       if (validationError) {
         toast.error(validationError);
         return;
       }
-  
+
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
       setIsCropping(true);
     }
   };
-  
-  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData();
 
-  
     formData.append("userName", form.userName || "");
     formData.append("dateOfBirth", form.dateOfBirth || "");
     formData.append("phone", form.phone || "");
     formData.append("address", form.address || "");
-    formData.append('userRole' , form.userRole || 'jobSeeker');
+    formData.append("userRole", form.userRole || "jobSeeker");
 
-    try{
-const response = await axiosInstance.patch(`/user/update-basic-detail/${user?._id}`, formData)
-if(response.data.success){
-    const updatedUser = response.data.data.user;
-toast.success("Updated successfully")
-dispatch(userUpdate(updatedUser))
-}else{
-    toast.error(response.data.message);
-}
-    }
-    catch(err : any){
-        console.error("Error updating details:", err);
-        toast.error(err.response?.data?.message || "Something went wrong");
+    try {
+      const response = await axiosInstance.patch(
+        `/user/update-basic-detail/${user?._id}`,
+        formData,
+      );
+      if (response.data.success) {
+        const updatedUser = response.data.data.user;
+        toast.success("Updated successfully");
+        dispatch(userUpdate(updatedUser));
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (err: any) {
+      console.error("Error updating details:", err);
+      toast.error(err.response?.data?.message || "Something went wrong");
     }
   };
 
-
-  
-
   const handleCroppedImage = async (croppedImageUrl: string) => {
     try {
- 
       const response = await fetch(croppedImageUrl);
       const blob = await response.blob();
-      const file = new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' });
-      
+      const file = new File([blob], "cropped-image.jpg", {
+        type: "image/jpeg",
+      });
+
       setSelectedFile(file);
       setPreviewUrl(croppedImageUrl);
-      
-   
+
       const formData = new FormData();
       formData.append("profilePhoto", file);
-  
+
       const uploadResponse = await axiosInstance.patch(
         `/user/upload-profile-image/${user?._id}`,
         formData,
@@ -127,45 +119,45 @@ dispatch(userUpdate(updatedUser))
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
-  
+
       if (uploadResponse.data.success) {
         toast.success("Profile photo updated successfully!");
         const updatedUser = uploadResponse.data.data.user;
         dispatch(userUpdate(updatedUser));
       }
-    } catch (error : any) {
+    } catch (error: any) {
       console.error("Error processing cropped image:", error);
-      toast.error(error.response.data.message || "Error uploading cropped image. Please try again.");
+      toast.error(
+        error.response.data.message ||
+          "Error uploading cropped image. Please try again.",
+      );
     }
   };
 
-
-
   const handleDeleteImage = async () => {
-  
     try {
-      const res = await axiosInstance.delete(`/user/delete-profile-image/${user?._id}`);
+      const res = await axiosInstance.delete(
+        `/user/delete-profile-image/${user?._id}`,
+      );
       if (res.data.success) {
         toast.success("Deleted successfully");
         const updatedUser = res.data.data.user;
-        dispatch(userUpdate(updatedUser))
-        setPreviewUrl(null)
+        dispatch(userUpdate(updatedUser));
+        setPreviewUrl(null);
       } else {
         toast.error(res.data.message);
       }
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Error deleting resume");
       console.error(error);
-    } 
+    }
   };
-
 
   return (
     <div>
-
-{isCropping && previewUrl && (
+      {isCropping && previewUrl && (
         <CropImageModal
           image={previewUrl}
           onCancel={() => {
@@ -180,12 +172,8 @@ dispatch(userUpdate(updatedUser))
         />
       )}
 
+      {company ? <CompanyHeader /> : <Header />}
 
-
-
-
-        {company ? (<CompanyHeader/>) : (    <Header />)}
-  
       <div className="container mx-auto px-6 py-8 bg-gradient-to-r from-blue-100 to-blue-200">
         <motion.div
           className="bg-gradient-to-r from-purple-400 to-blue-500 shadow-lg text-white rounded-lg p-6"
@@ -241,20 +229,20 @@ dispatch(userUpdate(updatedUser))
               />
             </div>
             <div className="mb-4">
-  <label className="block text-gray-700 font-medium mb-2">
-    User Role
-  </label>
-  <select
-    name="userRole"
-    value={form.userRole || "jobSeeker"}
-    onChange={handleChange}
-    className="w-full border border-gray-300 rounded-lg p-2"
-  >
-    <option value="jobSeeker">Job Seeker</option>
-    <option value="companyMember">Company Member</option>
-    <option value="companyAdmin">Company Admin</option>
-  </select>
-</div>
+              <label className="block text-gray-700 font-medium mb-2">
+                User Role
+              </label>
+              <select
+                name="userRole"
+                value={form.userRole || "jobSeeker"}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-lg p-2"
+              >
+                <option value="jobSeeker">Job Seeker</option>
+                <option value="companyMember">Company Member</option>
+                <option value="companyAdmin">Company Admin</option>
+              </select>
+            </div>
 
             <div className="mb-4">
               <label className="block text-gray-700 font-medium mb-2">
@@ -276,7 +264,6 @@ dispatch(userUpdate(updatedUser))
             </button>
           </form>
 
-       
           <div className="bg-white p-6 rounded-lg shadow flex flex-col items-center justify-center">
             <div className="text-blue-500 text-4xl mb-4">
               <FaUpload />
@@ -295,7 +282,14 @@ dispatch(userUpdate(updatedUser))
                 className="w-32 h-32 rounded-full mb-4 object-cover"
               />
             )}
-            {user?.profilePhoto?.url &&  <button onClick={handleDeleteImage} className="bg-red-600 text-white rounded-lg px-2 py-1">Delete</button>}
+            {user?.profilePhoto?.url && (
+              <button
+                onClick={handleDeleteImage}
+                className="bg-red-600 text-white rounded-lg px-2 py-1"
+              >
+                Delete
+              </button>
+            )}
           </div>
         </div>
       </div>

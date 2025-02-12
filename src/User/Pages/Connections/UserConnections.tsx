@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import Header from "../../Components/Header/Header";
 import Footer from "../../Components/Footer/Footer";
@@ -44,7 +42,9 @@ export interface Connections {
 
 const Connections = () => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const [pendingRequests, setPendingRequests] = useState<ConnectionRequest[]>([]);
+  const [pendingRequests, setPendingRequests] = useState<ConnectionRequest[]>(
+    [],
+  );
   const [pendingTotalPages, setPendingTotalPages] = useState(1);
   const [pendingPage, setPendingPage] = useState(1);
   const [connections, setConnections] = useState<Connections[]>([]);
@@ -60,15 +60,19 @@ const Connections = () => {
     try {
       const limit = 8;
       const response = await axiosInstance.get(
-        `/connection-request/to-user/${user?._id}`,{params:{
-page, limit
-        }}
+        `/connection-request/to-user/${user?._id}`,
+        {
+          params: {
+            page,
+            limit,
+          },
+        },
       );
       if (response.data.success) {
         const requests = response.data.data.pendingRequests.map(
-          (request: any) => request._doc || request
+          (request: any) => request._doc || request,
         );
-        console.log("request", requests)
+        console.log("request", requests);
         setPendingRequests(requests);
         setPendingTotalPages(response.data.data.totalPages);
       } else {
@@ -98,7 +102,7 @@ page, limit
         `/connection-request/user/all-connections/${user?._id}`,
         {
           params: { page, limit, search },
-        }
+        },
       );
       if (response.data.success) {
         setConnections(response.data.data.connections);
@@ -108,7 +112,8 @@ page, limit
       }
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message || "An error occurred while fetching connections"
+        error.response?.data?.message ||
+          "An error occurred while fetching connections",
       );
     } finally {
       setLoading(false);
@@ -118,10 +123,9 @@ page, limit
   useEffect(() => {
     if (user?._id) {
       fetchConnections(connectionsPage, debouncedSearchTerm);
-      fetchPendingRequests(pendingPage); 
+      fetchPendingRequests(pendingPage);
     }
-
-  }, [debouncedSearchTerm, connectionsPage,pendingPage, user?._id]);
+  }, [debouncedSearchTerm, connectionsPage, pendingPage, user?._id]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -130,7 +134,7 @@ page, limit
   const handleRequest = async (requestId: string, action: string) => {
     try {
       const response = await axiosInstance.put(
-        `/connection-request/${requestId}/${action}`
+        `/connection-request/${requestId}/${action}`,
       );
       if (response.data.success) {
         fetchPendingRequests(pendingPage);
@@ -152,7 +156,7 @@ page, limit
   const renderPaginationControls = (
     currentPage: number,
     totalPages: number,
-    setPage: React.Dispatch<React.SetStateAction<number>>
+    setPage: React.Dispatch<React.SetStateAction<number>>,
   ) => (
     <div className="flex justify-center items-center mt-4">
       <button
@@ -250,17 +254,13 @@ page, limit
                           </div>
                           <div className="flex gap-2 mt-2 sm:mt-0">
                             <button
-                              onClick={() =>
-                                handleRequest(req._id, "accept")
-                              }
+                              onClick={() => handleRequest(req._id, "accept")}
                               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                             >
                               Accept
                             </button>
                             <button
-                              onClick={() =>
-                                handleRequest(req._id, "reject")
-                              }
+                              onClick={() => handleRequest(req._id, "reject")}
                               className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
                             >
                               Decline
@@ -284,7 +284,7 @@ page, limit
                     {renderPaginationControls(
                       pendingPage,
                       pendingTotalPages,
-                      setPendingPage
+                      setPendingPage,
                     )}
                   </div>
                 )}
@@ -365,7 +365,7 @@ page, limit
                     {renderPaginationControls(
                       connectionsPage,
                       connectionsTotalPages,
-                      setConnectionsPage
+                      setConnectionsPage,
                     )}
                   </div>
                 )}

@@ -18,7 +18,7 @@ import About from "./Shared/Pages/About";
 
 function App() {
   const { company, user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth
+    (state: RootState) => state.auth,
   );
   const theme = useSelector((state: RootState) => state.theme.theme);
 
@@ -36,8 +36,8 @@ function App() {
           <Route path="*" element={<NotFound />} />
           <Route path="/error" element={<ErrorPage />} />
           <Route path="/no-access" element={<NoAccess />} />
-          <Route  path="/contact" element={<Contact/>}/>
-          <Route  path="/about" element={<About/>}/>
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<About />} />
           <Route path="/user/*" element={<UserRoutes />} />
           <Route path="/company/*" element={<CompanyRoutes />} />
           <Route path="/admin/*" element={<AdminRoutes />} />

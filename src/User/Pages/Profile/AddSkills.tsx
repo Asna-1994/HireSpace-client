@@ -1,18 +1,22 @@
-
 import React, { useEffect, useState } from "react";
 import Header from "../../Components/Header/Header";
 import axiosInstance from "../../../Utils/Instance/axiosInstance";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { toast } from "react-toastify";
-import * as Yup from "yup"; 
+import * as Yup from "yup";
 import { motion } from "framer-motion";
 
-
 const validationSchema = Yup.object({
-  softSkills: Yup.array().of(Yup.string().min(2, "Skill must be at least 2 characters")),
-  hardSkills: Yup.array().of(Yup.string().min(2, "Skill must be at least 2 characters")),
-  technicalSkills: Yup.array().of(Yup.string().min(2, "Skill must be at least 2 characters")),
+  softSkills: Yup.array().of(
+    Yup.string().min(2, "Skill must be at least 2 characters"),
+  ),
+  hardSkills: Yup.array().of(
+    Yup.string().min(2, "Skill must be at least 2 characters"),
+  ),
+  technicalSkills: Yup.array().of(
+    Yup.string().min(2, "Skill must be at least 2 characters"),
+  ),
 });
 
 export interface Skills {
@@ -44,25 +48,23 @@ const AddSkills: React.FC = () => {
     }));
   };
 
-
   const validate = async () => {
     try {
-      await validationSchema.validate(skills, { abortEarly: false });  
-      setErrors({});  
+      await validationSchema.validate(skills, { abortEarly: false });
+      setErrors({});
       return true;
-    } catch (err  :any) {
+    } catch (err: any) {
       const validationErrors: any = {};
       err.inner.forEach((error: any) => {
         validationErrors[error.path] = error.message;
       });
-      setErrors(validationErrors);  
+      setErrors(validationErrors);
       return false;
     }
   };
 
   const handleAddOrUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
 
     const isValid = await validate();
     if (!isValid) {
@@ -72,7 +74,7 @@ const AddSkills: React.FC = () => {
     try {
       const res = await axiosInstance.patch(
         `/user/add-or-update-skills/${user?._id}`,
-        skills
+        skills,
       );
       if (res.data.success) {
         toast.success("Skills updated successfully");
@@ -128,9 +130,12 @@ const AddSkills: React.FC = () => {
 
   const handleDeleteSkill = async (skillName: string) => {
     try {
-      const res = await axiosInstance.delete(`/user/${user?._id}/delete-skills`, {
-        data: { skillName },
-      });
+      const res = await axiosInstance.delete(
+        `/user/${user?._id}/delete-skills`,
+        {
+          data: { skillName },
+        },
+      );
       if (res.data.success) {
         toast.success("Skill deleted successfully");
         getSkills();
@@ -194,7 +199,9 @@ const AddSkills: React.FC = () => {
                     className="mt-1 w-full px-1 py-1 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                   />
                   {errors[field.name] && (
-                    <div className="text-red-500 text-sm">{errors[field.name]}</div>
+                    <div className="text-red-500 text-sm">
+                      {errors[field.name]}
+                    </div>
                   )}
                 </div>
               ))}
@@ -222,9 +229,15 @@ const AddSkills: React.FC = () => {
                   {[
                     { label: "Soft Skills", skills: skillsList.softSkills },
                     { label: "Hard Skills", skills: skillsList.hardSkills },
-                    { label: "Technical Skills", skills: skillsList.technicalSkills },
+                    {
+                      label: "Technical Skills",
+                      skills: skillsList.technicalSkills,
+                    },
                   ].map((category, idx) => (
-                    <li key={idx} className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <li
+                      key={idx}
+                      className="bg-gray-50 p-4 rounded-lg shadow-sm"
+                    >
                       <div className="flex justify-between">
                         <h4 className="text-xl font-semibold text-gray-800">
                           {category.label}
@@ -232,7 +245,9 @@ const AddSkills: React.FC = () => {
                         {category.skills && category?.skills?.length > 0 && (
                           <button
                             onClick={() =>
-                              handleDeleteSkill(category.label.toLowerCase().replace(" ", ""))
+                              handleDeleteSkill(
+                                category.label.toLowerCase().replace(" ", ""),
+                              )
                             }
                             className="text-red-500 ml-4"
                           >
@@ -242,7 +257,9 @@ const AddSkills: React.FC = () => {
                       </div>
                       <ul className="list-disc list-inside ml-4">
                         {category.skills?.map((skill, index) => (
-                          <li key={index} className="text-gray-600">{skill}</li>
+                          <li key={index} className="text-gray-600">
+                            {skill}
+                          </li>
                         ))}
                       </ul>
                     </li>
@@ -266,4 +283,3 @@ const AddSkills: React.FC = () => {
 };
 
 export default AddSkills;
-

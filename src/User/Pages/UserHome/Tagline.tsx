@@ -1,4 +1,3 @@
-
 import { FaPen } from "react-icons/fa";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -12,12 +11,16 @@ const TaglineSection = ({ user, tagline, setTagline, saveTagline }: any) => {
 
   return (
     <div className="bg-gradient-to-r from-blue-500 to-indigo-500 shadow-md rounded-lg p-6 text-white text-center max-w-2xl mx-auto">
-      <h2 className="text-2xl md:text-3xl font-bold">Welcome, {user?.userName}!</h2>
+      <h2 className="text-2xl md:text-3xl font-bold">
+        Welcome, {user?.userName}!
+      </h2>
 
       {/* Tagline Display */}
       {!isEditing ? (
         <div className="flex items-center justify-center mt-2 space-x-2">
-          <p className="text-lg md:text-xl">{user?.tagLine || "Add a tagline to stand out!"}</p>
+          <p className="text-lg md:text-xl">
+            {user?.tagLine || "Add a tagline to stand out!"}
+          </p>
           <button
             onClick={() => setIsEditing(true)}
             className="text-white hover:text-gray-300"

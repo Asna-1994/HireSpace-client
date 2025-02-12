@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import Header from "../../Components/Header/Header";
 import axiosInstance from "../../../Utils/Instance/axiosInstance";
@@ -6,7 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
-import * as yup from "yup";  
+import * as yup from "yup";
 
 export interface CertificateObject {
   certificateTitle: string;
@@ -22,12 +21,9 @@ const certificateSchema = yup.object().shape({
   description: yup.string().optional(),
   certificateUrl: yup
     .string()
-    .nullable() 
+    .nullable()
     .notRequired()
-    .matches(
-      /^(https?:\/\/[^\s]+)?$/,
-      "Must be a valid URL (if provided)"
-    ),
+    .matches(/^(https?:\/\/[^\s]+)?$/, "Must be a valid URL (if provided)"),
   issuer: yup.string().required("Issuer is required"),
   issuedDate: yup
     .string()
@@ -46,7 +42,6 @@ const certificateSchema = yup.object().shape({
     })
     .required("Issued Date is required"),
 });
-
 
 const AddCertificates: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -72,17 +67,17 @@ const AddCertificates: React.FC = () => {
 
   const handleAddOrUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+
     try {
       await certificateSchema.validate(form, { abortEarly: false });
-      setErrors({}); 
-  
+      setErrors({});
+
       const res = await axiosInstance.patch(
         `/user/add-or-update-certificates/${user?._id}`,
         form,
-        { params: { certificateId } }
+        { params: { certificateId } },
       );
-  
+
       if (res.data.success) {
         toast.success("Certificate updated successfully");
         getCertificates();
@@ -102,7 +97,6 @@ const AddCertificates: React.FC = () => {
       }
     }
   };
-  
 
   const handleEdit = (index: number, certificateId: string) => {
     setForm(certificates[index]);
@@ -125,7 +119,9 @@ const AddCertificates: React.FC = () => {
 
   const getCertificates = async () => {
     try {
-      const response = await axiosInstance.get(`/user/${user?._id}/all-certificates`);
+      const response = await axiosInstance.get(
+        `/user/${user?._id}/all-certificates`,
+      );
       if (response.data.success) {
         setCertificates(response.data.data.certificates);
       } else {
@@ -142,7 +138,9 @@ const AddCertificates: React.FC = () => {
 
   const handleDelete = async (index: number, certificateId: string) => {
     try {
-      const response = await axiosInstance.delete(`/user/${user?._id}/certificates/${certificateId}`);
+      const response = await axiosInstance.delete(
+        `/user/${user?._id}/certificates/${certificateId}`,
+      );
       if (response.data.success) {
         toast.success("Successfully deleted");
         setCertificates(response.data.data.certificates);
@@ -166,24 +164,47 @@ const AddCertificates: React.FC = () => {
         >
           <h2 className="text-3xl font-semibold">Add Certificates</h2>
         </motion.div>
-        
+
         <div className="max-w-6xl mx-auto mt-2 bg-white p-8 rounded-xl shadow-lg grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Form Section */}
           <div className="bg-gray-50 p-6 rounded-lg shadow-md">
             <h3 className="text-2xl font-semibold text-blue-700 mb-6 text-center">
               {editIndex !== null ? "Update Certificate" : "Add Certificate"}
             </h3>
-            
+
             <form onSubmit={handleAddOrUpdate} className="space-y-6">
               {[
-                { label: "Certificate Title", name: "certificateTitle", placeholder: "e.g., React Certification" },
-                { label: "Description", name: "description", placeholder: "e.g., Front End Developer" },
-                { label: "Issuer", name: "issuer", placeholder: "e.g., Google" },
-                { label: "Issued Date", name: "issuedDate", placeholder: "e.g., 22-06-2023" },
-                { label: "Certificate URL", name: "certificateUrl", placeholder: "e.g., https://certificate.com" },
+                {
+                  label: "Certificate Title",
+                  name: "certificateTitle",
+                  placeholder: "e.g., React Certification",
+                },
+                {
+                  label: "Description",
+                  name: "description",
+                  placeholder: "e.g., Front End Developer",
+                },
+                {
+                  label: "Issuer",
+                  name: "issuer",
+                  placeholder: "e.g., Google",
+                },
+                {
+                  label: "Issued Date",
+                  name: "issuedDate",
+                  placeholder: "e.g., 22-06-2023",
+                },
+                {
+                  label: "Certificate URL",
+                  name: "certificateUrl",
+                  placeholder: "e.g., https://certificate.com",
+                },
               ].map((field, idx) => (
                 <div key={idx}>
-                  <label htmlFor={field.name} className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor={field.name}
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     {field.label}
                   </label>
                   <input
@@ -196,11 +217,13 @@ const AddCertificates: React.FC = () => {
                     className="mt-1 w-full px-1 py-1 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   {errors[field.name] && (
-                    <p className="text-red-500 text-sm mt-1">{errors[field.name]}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors[field.name]}
+                    </p>
                   )}
                 </div>
               ))}
-              
+
               <div className="text-center">
                 <button
                   type="submit"
@@ -211,24 +234,45 @@ const AddCertificates: React.FC = () => {
               </div>
             </form>
           </div>
-          
+
           {/* List Section */}
           <div>
-            <h3 className="text-2xl font-semibold text-blue-700 mb-6 text-center">Certificates</h3>
+            <h3 className="text-2xl font-semibold text-blue-700 mb-6 text-center">
+              Certificates
+            </h3>
             {certificates.length === 0 ? (
-              <p className="text-gray-600 text-center">No certificates added yet.</p>
+              <p className="text-gray-600 text-center">
+                No certificates added yet.
+              </p>
             ) : (
               <ul className="space-y-4">
                 {certificates.map((cert, index) => (
-                  <li key={cert._id} className="bg-white p-6 rounded-lg shadow-md flex justify-between items-start">
+                  <li
+                    key={cert._id}
+                    className="bg-white p-6 rounded-lg shadow-md flex justify-between items-start"
+                  >
                     <div>
-                      <p className="text-lg font-semibold text-gray-800">{cert.certificateTitle}</p>
+                      <p className="text-lg font-semibold text-gray-800">
+                        {cert.certificateTitle}
+                      </p>
                       <p className="text-gray-600">{cert?.description}</p>
-                      <p className="text-gray-600">{cert.issuer} - {cert.issuedDate}</p>
+                      <p className="text-gray-600">
+                        {cert.issuer} - {cert.issuedDate}
+                      </p>
                     </div>
                     <div className="flex space-x-4">
-                      <button onClick={() => handleEdit(index, cert._id as string)} className="text-blue-600 hover:text-blue-800">Edit</button>
-                      <button onClick={() => handleDelete(index, cert._id as string)} className="text-red-600 hover:text-red-800">Delete</button>
+                      <button
+                        onClick={() => handleEdit(index, cert._id as string)}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(index, cert._id as string)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        Delete
+                      </button>
                     </div>
                   </li>
                 ))}
@@ -242,5 +286,3 @@ const AddCertificates: React.FC = () => {
 };
 
 export default AddCertificates;
-
-

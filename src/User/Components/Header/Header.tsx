@@ -1,4 +1,3 @@
-
 import { FC, useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,7 +11,7 @@ import {
   FaUserPlus,
   FaUserCircle,
   FaBriefcase,
-  FaEnvelope
+  FaEnvelope,
 } from "react-icons/fa";
 import axiosInstance from "../../../Utils/Instance/axiosInstance";
 import { logout } from "../../../redux/slices/authSlice";
@@ -26,35 +25,41 @@ interface UnreadCounts {
 const Header: FC = () => {
   const [unreadChatsCount, setUnreadChatsCount] = useState(0);
   const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
-  const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { user, isAuthenticated } = useSelector(
+    (state: RootState) => state.auth,
+  );
   const [menuOpen, setMenuOpen] = useState(false);
   // New state for toggling mobile user profile dropdown
-  const [mobileProfileDropdownOpen, setMobileProfileDropdownOpen] = useState(false);
+  const [mobileProfileDropdownOpen, setMobileProfileDropdownOpen] =
+    useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
-      const response = await axiosInstance.post('/user/logout');
+      const response = await axiosInstance.post("/user/logout");
       dispatch(logout());
-      navigate('/');
+      navigate("/");
       toast.success(response.data.message);
     } catch (err: any) {
       console.error(err);
-      toast.error(err?.response?.data?.message || 'Something went wrong!');
+      toast.error(err?.response?.data?.message || "Something went wrong!");
     }
   };
 
   useEffect(() => {
     if (socket && user?._id) {
       // Initial fetch of counts
-      socket.emit('getUnreadCount', { userId: user._id });
-      socket.emit('getPendingRequestsCount', { userId: user._id });
+      socket.emit("getUnreadCount", { userId: user._id });
+      socket.emit("getPendingRequestsCount", { userId: user._id });
 
       // Listen for unread message updates
-      socket.on('unreadCounts', (data: { counts: UnreadCounts }) => {
+      socket.on("unreadCounts", (data: { counts: UnreadCounts }) => {
         if (data.counts) {
-          const totalUnread = Object.values(data.counts).reduce((sum, count) => sum + count, 0);
+          const totalUnread = Object.values(data.counts).reduce(
+            (sum, count) => sum + count,
+            0,
+          );
           setUnreadChatsCount(totalUnread || 0);
         } else {
           setUnreadChatsCount(0);
@@ -62,27 +67,27 @@ const Header: FC = () => {
       });
 
       // Listen for pending requests updates
-      socket.on('pendingRequestsCount', (data: { count: number }) => {
+      socket.on("pendingRequestsCount", (data: { count: number }) => {
         setPendingRequestsCount(data.count || 0);
       });
 
       // Listen for new messages
-      socket.on('message', (message: any) => {
-        if (message.receiverId === user._id && message.status === 'unread') {
-          socket.emit('getUnreadCount', { userId: user._id });
+      socket.on("message", (message: any) => {
+        if (message.receiverId === user._id && message.status === "unread") {
+          socket.emit("getUnreadCount", { userId: user._id });
         }
       });
 
       // Listen for message read status changes
-      socket.on('messageRead', () => {
-        socket.emit('getUnreadCount', { userId: user._id });
+      socket.on("messageRead", () => {
+        socket.emit("getUnreadCount", { userId: user._id });
       });
 
       return () => {
-        socket.off('unreadCounts');
-        socket.off('pendingRequestsCount');
-        socket.off('message');
-        socket.off('messageRead');
+        socket.off("unreadCounts");
+        socket.off("pendingRequestsCount");
+        socket.off("message");
+        socket.off("messageRead");
       };
     }
   }, [user?._id]);
@@ -93,7 +98,7 @@ const Header: FC = () => {
     icon,
     label,
     badgeCount,
-    onClick
+    onClick,
   }: {
     to: string;
     icon: JSX.Element;
@@ -132,11 +137,33 @@ const Header: FC = () => {
         <nav className="hidden md:flex space-x-4 items-center">
           {isAuthenticated && user ? (
             <>
-              <NavItem to={`/user/home/${user._id}`} icon={<FaHome />} label="Home" />
-              <NavItem to={`/user/all-job-applications/${user._id}`} icon={<FaInfoCircle />} label="My Applications" />
-              <NavItem to={`/user/messages/${user._id}`} icon={<FaEnvelope />} label="Messages" badgeCount={unreadChatsCount} />
-              <NavItem to={`/user/user-connections/${user._id}`} icon={<FaSignInAlt />} label="Connections" badgeCount={pendingRequestsCount} />
-              <NavItem to="/user/view-job-posts" icon={<FaBriefcase />} label="Jobs" />
+              <NavItem
+                to={`/user/home/${user._id}`}
+                icon={<FaHome />}
+                label="Home"
+              />
+              <NavItem
+                to={`/user/all-job-applications/${user._id}`}
+                icon={<FaInfoCircle />}
+                label="My Applications"
+              />
+              <NavItem
+                to={`/user/messages/${user._id}`}
+                icon={<FaEnvelope />}
+                label="Messages"
+                badgeCount={unreadChatsCount}
+              />
+              <NavItem
+                to={`/user/user-connections/${user._id}`}
+                icon={<FaSignInAlt />}
+                label="Connections"
+                badgeCount={pendingRequestsCount}
+              />
+              <NavItem
+                to="/user/view-job-posts"
+                icon={<FaBriefcase />}
+                label="Jobs"
+              />
             </>
           ) : (
             <>
@@ -144,7 +171,11 @@ const Header: FC = () => {
               <NavItem to="/about" icon={<FaInfoCircle />} label="About" />
               <NavItem to="/contact" icon={<FaPhoneAlt />} label="Contact" />
               <NavItem to="/user/login" icon={<FaSignInAlt />} label="Login" />
-              <NavItem to="/user/signup" icon={<FaUserPlus />} label="Sign Up" />
+              <NavItem
+                to="/user/signup"
+                icon={<FaUserPlus />}
+                label="Sign Up"
+              />
             </>
           )}
         </nav>
@@ -181,7 +212,12 @@ const Header: FC = () => {
                 d="M6 18L18 6M6 6l12 12"
               />
             ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16m-7 6h7"
+              />
             )}
           </svg>
         </button>
@@ -195,7 +231,7 @@ const Header: FC = () => {
               {/* Mobile Profile Display with Dropdown Toggle */}
               <div className="relative">
                 <button
-                  onClick={() => setMobileProfileDropdownOpen(prev => !prev)}
+                  onClick={() => setMobileProfileDropdownOpen((prev) => !prev)}
                   className="flex items-center space-x-3 focus:outline-none"
                 >
                   <span className="text-sm font-semibold">Profile</span>
@@ -203,7 +239,10 @@ const Header: FC = () => {
                 {mobileProfileDropdownOpen && (
                   <div className="mt-2">
                     {/* You may want to adjust the positioning/styling for mobile */}
-                    <UserProfileDropdown user={user} handleLogout={handleLogout} />
+                    <UserProfileDropdown
+                      user={user}
+                      handleLogout={handleLogout}
+                    />
                   </div>
                 )}
               </div>
@@ -269,11 +308,36 @@ const Header: FC = () => {
             </>
           ) : (
             <>
-              <NavItem to="/" icon={<FaHome />} label="Home" onClick={() => setMenuOpen(false)} />
-              <NavItem to="/about" icon={<FaInfoCircle />} label="About" onClick={() => setMenuOpen(false)} />
-              <NavItem to="/contact" icon={<FaPhoneAlt />} label="Contact" onClick={() => setMenuOpen(false)} />
-              <NavItem to="/user/login" icon={<FaSignInAlt />} label="Login" onClick={() => setMenuOpen(false)} />
-              <NavItem to="/user/signup" icon={<FaUserPlus />} label="Sign Up" onClick={() => setMenuOpen(false)} />
+              <NavItem
+                to="/"
+                icon={<FaHome />}
+                label="Home"
+                onClick={() => setMenuOpen(false)}
+              />
+              <NavItem
+                to="/about"
+                icon={<FaInfoCircle />}
+                label="About"
+                onClick={() => setMenuOpen(false)}
+              />
+              <NavItem
+                to="/contact"
+                icon={<FaPhoneAlt />}
+                label="Contact"
+                onClick={() => setMenuOpen(false)}
+              />
+              <NavItem
+                to="/user/login"
+                icon={<FaSignInAlt />}
+                label="Login"
+                onClick={() => setMenuOpen(false)}
+              />
+              <NavItem
+                to="/user/signup"
+                icon={<FaUserPlus />}
+                label="Sign Up"
+                onClick={() => setMenuOpen(false)}
+              />
             </>
           )}
         </nav>
@@ -283,4 +347,3 @@ const Header: FC = () => {
 };
 
 export default Header;
-

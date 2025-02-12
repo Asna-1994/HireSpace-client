@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { connectSocket, socket } from '../../../services/socket';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import Header from '../Header/Header';
-import { setTotalUnreadChats } from '../../../redux/slices/chatSlice';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { connectSocket, socket } from "../../../services/socket";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import Header from "../Header/Header";
+import { setTotalUnreadChats } from "../../../redux/slices/chatSlice";
 
 interface RecentChat {
   roomId: string;
@@ -34,84 +34,90 @@ const MessagesPage: React.FC = () => {
         connectSocket();
         console.log("Attempting to connect socket");
       }
-      
-      socket.on('connect', () => {
-        console.log('Socket connected successfully');
+
+      socket.on("connect", () => {
+        console.log("Socket connected successfully");
       });
       if (socket && user?._id) {
-        socket.emit('registerUser', user._id);
+        socket.emit("registerUser", user._id);
       }
 
+      socket.emit("getRecentChats", { userId: user._id });
+      console.log("Requesting recent chats for user:", user._id);
+      socket.emit("getUnreadCount", { userId: user._id });
 
-      socket.emit('getRecentChats', { userId: user._id });
-      console.log('Requesting recent chats for user:', user._id);
-      socket.emit('getUnreadCount', { userId: user._id });
+      socket.on(
+        "unreadCounts",
+        ({ counts }: { counts: { [roomId: string]: number } }) => {
+          setChats((prevChats) =>
+            prevChats.map((chat) => ({
+              ...chat,
+              unreadCount: counts[chat.roomId] || 0,
+            })),
+          );
 
- 
-      socket.on('unreadCounts', ({ counts }: { counts: { [roomId: string]: number } }) => {
-     
-        setChats(prevChats =>
-          prevChats.map(chat => ({
-            ...chat,
-            unreadCount: counts[chat.roomId] || 0,
-          }))
-        );
+          const totalUnreadChats = Object.values(counts).reduce(
+            (total, count) => total + (count > 0 ? 1 : 0),
+            0,
+          );
+          dispatch(setTotalUnreadChats(totalUnreadChats));
+        },
+      );
 
-
-        const totalUnreadChats = Object.values(counts).reduce((total, count) => total + (count > 0 ? 1 : 0), 0);
-        dispatch(setTotalUnreadChats(totalUnreadChats));
-      });
-
-    
-      socket.on('recentChats', (data: { chats: RecentChat[] }) => {
+      socket.on("recentChats", (data: { chats: RecentChat[] }) => {
         setChats(data.chats);
-        console.log('Received recent chats:', data.chats);
+        console.log("Received recent chats:", data.chats);
 
-        socket.emit('getUnreadCount', { userId: user._id });
+        socket.emit("getUnreadCount", { userId: user._id });
       });
 
+      socket.on(
+        "message",
+        (message: {
+          senderId: string;
+          roomId: string;
+          content: string;
+          createdAt: string;
+        }) => {
+          setChats((prevChats) =>
+            prevChats.map((chat) =>
+              chat.roomId === message.roomId
+                ? {
+                    ...chat,
+                    lastMessage: message.content,
+                    createdAt: message.createdAt,
+                  }
+                : chat,
+            ),
+          );
 
-      socket.on('message', (message: {senderId : string, roomId: string; content: string; createdAt: string }) => {
-        setChats(prevChats =>
-          prevChats.map(chat =>
-            chat.roomId === message.roomId
-              ? {
-                  ...chat,
-                  lastMessage: message.content,
-                  createdAt: message.createdAt,
-                }
-              : chat
-          )
-        );
-        
-  
-        // socket.emit('getUnreadCount', { userId: user._id });
-        if (message.senderId !== user._id) {
-          socket.emit('getUnreadCount', { userId: user._id });
-        }
+          // socket.emit('getUnreadCount', { userId: user._id });
+          if (message.senderId !== user._id) {
+            socket.emit("getUnreadCount", { userId: user._id });
+          }
+        },
+      );
+
+      socket.on("messageRead", ({ messageId, roomId }) => {
+        socket.emit("getUnreadCount", { userId: user._id });
       });
 
-
-      socket.on('messageRead', ({ messageId, roomId }) => {
-        socket.emit('getUnreadCount', { userId: user._id });
+      socket.on("error", (error) => {
+        console.error("Socket error:", error);
       });
 
-      socket.on('error', (error) => {
-        console.error('Socket error:', error);
-      });
-      
-      socket.on('connect_error', (error) => {
-        console.error('Connection error:', error);
+      socket.on("connect_error", (error) => {
+        console.error("Connection error:", error);
       });
 
       return () => {
-        socket.off('recentChats');
-        socket.off('unreadCounts');
-        socket.off('message');
-        socket.off('messageRead');
+        socket.off("recentChats");
+        socket.off("unreadCounts");
+        socket.off("message");
+        socket.off("messageRead");
       };
     }
-  }, [user,socket, dispatch]);
+  }, [user, socket, dispatch]);
 
   const openChat = (roomId: string, receiverId: string, receiver: any) => {
     navigate(`/user/messages/chats/${roomId}/${receiverId}`, {
@@ -123,18 +129,22 @@ const MessagesPage: React.FC = () => {
     <>
       <Header />
       <div className="max-w-4xl mx-auto p-6 bg-gray-100 min-h-screen">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Messages</h1>
+        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
+          Messages
+        </h1>
         {chats.length > 0 ? (
           <ul className="space-y-4">
             {chats.map((chat) => (
               <li
                 key={chat.roomId}
                 className="flex items-center p-4 bg-white shadow-md rounded-lg hover:shadow-lg transition-shadow hover:bg-gray-50 cursor-pointer relative"
-                onClick={() => openChat(chat.roomId, chat.otherUser._id, chat.otherUser)}
+                onClick={() =>
+                  openChat(chat.roomId, chat.otherUser._id, chat.otherUser)
+                }
               >
                 {chat.otherUser.profilePhoto ? (
-                  <img 
-                    src={chat.otherUser.profilePhoto.url} 
+                  <img
+                    src={chat.otherUser.profilePhoto.url}
                     alt={chat.otherUser.userName}
                     className="w-10 h-10 rounded-full object-cover"
                   />
@@ -143,16 +153,16 @@ const MessagesPage: React.FC = () => {
                     {chat.otherUser.userName[0].toUpperCase()}
                   </div>
                 )}
-                
+
                 <div className="ml-4 flex-1">
                   <div className="flex justify-between items-center">
                     <span className="font-semibold text-lg text-gray-800">
                       {chat.otherUser.userName}
                     </span>
                     <span className="text-sm text-gray-500">
-                      {new Date(chat.createdAt).toLocaleString([], { 
-                        dateStyle: 'short', 
-                        timeStyle: 'short' 
+                      {new Date(chat.createdAt).toLocaleString([], {
+                        dateStyle: "short",
+                        timeStyle: "short",
                       })}
                     </span>
                   </div>
@@ -173,7 +183,9 @@ const MessagesPage: React.FC = () => {
         ) : (
           <div className="text-center text-gray-500 mt-16">
             <p className="text-xl">No messages yet</p>
-            <p className="text-sm mt-2">Start a conversation to see your messages here!</p>
+            <p className="text-sm mt-2">
+              Start a conversation to see your messages here!
+            </p>
           </div>
         )}
       </div>
@@ -182,4 +194,3 @@ const MessagesPage: React.FC = () => {
 };
 
 export default MessagesPage;
-

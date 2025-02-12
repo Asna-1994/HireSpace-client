@@ -1,9 +1,7 @@
-
-
-import React, { useState } from 'react';
-import { FaExclamationTriangle } from 'react-icons/fa';
-import axiosInstance from '../../Utils/Instance/axiosInstance';
-import { toast } from 'react-toastify';
+import React, { useState } from "react";
+import { FaExclamationTriangle } from "react-icons/fa";
+import axiosInstance from "../../Utils/Instance/axiosInstance";
+import { toast } from "react-toastify";
 
 interface ReportSpamModalProps {
   isOpen: boolean;
@@ -18,27 +16,30 @@ const ReportSpamModal: React.FC<ReportSpamModalProps> = ({
   companyId,
   userId,
 }) => {
-  const [reason, setReason] = useState('');
-  const [description, setDescription] = useState('');
+  const [reason, setReason] = useState("");
+  const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setIsSubmitting(true);
-      const response = await axiosInstance.post('/user/report-spam', {
+      const response = await axiosInstance.post("/user/report-spam", {
         userId,
         companyId,
         reason,
         description,
       });
       if (response.data.success) {
-        toast.success('Report submitted successfully');
+        toast.success("Report submitted successfully");
         onClose();
       }
-    } catch (error :any) {
-      console.error('Error submitting report:', error);
-      toast.error(error.response?.data?.message  || 'Failed to submit report. Please try again.');
+    } catch (error: any) {
+      console.error("Error submitting report:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to submit report. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -67,8 +68,12 @@ const ReportSpamModal: React.FC<ReportSpamModalProps> = ({
             >
               <option value="">Select a reason</option>
               <option value="fake_company">Fake Company</option>
-              <option value="inappropriate_content">Inappropriate Content</option>
-              <option value="misleading_information">Misleading Information</option>
+              <option value="inappropriate_content">
+                Inappropriate Content
+              </option>
+              <option value="misleading_information">
+                Misleading Information
+              </option>
               <option value="scam">Potential Scam</option>
               <option value="other">Other</option>
             </select>
@@ -101,7 +106,7 @@ const ReportSpamModal: React.FC<ReportSpamModalProps> = ({
               disabled={isSubmitting}
               className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 disabled:opacity-50"
             >
-              {isSubmitting ? 'Submitting...' : 'Submit Report'}
+              {isSubmitting ? "Submitting..." : "Submit Report"}
             </button>
           </div>
         </form>

@@ -16,27 +16,30 @@ import { JobPost } from "../../../Compnay/Pages/JobPosts/AllJobPosts";
 import { userUpdate } from "../../../redux/slices/authSlice";
 
 const ViewAllPosts = () => {
-  const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { user, isAuthenticated } = useSelector(
+    (state: RootState) => state.auth,
+  );
   const [jobPosts, setJobPosts] = useState<JobPost[]>([]);
   const [savedJobs, setSavedJobs] = useState<JobPost[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [page, setPage] = useState<number>(1);
-    const [limit, setLimit] = useState<number>(10);
-    const [hasMore, setHasMore] = useState(true);
+  const [limit, setLimit] = useState<number>(10);
+  const [hasMore, setHasMore] = useState(true);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchJobPosts = async () => {
       try {
-        const response = await axiosInstance.get("/user/all-job-posts",  {
+        const response = await axiosInstance.get("/user/all-job-posts", {
           params: {
             page: currentPage,
             limit,
             search: searchTerm,
-          },});
+          },
+        });
         const jobPosts = response.data.allJobPost.map((post: any) => post._doc);
         setJobPosts(jobPosts);
         if (jobPosts.length < limit) {
@@ -53,25 +56,25 @@ const ViewAllPosts = () => {
   }, [currentPage, searchTerm]);
 
   const filteredJobPosts = jobPosts.filter((jobPost) =>
-    jobPost.jobTitle.toLowerCase().includes(searchTerm.toLowerCase())
+    jobPost.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const handleSaveJob =async (jobPost: JobPost) => {
-    try{
-      const response = await axiosInstance.patch(`/user/save-job-post/${user?._id}/${jobPost._id}`)
-      if(response.data.success){
-        const user = response.data.user
-        dispatch(userUpdate(user))
+  const handleSaveJob = async (jobPost: JobPost) => {
+    try {
+      const response = await axiosInstance.patch(
+        `/user/save-job-post/${user?._id}/${jobPost._id}`,
+      );
+      if (response.data.success) {
+        const user = response.data.user;
+        dispatch(userUpdate(user));
 
-console.log(response.data.message)
-      }   else{
-        console.log(response.data.message)
+        console.log(response.data.message);
+      } else {
+        console.log(response.data.message);
       }
-     }
-    catch(err){
-      console.log(err)
+    } catch (err) {
+      console.log(err);
     }
- 
 
     setSavedJobs((prevSavedJobs) => [...prevSavedJobs, jobPost]);
   };
@@ -96,7 +99,9 @@ console.log(response.data.message)
         </div>
 
         <div className="mt-8">
-          <h3 className="text-2xl font-semibold text-gray-800">Job Opportunities</h3>
+          <h3 className="text-2xl font-semibold text-gray-800">
+            Job Opportunities
+          </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
             {filteredJobPosts.map((jobPost) => (
               <motion.div
@@ -118,20 +123,18 @@ console.log(response.data.message)
                     )}
                   </div>
                   <div>
-                  <p className="text-gray-600 text-xl font-medium">
+                    <p className="text-gray-600 text-xl font-medium">
                       {jobPost.jobTitle}
                     </p>
                     <div className="flex items-center gap-3">
-
-                    <p className="text-gray-600 text-lg font-medium">
-                      {jobPost.companyId?.companyName}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      <FaMapMarkerAlt className="inline-block mr-1" />
-                      {jobPost.location.city} - {jobPost.location.country}
-                    </p>
+                      <p className="text-gray-600 text-lg font-medium">
+                        {jobPost.companyId?.companyName}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        <FaMapMarkerAlt className="inline-block mr-1" />
+                        {jobPost.location.city} - {jobPost.location.country}
+                      </p>
                     </div>
-             
                   </div>
                 </div>
                 <div className="mt-4 text-gray-600 space-y-2">
@@ -154,7 +157,7 @@ console.log(response.data.message)
                   </p>
                 </div>
                 <div className="mt-4 flex justify-between items-center">
-                <Link
+                  <Link
                     to={`/user/job-posts/${jobPost._id}`}
                     state={{ jobPost }}
                     className="text-blue-600 hover:underline"
@@ -168,7 +171,9 @@ console.log(response.data.message)
                         : "bg-yellow-300"
                     } text-white px-2 rounded-lg hover:bg-blue-600 transition-colors duration-300`}
                     onClick={() => handleSaveJob(jobPost)}
-                    disabled={user?.savedJobs.some((job) => job === jobPost._id)}
+                    disabled={user?.savedJobs.some(
+                      (job) => job === jobPost._id,
+                    )}
                   >
                     {user?.savedJobs.some((job) => job === jobPost._id)
                       ? "Saved"
@@ -180,23 +185,22 @@ console.log(response.data.message)
           </div>
         </div>
         <div className="mt-4 flex justify-between items-center p-2">
-  <button
-    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-    disabled={currentPage === 1}
-    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-  >
-    Previous
-  </button>
-  <span>Page {currentPage}</span>
-  <button
-    onClick={() => setCurrentPage((prev) => prev + 1)}
-    disabled={!hasMore}  // Disable "Next" button if there are no more pages
-    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-  >
-    Next
-  </button>
-</div>
-
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span>Page {currentPage}</span>
+          <button
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            disabled={!hasMore} // Disable "Next" button if there are no more pages
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
       <Footer />
     </div>

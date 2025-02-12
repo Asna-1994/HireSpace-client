@@ -16,10 +16,10 @@ const ApplicationDetails = () => {
     try {
       const response = await axiosInstance.patch(
         `/company/job-application-status/${application._id}`,
-        { status }
+        { status },
       );
       if (response.data.success) {
-        setStatus(response.data.application.status)
+        setStatus(response.data.application.status);
         toast.success("status updated");
       } else {
         toast.error(response.data.message);
@@ -87,10 +87,10 @@ const ApplicationDetails = () => {
                       status === "pending"
                         ? "bg-yellow-100 border-yellow-300"
                         : status === "accepted"
-                        ? "bg-green-100 border-green-300"
-                        : status === "rejected"
-                        ? "bg-red-100 border-red-300"
-                        : "bg-blue-100 border-blue-300"
+                          ? "bg-green-100 border-green-300"
+                          : status === "rejected"
+                            ? "bg-red-100 border-red-300"
+                            : "bg-blue-100 border-blue-300"
                     }`}
                   >
                     <select
@@ -100,10 +100,10 @@ const ApplicationDetails = () => {
                         status === "pending"
                           ? "text-yellow-800"
                           : status === "accepted"
-                          ? "text-green-800"
-                          : status === "rejected"
-                          ? "text-red-800"
-                          : "text-blue-800"
+                            ? "text-green-800"
+                            : status === "rejected"
+                              ? "text-red-800"
+                              : "text-blue-800"
                       } appearance-none bg-transparent`}
                     >
                       <option value="pending">Pending</option>

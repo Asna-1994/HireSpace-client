@@ -1,5 +1,4 @@
-
-import {  useState } from "react";
+import { useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import Header from "../../Components/Header/Header";
 import Footer from "../../Components/Footer/Footer";
@@ -13,13 +12,7 @@ const ViewApplicationDetails = () => {
   const { application } = location.state;
   console.log(application);
 
-  const {
-    coverLetter,
-    userId,
-    jobPostId,
-    appliedDate,
-    status,
-  } = application;
+  const { coverLetter, userId, jobPostId, appliedDate, status } = application;
 
   return (
     <div>
@@ -27,7 +20,9 @@ const ViewApplicationDetails = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
         <div className="bg-gradient-to-r from-green-400 to-blue-500 shadow-lg text-white rounded-lg p-6 sm:p-8">
-          <h2 className="text-3xl sm:text-4xl font-semibold">Application Details</h2>
+          <h2 className="text-3xl sm:text-4xl font-semibold">
+            Application Details
+          </h2>
           <p className="mt-2 text-lg sm:text-xl">
             Review all the details related to your job application.
           </p>
@@ -37,7 +32,9 @@ const ViewApplicationDetails = () => {
         <div className="mt-8 space-y-6">
           {/* Job Details */}
           <div className="bg-white p-6 sm:p-8 rounded-lg shadow">
-            <h3 className="text-2xl sm:text-3xl font-semibold text-gray-800">Job Details</h3>
+            <h3 className="text-2xl sm:text-3xl font-semibold text-gray-800">
+              Job Details
+            </h3>
             <div className="mt-4 space-y-2">
               <p className="text-lg sm:text-xl">
                 <span className="font-semibold">Job Title: </span>
@@ -53,7 +50,8 @@ const ViewApplicationDetails = () => {
               </p>
               <p className="text-lg sm:text-xl">
                 <span className="font-semibold">Salary: </span>
-                {jobPostId?.salaryRange?.currency} {jobPostId?.salaryRange?.min} - {jobPostId?.salaryRange?.max}
+                {jobPostId?.salaryRange?.currency} {jobPostId?.salaryRange?.min}{" "}
+                - {jobPostId?.salaryRange?.max}
               </p>
               <p className="text-lg sm:text-xl">
                 <span className="font-semibold">Job Type: </span>
@@ -76,7 +74,9 @@ const ViewApplicationDetails = () => {
 
           {/* Cover Letter Section */}
           <div className="bg-white p-6 sm:p-8 rounded-lg shadow">
-            <h3 className="text-2xl sm:text-3xl font-semibold text-gray-800">Cover Letter</h3>
+            <h3 className="text-2xl sm:text-3xl font-semibold text-gray-800">
+              Cover Letter
+            </h3>
             <div className="mt-4 space-y-3">
               <p className="text-lg sm:text-xl">
                 <span className="font-semibold">Salutation: </span>
@@ -95,7 +95,9 @@ const ViewApplicationDetails = () => {
 
           {/* Status and Dates */}
           <div className="bg-white p-6 sm:p-8 rounded-lg shadow">
-            <h3 className="text-2xl sm:text-3xl font-semibold text-gray-800">Application Status</h3>
+            <h3 className="text-2xl sm:text-3xl font-semibold text-gray-800">
+              Application Status
+            </h3>
             <div className="mt-4 space-y-2">
               <p className="text-lg sm:text-xl">
                 <span className="font-semibold">Applied On: </span>
@@ -109,14 +111,16 @@ const ViewApplicationDetails = () => {
                       status === "pending"
                         ? "bg-yellow-400"
                         : status === "accepted"
-                        ? "bg-green-500"
-                        : "bg-red-500"
+                          ? "bg-green-500"
+                          : "bg-red-500"
                     } text-white px-2 py-1 rounded-lg`}
                   >
                     {status}
                   </span>
                 ) : (
-                  <span className="ml-2 text-gray-600 italic">Premium feature</span>
+                  <span className="ml-2 text-gray-600 italic">
+                    Premium feature
+                  </span>
                 )}
               </p>
             </div>

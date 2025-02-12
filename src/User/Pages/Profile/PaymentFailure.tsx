@@ -1,8 +1,8 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import Header from '../../Components/Header/Header';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
+import React from "react";
+import { Link } from "react-router-dom";
+import Header from "../../Components/Header/Header";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
 
 const PaymentFailure: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -34,7 +34,8 @@ const PaymentFailure: React.FC = () => {
             Payment Failed 😞
           </h2>
           <p className="text-gray-600 text-center mb-6">
-            Unfortunately, your payment could not be processed. Please try again or contact support if the issue persists.
+            Unfortunately, your payment could not be processed. Please try again
+            or contact support if the issue persists.
           </p>
           <Link
             to={`/user/${user?._id}/try-premium`}
@@ -44,11 +45,8 @@ const PaymentFailure: React.FC = () => {
           </Link>
           <div className="mt-4 text-center">
             <p className="text-sm text-gray-500">
-              Need help?{' '}
-              <Link
-                to="/support"
-                className="text-blue-500 hover:underline"
-              >
+              Need help?{" "}
+              <Link to="/support" className="text-blue-500 hover:underline">
                 Contact Support
               </Link>
             </p>

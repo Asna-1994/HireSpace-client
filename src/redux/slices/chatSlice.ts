@@ -1,7 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Message } from '../../Utils/Interfaces/interface';
-
-
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Message } from "../../Utils/Interfaces/interface";
 
 interface ChatState {
   messages: Message[];
@@ -16,14 +14,15 @@ const initialState: ChatState = {
 };
 
 const chatSlice = createSlice({
-  name: 'chat',
+  name: "chat",
   initialState: {
-    totalUnreadChats: 0
+    totalUnreadChats: 0,
   },
   reducers: {
     setTotalUnreadChats: (state, action) => {
       state.totalUnreadChats = action.payload;
-    }}
+    },
+  },
 });
 
 export const { setTotalUnreadChats } = chatSlice.actions;

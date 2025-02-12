@@ -1,9 +1,23 @@
 import { FC } from "react";
 import { NavLink } from "react-router-dom";
-import { FaHome, FaInfoCircle, FaPhoneAlt, FaSignInAlt, FaUserPlus } from "react-icons/fa";
+import {
+  FaHome,
+  FaInfoCircle,
+  FaPhoneAlt,
+  FaSignInAlt,
+  FaUserPlus,
+} from "react-icons/fa";
 
 const UnauthenticatedHeader: FC = () => {
-  const NavItem = ({ to, icon, label }: { to: string; icon: JSX.Element; label: string }) => (
+  const NavItem = ({
+    to,
+    icon,
+    label,
+  }: {
+    to: string;
+    icon: JSX.Element;
+    label: string;
+  }) => (
     <NavLink
       to={to}
       className="relative flex flex-col items-center text-gray-300 hover:text-white transition duration-300 space-y-1"

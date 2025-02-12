@@ -1,4 +1,3 @@
-
 import React, { FC, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,7 +9,9 @@ import { FaUserCircle } from "react-icons/fa";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
 
 const AdminHeader: FC = () => {
-  const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { user, isAuthenticated } = useSelector(
+    (state: RootState) => state.auth,
+  );
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const dispatch = useDispatch();
@@ -31,7 +32,6 @@ const AdminHeader: FC = () => {
   return (
     <header className="  w-full shadow  flex items-center px-6 bg-gradient-to-r from-indigo-600 to-purple-600 ">
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-
         <Link
           to={`/user-home/${user?._id}`}
           className="text-2xl font-bold text-white hover:text-gray-200"
@@ -39,7 +39,6 @@ const AdminHeader: FC = () => {
           HireSpace
         </Link>
 
- 
         {isAuthenticated && (
           <nav className="hidden md:flex items-center space-x-6">
             <NavLink
@@ -53,9 +52,15 @@ const AdminHeader: FC = () => {
                 className="flex items-center space-x-2 focus:outline-none"
                 onClick={() => setProfileMenuOpen(!profileMenuOpen)}
               >
+                {user?.profilePhoto?.url ? (
+                  <img
+                    src={user?.profilePhoto?.url}
+                    className="w-10 h-10 rounded-full"
+                  ></img>
+                ) : (
+                  <FaUserCircle className="w-8 h-8 text-white" />
+                )}
 
-                {user?.profilePhoto?.url ? (<img src={user?.profilePhoto?.url} className="w-10 h-10 rounded-full"></img>) : (   <FaUserCircle className="w-8 h-8 text-white" />)}
-           
                 <span className="text-white">{user?.userName || "Admin"}</span>
               </button>
               {profileMenuOpen && (
@@ -79,7 +84,6 @@ const AdminHeader: FC = () => {
           </nav>
         )}
 
-
         <button
           className="md:hidden focus:outline-none"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -92,7 +96,6 @@ const AdminHeader: FC = () => {
         </button>
       </div>
 
-    
       {menuOpen && (
         <nav className="md:hidden bg-indigo-600 px-6 py-4 space-y-4">
           <NavLink
@@ -125,4 +128,3 @@ const AdminHeader: FC = () => {
 };
 
 export default AdminHeader;
-
