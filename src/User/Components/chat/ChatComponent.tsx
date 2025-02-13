@@ -226,13 +226,13 @@ const ChatComponent: React.FC = () => {
               <div className="flex items-center space-x-4">
                 {receiver.profilePhoto ? (
                   <img
-                    src={receiver.profilePhoto.url}
-                    alt={receiver.userName}
+                    src={receiver?.profilePhoto?.url}
+                    alt={receiver?.userName}
                     className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
                   />
                 ) : (
                   <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xl font-bold rounded-full">
-                    {receiver.userName[0].toUpperCase()}
+                    {receiver?.userName?.charAt(0).toUpperCase() || '?'}
                   </div>
                 )}
                 <div className="flex-1">
