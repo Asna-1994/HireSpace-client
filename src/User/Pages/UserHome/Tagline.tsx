@@ -1,6 +1,6 @@
-import { FaPen } from "react-icons/fa";
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { FaPen } from 'react-icons/fa';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 const TaglineSection = ({ user, tagline, setTagline, saveTagline }: any) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -19,7 +19,7 @@ const TaglineSection = ({ user, tagline, setTagline, saveTagline }: any) => {
       {!isEditing ? (
         <div className="flex items-center justify-center mt-2 space-x-2">
           <p className="text-lg md:text-xl">
-            {user?.tagLine || "Add a tagline to stand out!"}
+            {user?.tagLine || 'Add a tagline to stand out!'}
           </p>
           <button
             onClick={() => setIsEditing(true)}

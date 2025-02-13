@@ -1,28 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { motion } from "framer-motion";
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { motion } from 'framer-motion';
 import {
   FaBriefcase,
   FaMapMarkerAlt,
   FaMoneyBillAlt,
   FaClock,
-} from "react-icons/fa";
-import Header from "../../Components/Header/Header";
-import Footer from "../../Components/Footer/Footer";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { JobPost } from "../../../Compnay/Pages/JobPosts/AllJobPosts";
-import { userUpdate } from "../../../redux/slices/authSlice";
+} from 'react-icons/fa';
+import Header from '../../Components/Header/Header';
+import Footer from '../../Components/Footer/Footer';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { JobPost } from '../../../Compnay/Pages/JobPosts/AllJobPosts';
+import { userUpdate } from '../../../redux/slices/authSlice';
 
 const ViewAllPosts = () => {
   const { user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
   const [jobPosts, setJobPosts] = useState<JobPost[]>([]);
   const [savedJobs, setSavedJobs] = useState<JobPost[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [hasMore, setHasMore] = useState(true);
@@ -33,7 +33,7 @@ const ViewAllPosts = () => {
   useEffect(() => {
     const fetchJobPosts = async () => {
       try {
-        const response = await axiosInstance.get("/user/all-job-posts", {
+        const response = await axiosInstance.get('/user/all-job-posts', {
           params: {
             page: currentPage,
             limit,
@@ -48,7 +48,7 @@ const ViewAllPosts = () => {
           setHasMore(true);
         }
       } catch (error) {
-        console.error("Error fetching job posts:", error);
+        console.error('Error fetching job posts:', error);
       }
     };
 
@@ -56,13 +56,13 @@ const ViewAllPosts = () => {
   }, [currentPage, searchTerm]);
 
   const filteredJobPosts = jobPosts.filter((jobPost) =>
-    jobPost.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()),
+    jobPost.jobTitle.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleSaveJob = async (jobPost: JobPost) => {
     try {
       const response = await axiosInstance.patch(
-        `/user/save-job-post/${user?._id}/${jobPost._id}`,
+        `/user/save-job-post/${user?._id}/${jobPost._id}`
       );
       if (response.data.success) {
         const user = response.data.user;
@@ -152,7 +152,7 @@ const ViewAllPosts = () => {
                     <strong>Experience Level:</strong> {jobPost.experienceLevel}
                   </p>
                   <p>
-                    <strong>Application Deadline:</strong>{" "}
+                    <strong>Application Deadline:</strong>{' '}
                     {new Date(jobPost.applicationDeadline).toLocaleDateString()}
                   </p>
                 </div>
@@ -167,17 +167,17 @@ const ViewAllPosts = () => {
                   <button
                     className={`${
                       user?.savedJobs.some((job) => job === jobPost._id)
-                        ? "bg-green-500"
-                        : "bg-yellow-300"
+                        ? 'bg-green-500'
+                        : 'bg-yellow-300'
                     } text-white px-2 rounded-lg hover:bg-blue-600 transition-colors duration-300`}
                     onClick={() => handleSaveJob(jobPost)}
                     disabled={user?.savedJobs.some(
-                      (job) => job === jobPost._id,
+                      (job) => job === jobPost._id
                     )}
                   >
                     {user?.savedJobs.some((job) => job === jobPost._id)
-                      ? "Saved"
-                      : "Save"}
+                      ? 'Saved'
+                      : 'Save'}
                   </button>
                 </div>
               </motion.div>

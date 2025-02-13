@@ -1,12 +1,12 @@
-import { FC } from "react";
-import { NavLink } from "react-router-dom";
+import { FC } from 'react';
+import { NavLink } from 'react-router-dom';
 import {
   FaHome,
   FaInfoCircle,
   FaPhoneAlt,
   FaSignInAlt,
   FaUserPlus,
-} from "react-icons/fa";
+} from 'react-icons/fa';
 
 const UnauthenticatedHeader: FC = () => {
   const NavItem = ({

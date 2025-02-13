@@ -1,25 +1,25 @@
-import { Route, Routes } from "react-router-dom";
-import ProtectedRoute from "../Shared/Pages/ProtectRoute";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import CompanySignup from "../Compnay/Pages/CompanySignup/CompanySignup";
-import OtpVerificationCompany from "../Compnay/Pages/OTP/OTPVerification";
-import ForgotPasswordCompany from "../Compnay/Pages/ForgotPassword/ForgotPassword";
-import CompanyHome from "../Compnay/Pages/Home/CompanyHome";
-import CompanyLogin from "../Compnay/Pages/Login/CompanyLogin";
-import CompanyProfilePage from "../Compnay/Pages/profile/CompanyProfile";
-import EditProfile from "../Compnay/Pages/profile/EditProfile";
-import UploadLogo from "../Compnay/Pages/profile/uploadLogo";
-import UploadVerificationDocument from "../Compnay/Pages/profile/UploadVerificationDocument";
-import AddMembers from "../Compnay/Pages/profile/AddMembres";
-import CreateJobPost from "../Compnay/Pages/JobPosts/CreateJobPost";
-import CompanyJobPosts from "../Compnay/Pages/JobPosts/AllJobPosts";
-import ListApplications from "../Compnay/Pages/Applications/MyAppllications";
-import ApplicationDetails from "../Compnay/Pages/Applications/ViewDetailedApplication";
+import { Route, Routes } from 'react-router-dom';
+import ProtectedRoute from '../Shared/Pages/ProtectRoute';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import CompanySignup from '../Compnay/Pages/CompanySignup/CompanySignup';
+import OtpVerificationCompany from '../Compnay/Pages/OTP/OTPVerification';
+import ForgotPasswordCompany from '../Compnay/Pages/ForgotPassword/ForgotPassword';
+import CompanyHome from '../Compnay/Pages/Home/CompanyHome';
+import CompanyLogin from '../Compnay/Pages/Login/CompanyLogin';
+import CompanyProfilePage from '../Compnay/Pages/profile/CompanyProfile';
+import EditProfile from '../Compnay/Pages/profile/EditProfile';
+import UploadLogo from '../Compnay/Pages/profile/uploadLogo';
+import UploadVerificationDocument from '../Compnay/Pages/profile/UploadVerificationDocument';
+import AddMembers from '../Compnay/Pages/profile/AddMembres';
+import CreateJobPost from '../Compnay/Pages/JobPosts/CreateJobPost';
+import CompanyJobPosts from '../Compnay/Pages/JobPosts/AllJobPosts';
+import ListApplications from '../Compnay/Pages/Applications/MyAppllications';
+import ApplicationDetails from '../Compnay/Pages/Applications/ViewDetailedApplication';
 
 const CompanyRoutes = () => {
   const { company, user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
   return (
     <Routes>
@@ -32,7 +32,7 @@ const CompanyRoutes = () => {
           <ProtectedRoute
             isAuthenticated={isAuthenticated}
             requiredEntity="company"
-            allowedRoles={["companyMember", "companyAdmin"]}
+            allowedRoles={['companyMember', 'companyAdmin']}
             redirectPath="/"
           />
         }

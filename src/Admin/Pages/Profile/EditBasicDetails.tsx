@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { FaUpload } from "react-icons/fa";
-import Footer from "../../../User/Components/Footer/Footer";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { toast } from "react-toastify";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { validateFile } from "../../../Utils/helperFunctions/fileValidation";
-import { userUpdate } from "../../../redux/slices/authSlice";
-import CompanyHeader from "../../../Compnay/Components/Header/Header";
-import AdminHeader from "../../Components/Header/AdminHeader";
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { FaUpload } from 'react-icons/fa';
+import Footer from '../../../User/Components/Footer/Footer';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { toast } from 'react-toastify';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { validateFile } from '../../../Utils/helperFunctions/fileValidation';
+import { userUpdate } from '../../../redux/slices/authSlice';
+import CompanyHeader from '../../../Compnay/Components/Header/Header';
+import AdminHeader from '../../Components/Header/AdminHeader';
 
 const AdminProfile: React.FC = () => {
   const { user, company } = useSelector((state: RootState) => state.auth);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
-    user?.profilePhoto?.url || null,
+    user?.profilePhoto?.url || null
   );
   const dispatch = useDispatch();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -26,14 +26,14 @@ const AdminProfile: React.FC = () => {
   }>({
     userName: user?.userName,
     dateOfBirth: user?.dateOfBirth
-      ? new Date(user.dateOfBirth).toISOString().split("T")[0]
-      : "",
+      ? new Date(user.dateOfBirth).toISOString().split('T')[0]
+      : '',
     phone: user?.phone,
     address: user?.address,
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setForm((prevForm) => ({
@@ -43,7 +43,7 @@ const AdminProfile: React.FC = () => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
     const maxFileSize = 5 * 1024 * 1024;
     const file = e.target.files?.[0] || null;
 
@@ -65,37 +65,37 @@ const AdminProfile: React.FC = () => {
 
     const formData = new FormData();
 
-    formData.append("userName", form.userName || "");
-    formData.append("dateOfBirth", form.dateOfBirth || "");
-    formData.append("phone", form.phone || "");
-    formData.append("address", form.address || "");
+    formData.append('userName', form.userName || '');
+    formData.append('dateOfBirth', form.dateOfBirth || '');
+    formData.append('phone', form.phone || '');
+    formData.append('address', form.address || '');
 
     try {
       const response = await axiosInstance.patch(
         `/user/update-basic-detail/${user?._id}`,
-        formData,
+        formData
       );
       if (response.data.success) {
         const updatedUser = response.data.data.user;
-        toast.success("Updated successfully");
+        toast.success('Updated successfully');
         dispatch(userUpdate(updatedUser));
       } else {
         toast.error(response.data.message);
       }
     } catch (err: any) {
-      console.error("Error updating details:", err);
-      toast.error(err.response?.data?.message || "Something went wrong");
+      console.error('Error updating details:', err);
+      toast.error(err.response?.data?.message || 'Something went wrong');
     }
   };
 
   const handleImageUpload = async () => {
     if (!selectedFile) {
-      toast.error("Please select a photo to upload.");
+      toast.error('Please select a photo to upload.');
       return;
     }
 
     const formData = new FormData();
-    formData.append("profilePhoto", selectedFile);
+    formData.append('profilePhoto', selectedFile);
 
     try {
       const response = await axiosInstance.patch(
@@ -103,21 +103,21 @@ const AdminProfile: React.FC = () => {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
-        },
+        }
       );
 
       if (response.data.success) {
-        toast.success("Profile photo updated successfully!");
+        toast.success('Profile photo updated successfully!');
 
         const updatedUser = response.data.data.user;
         setPreviewUrl(updatedUser.profilePhoto.url);
         dispatch(userUpdate(updatedUser));
       }
     } catch (err) {
-      console.error("Error uploading photo:", err);
-      toast.error("Error uploading photo. Please try again.");
+      console.error('Error uploading photo:', err);
+      toast.error('Error uploading photo. Please try again.');
     }
   };
 
@@ -148,7 +148,7 @@ const AdminProfile: React.FC = () => {
               <input
                 type="text"
                 name="userName"
-                value={form.userName || ""}
+                value={form.userName || ''}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg p-3"
                 placeholder="Enter your name"
@@ -161,7 +161,7 @@ const AdminProfile: React.FC = () => {
               <input
                 type="date"
                 name="dateOfBirth"
-                value={form.dateOfBirth || ""}
+                value={form.dateOfBirth || ''}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border rounded-lg"
               />
@@ -173,7 +173,7 @@ const AdminProfile: React.FC = () => {
               <input
                 type="text"
                 name="phone"
-                value={form.phone || ""}
+                value={form.phone || ''}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg p-3"
                 placeholder="Enter your phone number"
@@ -185,7 +185,7 @@ const AdminProfile: React.FC = () => {
               </label>
               <textarea
                 name="address"
-                value={form.address || ""}
+                value={form.address || ''}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg p-3"
                 placeholder="Enter your address"

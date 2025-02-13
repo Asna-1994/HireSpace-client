@@ -1,12 +1,12 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
-import authReducer from "./slices/authSlice";
-import themeReducer from "./slices/themeSlice";
-import chatReducer from "./slices/chatSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import authReducer from './slices/authSlice';
+import themeReducer from './slices/themeSlice';
+import chatReducer from './slices/chatSlice';
 
 const persistConfig = {
-  key: "auth",
+  key: 'auth',
   storage,
 };
 
@@ -21,7 +21,7 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
       },
     }),
 });

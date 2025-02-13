@@ -1,13 +1,13 @@
-import { FC } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { FC } from 'react';
+import { NavLink, Link } from 'react-router-dom';
 import {
   FaHome,
   FaInfoCircle,
   FaSignInAlt,
   FaBriefcase,
   FaEnvelope,
-} from "react-icons/fa";
-import UserProfileDropdown from "../../../Shared/Components/userProfileDropdown/UserProfileDropdown";
+} from 'react-icons/fa';
+import UserProfileDropdown from '../../../Shared/Components/userProfileDropdown/UserProfileDropdown';
 
 interface AuthenticatedHeaderProps {
   user: any; // Replace with actual user type

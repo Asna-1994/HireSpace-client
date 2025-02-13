@@ -1,14 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
-import { connectSocket, socket } from "../../../services/socket";
-import { Message } from "../../../Utils/Interfaces/interface";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import Header from "../Header/Header";
-import { AiOutlineCheckCircle } from "react-icons/ai";
-import { IoSendSharp } from "react-icons/io5";
-import { BsCameraVideo } from "react-icons/bs";
-import VideoCall from "./VideoCall";
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+import { connectSocket, socket } from '../../../services/socket';
+import { Message } from '../../../Utils/Interfaces/interface';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import Header from '../Header/Header';
+import { AiOutlineCheckCircle } from 'react-icons/ai';
+import { IoSendSharp } from 'react-icons/io5';
+import { BsCameraVideo } from 'react-icons/bs';
+import VideoCall from './VideoCall';
 const ChatComponent: React.FC = () => {
   const location = useLocation();
   const { receiver } = location.state || {};
@@ -19,20 +19,20 @@ const ChatComponent: React.FC = () => {
     receiverName: string;
   }>();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState("");
+  const [newMessage, setNewMessage] = useState('');
   const [typing, setTyping] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
 
-  const [callerName, setCallerName] = useState("");
+  const [callerName, setCallerName] = useState('');
   const [incomingCall, setIncomingCall] = useState(false);
-  const [callerId, setCallerId] = useState("");
+  const [callerId, setCallerId] = useState('');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [isCaller, setIsCaller] = useState(false);
 
   const [isVideoCallActive, setIsVideoCallActive] = useState(false);
 
   const handleAcceptCall = () => {
-    socket.emit("acceptCall", {
+    socket.emit('acceptCall', {
       roomId,
       callerId,
       receiverId: user?._id,
@@ -44,7 +44,7 @@ const ChatComponent: React.FC = () => {
   };
 
   const handleRejectCall = () => {
-    socket.emit("rejectCall", {
+    socket.emit('rejectCall', {
       roomId,
       callerId,
       receiverId: user?._id,
@@ -59,115 +59,115 @@ const ChatComponent: React.FC = () => {
       }
 
       if (socket && user?._id) {
-        socket.emit("registerUser", user._id);
+        socket.emit('registerUser', user._id);
       }
 
-      socket.emit("joinChat", { senderId: user?._id, receiverId });
+      socket.emit('joinChat', { senderId: user?._id, receiverId });
 
       const unreadMessages = messages.filter(
-        (msg) => msg.status !== "read" && msg.senderId !== user?._id,
+        (msg) => msg.status !== 'read' && msg.senderId !== user?._id
       );
       unreadMessages.forEach((message) => {
-        socket.emit("readMessage", { messageId: message._id, roomId });
+        socket.emit('readMessage', { messageId: message._id, roomId });
       });
 
-      socket.on("chatHistory", ({ roomId: joinedRoomId, chatHistory }) => {
+      socket.on('chatHistory', ({ roomId: joinedRoomId, chatHistory }) => {
         if (joinedRoomId === roomId) {
           setMessages(chatHistory);
           scrollToBottom();
 
-          console.log("chat history", chatHistory);
+          console.log('chat history', chatHistory);
           chatHistory.forEach((message: Message) => {
-            if (message.status !== "read" && message.senderId !== user?._id) {
-              socket.emit("readMessage", { messageId: message._id, roomId });
+            if (message.status !== 'read' && message.senderId !== user?._id) {
+              socket.emit('readMessage', { messageId: message._id, roomId });
             }
           });
         }
       });
 
-      socket.on("message", (message: Message) => {
+      socket.on('message', (message: Message) => {
         setMessages((prev) => [...prev, message]);
         scrollToBottom();
 
         if (message.senderId !== user?._id) {
-          socket.emit("readMessage", { messageId: message._id, roomId });
+          socket.emit('readMessage', { messageId: message._id, roomId });
         }
       });
 
-      socket.on("messageRead", ({ messageId }) => {
+      socket.on('messageRead', ({ messageId }) => {
         setMessages((prev) =>
           prev.map((msg) =>
-            msg._id === messageId ? { ...msg, status: "read" } : msg,
-          ),
+            msg._id === messageId ? { ...msg, status: 'read' } : msg
+          )
         );
       });
 
-      socket.on("incomingCall", (data) => {
-        console.log("Incoming call received:", data);
+      socket.on('incomingCall', (data) => {
+        console.log('Incoming call received:', data);
         setIncomingCall(true);
         setCallerId(data.callerId);
         setCallerName(data.callerName);
       });
 
-      socket.on("callAccepted", ({ receiverId, answer }) => {
-        console.log("Call accepted by:", receiverId);
+      socket.on('callAccepted', ({ receiverId, answer }) => {
+        console.log('Call accepted by:', receiverId);
         if (user?._id !== receiverId) {
           setIsVideoCallActive(true);
         }
       });
 
-      socket.on("callRejected", ({ receiverId }) => {
-        console.log("call rejected by ", receiverId);
+      socket.on('callRejected', ({ receiverId }) => {
+        console.log('call rejected by ', receiverId);
         setIsVideoCallActive(false);
         setIsCaller(false);
       });
 
-      socket.on("callEnded", () => {
+      socket.on('callEnded', () => {
         setIsVideoCallActive(false);
         setIsCaller(false);
         setIncomingCall(false);
       });
 
       return () => {
-        socket.off("chatHistory");
-        socket.off("message");
-        socket.off("messageRead");
-        socket.off("incomingCall");
-        socket.off("callAccepted");
-        socket.off("callRejected");
-        socket.off("callEnded");
+        socket.off('chatHistory');
+        socket.off('message');
+        socket.off('messageRead');
+        socket.off('incomingCall');
+        socket.off('callAccepted');
+        socket.off('callRejected');
+        socket.off('callEnded');
       };
     }
   }, [roomId, user?._id]);
 
   const sendMessage = () => {
-    if (newMessage.trim() !== "") {
+    if (newMessage.trim() !== '') {
       const message: Message = {
-        roomId: roomId || "",
-        senderId: user?._id || "",
-        receiverId: receiverId || "",
+        roomId: roomId || '',
+        senderId: user?._id || '',
+        receiverId: receiverId || '',
         content: newMessage,
         createdAt: new Date(),
         updatedAt: new Date(),
-        status: "sent",
+        status: 'sent',
       };
 
-      setNewMessage("");
+      setNewMessage('');
 
-      socket.emit("message", message, (error: any) => {
+      socket.emit('message', message, (error: any) => {
         if (error) {
-          console.error("Error sending message:", error);
+          console.error('Error sending message:', error);
         }
       });
     }
   };
 
   const handleTyping = () => {
-    socket.emit("typing", { roomId, userId: user?._id });
+    socket.emit('typing', { roomId, userId: user?._id });
   };
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const formatMessageDate = (date: Date) => {
@@ -177,16 +177,16 @@ const ChatComponent: React.FC = () => {
     yesterday.setDate(yesterday.getDate() - 1);
 
     if (messageDate.toDateString() === today.toDateString()) {
-      return "Today";
+      return 'Today';
     } else if (messageDate.toDateString() === yesterday.toDateString()) {
-      return "Yesterday";
+      return 'Yesterday';
     } else {
-      return messageDate.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
+      return messageDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
         year:
           messageDate.getFullYear() !== today.getFullYear()
-            ? "numeric"
+            ? 'numeric'
             : undefined,
       });
     }
@@ -204,7 +204,7 @@ const ChatComponent: React.FC = () => {
     return groups;
   };
   const handleInitiateCall = () => {
-    socket.emit("initiateVideoCall", {
+    socket.emit('initiateVideoCall', {
       roomId,
       callerId: user?._id,
       callerName: user?.userName,
@@ -266,10 +266,10 @@ const ChatComponent: React.FC = () => {
                       {dateMessages.map((message, index) => (
                         <div
                           key={index}
-                          className={`flex ${message.senderId === user?._id ? "justify-end" : "justify-start"}`}
+                          className={`flex ${message.senderId === user?._id ? 'justify-end' : 'justify-start'}`}
                         >
                           <div
-                            className={`flex flex-col ${message.senderId === user?._id ? "items-end" : "items-start"}`}
+                            className={`flex flex-col ${message.senderId === user?._id ? 'items-end' : 'items-start'}`}
                           >
                             <div className="flex items-end gap-2 group">
                               {/* {message.senderId !== user?._id && (
@@ -278,8 +278,8 @@ const ChatComponent: React.FC = () => {
                               <div
                                 className={`relative px-4 py-2 rounded-2xl max-w-md break-words ${
                                   message.senderId === user?._id
-                                    ? "bg-blue-500 text-white rounded-br-none"
-                                    : "bg-gray-200 text-gray-800 rounded-bl-none"
+                                    ? 'bg-blue-500 text-white rounded-br-none'
+                                    : 'bg-gray-200 text-gray-800 rounded-bl-none'
                                 }`}
                               >
                                 {message.content}
@@ -289,9 +289,9 @@ const ChatComponent: React.FC = () => {
                                   <AiOutlineCheckCircle
                                     size={16}
                                     className={`transition-all duration-200 ${
-                                      message.status === "read"
-                                        ? "text-blue-500"
-                                        : "text-gray-400"
+                                      message.status === 'read'
+                                        ? 'text-blue-500'
+                                        : 'text-gray-400'
                                     }`}
                                   />
                                 </div>
@@ -301,17 +301,17 @@ const ChatComponent: React.FC = () => {
                               {new Date(message.createdAt).toLocaleTimeString(
                                 [],
                                 {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
+                                  hour: '2-digit',
+                                  minute: '2-digit',
                                   hour12: true,
-                                },
+                                }
                               )}
                             </span>
                           </div>
                         </div>
                       ))}
                     </div>
-                  ),
+                  )
                 )}
                 {typing && (
                   <div className="flex justify-start">
@@ -338,7 +338,7 @@ const ChatComponent: React.FC = () => {
                     setNewMessage(e.target.value);
                     handleTyping();
                   }}
-                  onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                   placeholder="Type your message..."
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
@@ -382,7 +382,7 @@ const ChatComponent: React.FC = () => {
 
       {isVideoCallActive && (
         <VideoCall
-          roomId={roomId || ""}
+          roomId={roomId || ''}
           receiverId={receiver._id}
           receiverName={receiver.userName}
           callerId={isCaller ? user?._id : receiver._id}
@@ -390,7 +390,7 @@ const ChatComponent: React.FC = () => {
           onEndCall={() => {
             setIsVideoCallActive(false);
             setIsCaller(false);
-            socket.emit("endCall", {
+            socket.emit('endCall', {
               roomId,
               callerId: isCaller ? user?._id : receiver._id,
               receiverId: receiver._id,

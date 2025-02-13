@@ -1,7 +1,7 @@
-import React from "react";
-import Header from "../../Components/Header/Header";
-import Footer from "../../Components/Footer/Footer";
-import { Link } from "react-router-dom";
+import React from 'react';
+import Header from '../../Components/Header/Header';
+import Footer from '../../Components/Footer/Footer';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   return (
@@ -20,19 +20,19 @@ const Home = () => {
           </p>
           <div className="flex gap-4 items-center justify-center">
             <Link
-              to={"/user/login"}
+              to={'/user/login'}
               className="bg-white text-blue-600 px-6 py-3 rounded-lg text-lg font-semibold shadow-lg hover:bg-gray-200 transition duration-300"
             >
               For Users
             </Link>
             <Link
-              to={"/company/login"}
+              to={'/company/login'}
               className="bg-blue-800 text-white px-6 py-3 rounded-lg text-lg font-semibold shadow-lg hover:bg-gray-200 transition duration-300"
             >
               For Companies
             </Link>
             <Link
-              to={"/admin/login"}
+              to={'/admin/login'}
               className="bg-white text-blue-600 px-6 py-3 rounded-lg text-lg font-semibold shadow-lg hover:bg-gray-200 transition duration-300"
             >
               For Admins

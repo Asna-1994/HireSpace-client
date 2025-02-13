@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import AdminHeader from "../../Components/Header/AdminHeader";
-import SideBar from "../../Components/SideBar/SideBar";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import Footer from "../../../User/Components/Footer/Footer";
+import React, { useState, useEffect } from 'react';
+import AdminHeader from '../../Components/Header/AdminHeader';
+import SideBar from '../../Components/SideBar/SideBar';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import Footer from '../../../User/Components/Footer/Footer';
 import {
   LineChart,
   Line,
@@ -18,7 +18,7 @@ import {
   PieChart,
   Pie,
   Cell,
-} from "recharts";
+} from 'recharts';
 import {
   FiTrendingUp,
   FiTrendingDown,
@@ -27,10 +27,10 @@ import {
   FiAward,
   FiAlertTriangle,
   FiFileText,
-} from "react-icons/fi";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { toast } from "react-toastify";
-import StatsCard from "./StateCard";
+} from 'react-icons/fi';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { toast } from 'react-toastify';
+import StatsCard from './StateCard';
 
 interface DashboardStats {
   totalUsers: number;
@@ -70,10 +70,10 @@ const AdminHome = () => {
   const [startDate, setStartDate] = useState(() => {
     const date = new Date();
     date.setMonth(date.getMonth() - 6);
-    return date.toISOString().split("T")[0];
+    return date.toISOString().split('T')[0];
   });
   const [endDate, setEndDate] = useState(
-    () => new Date().toISOString().split("T")[0],
+    () => new Date().toISOString().split('T')[0]
   );
   const [stats, setStats] = useState<DashboardStats>({
     totalUsers: 0,
@@ -95,12 +95,12 @@ const AdminHome = () => {
     jobCategories: [],
   });
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
   useEffect(() => {
     if (new Date(endDate) < new Date(startDate)) {
-      toast.error("End date cannot be before start date");
-      setEndDate(new Date().toISOString().split("T")[0]);
+      toast.error('End date cannot be before start date');
+      setEndDate(new Date().toISOString().split('T')[0]);
     }
 
     const fetchDashboardStats = async () => {
@@ -113,7 +113,7 @@ const AdminHome = () => {
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
 
-        const response = await axiosInstance.get("/admin/dashboard-stats", {
+        const response = await axiosInstance.get('/admin/dashboard-stats', {
           params: {
             startDate: start.toISOString(),
             endDate: end.toISOString(),
@@ -124,7 +124,7 @@ const AdminHome = () => {
         }
         console.log(response.data.stats);
       } catch (error) {
-        toast.error("Failed to fetch dashboard statistics");
+        toast.error('Failed to fetch dashboard statistics');
       } finally {
         setIsLoading(false);
       }

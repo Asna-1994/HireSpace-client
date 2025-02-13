@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { JobPost } from "../../../Compnay/Pages/JobPosts/AllJobPosts";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import Header from "../../Components/Header/Header";
-import Footer from "../../Components/Footer/Footer";
-import { FaBriefcase, FaExclamationTriangle } from "react-icons/fa";
-import ApplyModal from "./ApplyModal";
-import ReportSpamModal from "../../../Shared/CompanyProfileUtilities/companyProfileUtilities";
+import React, { useEffect, useState } from 'react';
+import { JobPost } from '../../../Compnay/Pages/JobPosts/AllJobPosts';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import Header from '../../Components/Header/Header';
+import Footer from '../../Components/Footer/Footer';
+import { FaBriefcase, FaExclamationTriangle } from 'react-icons/fa';
+import ApplyModal from './ApplyModal';
+import ReportSpamModal from '../../../Shared/CompanyProfileUtilities/companyProfileUtilities';
 
 const ViewJobDetails: React.FC = () => {
   const { company, user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -30,13 +30,13 @@ const ViewJobDetails: React.FC = () => {
   // Prevent background scroll when a modal is open
   useEffect(() => {
     if (isModalOpen || isReportModalOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     }
 
     return () => {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     };
   }, [isModalOpen, isReportModalOpen]);
 
@@ -125,14 +125,14 @@ const ViewJobDetails: React.FC = () => {
                 </h2>
                 <div className="mt-2 text-gray-600 text-sm sm:text-base space-y-2">
                   <p>
-                    <strong>Location:</strong> {jobPost.location.city},{" "}
+                    <strong>Location:</strong> {jobPost.location.city},{' '}
                     {jobPost.location.state}, {jobPost.location.country}
                   </p>
                   <p>
                     <strong>Work Mode:</strong> {jobPost.workMode}
                   </p>
                   <p>
-                    <strong>Salary:</strong> {jobPost.salaryRange.currency}{" "}
+                    <strong>Salary:</strong> {jobPost.salaryRange.currency}{' '}
                     {jobPost.salaryRange.min} - {jobPost.salaryRange.max}
                   </p>
                   <p>
@@ -142,19 +142,19 @@ const ViewJobDetails: React.FC = () => {
                     <strong>Experience Level:</strong> {jobPost.experienceLevel}
                   </p>
                   <p>
-                    <strong>Education Required:</strong>{" "}
+                    <strong>Education Required:</strong>{' '}
                     {jobPost.educationRequired}
                   </p>
                   <p>
-                    <strong>Application Deadline:</strong>{" "}
+                    <strong>Application Deadline:</strong>{' '}
                     {new Date(jobPost.applicationDeadline).toLocaleDateString()}
                   </p>
                   <p>
-                    <strong>Employment Start Date:</strong>{" "}
+                    <strong>Employment Start Date:</strong>{' '}
                     {new Date(jobPost.employmentStartDate).toLocaleDateString()}
                   </p>
                   <p>
-                    <strong>Number of Vacancies:</strong>{" "}
+                    <strong>Number of Vacancies:</strong>{' '}
                     {jobPost.numberOfVacancies}
                   </p>
                   <p>

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import Modal from "react-modal";
-import { toast } from "react-toastify";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import AdminHeader from "../../Components/Header/AdminHeader";
-import SideBar from "../../Components/SideBar/SideBar";
-import { User } from "../../../Utils/Interfaces/interface";
-import Footer from "../../../User/Components/Footer/Footer";
+import React, { useEffect, useState } from 'react';
+import Modal from 'react-modal';
+import { toast } from 'react-toastify';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import AdminHeader from '../../Components/Header/AdminHeader';
+import SideBar from '../../Components/SideBar/SideBar';
+import { User } from '../../../Utils/Interfaces/interface';
+import Footer from '../../../User/Components/Footer/Footer';
 
-Modal.setAppElement("#root");
+Modal.setAppElement('#root');
 
 export interface Spam {
   reportedByUser: {
@@ -37,12 +37,12 @@ const SpamList = () => {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(8);
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
-    null,
+    null
   );
-  const [selectedAction, setSelectedAction] = useState<string>("");
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedAction, setSelectedAction] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const fetchSpams = async (query = "") => {
+  const fetchSpams = async (query = '') => {
     console.log(query);
     try {
       const response = await axiosInstance.get(`/admin/spam-reports`, {
@@ -58,7 +58,7 @@ const SpamList = () => {
       setTotalPages(totalPages);
       setPage(currentPage);
     } catch (err: any) {
-      toast.error("Failed to fetch spam reports.");
+      toast.error('Failed to fetch spam reports.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -75,14 +75,12 @@ const SpamList = () => {
 
     try {
       const response = await axiosInstance.patch(
-        `/admin/block-or-unblock-company/${selectedCompanyId}/${selectedAction}`,
+        `/admin/block-or-unblock-company/${selectedCompanyId}/${selectedAction}`
       );
 
       if (response.status === 200) {
         toast.success(
-          `Successfully ${
-            selectedAction === "block" ? "blocked" : "unblocked"
-          }`,
+          `Successfully ${selectedAction === 'block' ? 'blocked' : 'unblocked'}`
         );
         fetchSpams();
       }
@@ -90,12 +88,12 @@ const SpamList = () => {
       console.error(error.response?.data?.message);
       toast.error(
         error.response?.data?.message ||
-          "An error occurred while blocking the user",
+          'An error occurred while blocking the user'
       );
     } finally {
       setModalIsOpen(false);
       setSelectedCompanyId(null);
-      setSelectedAction("");
+      setSelectedAction('');
     }
   };
 
@@ -108,7 +106,7 @@ const SpamList = () => {
   const closeModal = () => {
     setModalIsOpen(false);
     setSelectedCompanyId(null);
-    setSelectedAction("");
+    setSelectedAction('');
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,8 +135,8 @@ const SpamList = () => {
       >
         <h2 className="text-lg font-bold mb-4">Confirm Action</h2>
         <p>
-          Are you sure you want to{" "}
-          {selectedAction === "block" ? "block" : "unblock"} this company?
+          Are you sure you want to{' '}
+          {selectedAction === 'block' ? 'block' : 'unblock'} this company?
         </p>
         <div className="mt-4 flex justify-end space-x-4">
           <button
@@ -151,7 +149,7 @@ const SpamList = () => {
             onClick={handleAction}
             className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
           >
-            {selectedAction === "block" ? "Block" : "Unblock"}
+            {selectedAction === 'block' ? 'Block' : 'Unblock'}
           </button>
         </div>
       </Modal>
@@ -191,44 +189,44 @@ const SpamList = () => {
               {spams.map((spam, index) => (
                 <tr key={spam._id} className="border-b">
                   <td className="px-4 py-2">
-                    {" "}
+                    {' '}
                     {(page - 1) * limit + index + 1}
-                  </td>{" "}
+                  </td>{' '}
                   {/* Serial number */}
                   <td className="px-4 py-2">
-                    {" "}
+                    {' '}
                     <div className="flex flex-col">
                       <span> {spam.reportedByUser.userName}</span>
                       <span> {spam.reportedByUser.email}</span>
                       <span> {spam.reportedByUser.phone}</span>
-                    </div>{" "}
+                    </div>{' '}
                   </td>
                   <td className="px-4 py-2">
-                    {" "}
+                    {' '}
                     <div className="flex flex-col">
                       <span> {spam.companyId.companyName}</span>
                       <span> {spam.companyId.email}</span>
                       <span> {spam.companyId.phone}</span>
-                    </div>{" "}
+                    </div>{' '}
                   </td>
                   <td className="px-4 py-2">{spam.reason}</td>
                   <td className="px-4 py-2">{spam.description}</td>
                   <td className="px-4 py-2">
                     {spam.createdAt
                       ? new Date(spam.createdAt).toLocaleDateString()
-                      : "N/A"}
+                      : 'N/A'}
                   </td>
                   <td className="px-4 py-2">
                     <button
                       onClick={() =>
                         openModal(
                           spam.companyId._id,
-                          spam.companyId.isBlocked ? "unblock" : "block",
+                          spam.companyId.isBlocked ? 'unblock' : 'block'
                         )
                       }
                       className="text-white text-sm w-20 hover:underline border bg-blue-700 px-3 py-1 rounded-md"
                     >
-                      {spam.companyId.isBlocked ? "Unblock" : "Block"}
+                      {spam.companyId.isBlocked ? 'Unblock' : 'Block'}
                     </button>
                   </td>
                 </tr>

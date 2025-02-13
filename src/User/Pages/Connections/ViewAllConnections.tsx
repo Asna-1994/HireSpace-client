@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react";
-import Header from "../../Components/Header/Header";
-import Footer from "../../Components/Footer/Footer";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { toast } from "react-toastify";
-import { FaUser, FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { generateRoomId } from "../../../Utils/helperFunctions/companyName";
-import { User } from "../../../Utils/Interfaces/interface";
-import { Connections } from "./UserConnections";
+import React, { useEffect, useState } from 'react';
+import Header from '../../Components/Header/Header';
+import Footer from '../../Components/Footer/Footer';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { toast } from 'react-toastify';
+import { FaUser, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { generateRoomId } from '../../../Utils/helperFunctions/companyName';
+import { User } from '../../../Utils/Interfaces/interface';
+import { Connections } from './UserConnections';
 
 const AllConnections = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [searchResult, setSearchResult] = useState<User[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const [recommendations, setRecommendations] = useState<Connections[]>([]);
   const [recommendationsPage, setRecommendationsPage] = useState(1);
@@ -28,14 +28,14 @@ const AllConnections = () => {
   const fetchRecommendations = async (page: number) => {
     try {
       const response = await axiosInstance.get(
-        `/connection-request/recommendations/${user?._id}?page=${page}&limit=${limit}`,
+        `/connection-request/recommendations/${user?._id}?page=${page}&limit=${limit}`
       );
       if (response.data.success) {
         const connectedUserIds = new Set(user?.connections);
         const filteredRecommendations =
           response.data.data.recommendations.filter(
             (recommendation: Connections) =>
-              !connectedUserIds.has(recommendation._id),
+              !connectedUserIds.has(recommendation._id)
           );
         setRecommendations(filteredRecommendations);
         setRecommendationsTotalPages(response.data.data.totalPages);
@@ -44,7 +44,7 @@ const AllConnections = () => {
       }
     } catch (error: any) {
       toast.error(
-        error?.response?.data?.message || "Failed to fetch recommendations",
+        error?.response?.data?.message || 'Failed to fetch recommendations'
       );
     }
   };
@@ -54,17 +54,17 @@ const AllConnections = () => {
     setLoading(true);
     try {
       const response = await axiosInstance.get(`/admin/all-users`, {
-        params: { search: query, page, limit, role: "jobSeeker" },
+        params: { search: query, page, limit, role: 'jobSeeker' },
       });
       if (response.data.success) {
         setSearchResult(response.data.data.users);
-        console.log("user search result", response.data.data.users);
+        console.log('user search result', response.data.data.users);
         setSearchTotalPages(response.data.data.totalPages);
       } else {
         setSearchResult([]);
       }
     } catch (error: any) {
-      toast.error("Failed to fetch users.");
+      toast.error('Failed to fetch users.');
     } finally {
       setLoading(false);
     }
@@ -73,7 +73,7 @@ const AllConnections = () => {
   // Handle Connect Request
   const handleSendRequestForConnection = async (
     sender: string,
-    receiver: string,
+    receiver: string
   ) => {
     try {
       const response = await axiosInstance.post(`/connection-request`, {
@@ -81,13 +81,13 @@ const AllConnections = () => {
         toUser: receiver,
       });
       if (response.data.success) {
-        toast.success("Request has been sent");
+        toast.success('Request has been sent');
       } else {
         toast.error(response.data.message);
       }
     } catch (error: any) {
       toast.error(
-        error?.response?.data?.message || "Failed to send connection request",
+        error?.response?.data?.message || 'Failed to send connection request'
       );
     }
   };
@@ -167,7 +167,7 @@ const AllConnections = () => {
                           onClick={() =>
                             handleSendRequestForConnection(
                               user?._id as string,
-                              recommendation._id,
+                              recommendation._id
                             )
                           }
                           className="mt-2 sm:mt-0 bg-blue-500 text-white px-4 py-2 rounded-full text-sm hover:bg-blue-600 transition duration-300"
@@ -258,7 +258,7 @@ const AllConnections = () => {
                             onClick={() =>
                               handleSendRequestForConnection(
                                 user?._id as string,
-                                result._id,
+                                result._id
                               )
                             }
                             className="mt-2 sm:mt-0 bg-blue-500 text-white px-4 py-2 rounded-full text-sm hover:bg-blue-600"

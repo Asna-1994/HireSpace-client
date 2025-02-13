@@ -41,8 +41,8 @@ export interface User {
   address?: string;
   dateOfBirth?: Date;
   tagLine?: string;
-  entity: "company" | "user";
-  userRole: "jobSeeker" | "companyAdmin" | "companyMember" | "admin";
+  entity: 'company' | 'user';
+  userRole: 'jobSeeker' | 'companyAdmin' | 'companyMember' | 'admin';
   password?: string;
   _id: string;
   profilePhoto?: ImageObject;
@@ -73,12 +73,12 @@ export interface Company {
   phone?: string;
   address?: string;
   establishedDate?: Date;
-  entity: "company" | "user";
+  entity: 'company' | 'user';
   industry: string;
   companyLogo: ImageObject;
   password?: string;
   _id: string;
-  appPlan: "basic" | "premium";
+  appPlan: 'basic' | 'premium';
   isBlocked: boolean;
   verificationDocument: ImageObject;
   documentNumber: string;
@@ -97,8 +97,8 @@ export interface TempUser {
   phone?: string;
   address?: string;
   dateOfBirth?: Date;
-  entity: "company" | "user";
-  userRole: "jobSeeker" | "companyAdmin" | "companyMember" | "admin";
+  entity: 'company' | 'user';
+  userRole: 'jobSeeker' | 'companyAdmin' | 'companyMember' | 'admin';
   password?: string;
   _id: string;
   otp: string;
@@ -112,7 +112,7 @@ export interface TempCompany {
   phone?: string;
   address?: string;
   establishedDate?: Date;
-  entity: "company" | "user";
+  entity: 'company' | 'user';
   industry: string;
   password?: string;
   _id: string;
@@ -129,7 +129,7 @@ export interface Message {
   receiverId: string;
   content: string;
   roomId: string;
-  status?: "sent" | "delivered" | "read";
+  status?: 'sent' | 'delivered' | 'read';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -138,7 +138,7 @@ export interface Plans {
   _id?: string;
   planType: string;
   price: number;
-  userType: "user" | "company";
+  userType: 'user' | 'company';
   durationInDays: number;
   features: string[];
   isDeleted: boolean;

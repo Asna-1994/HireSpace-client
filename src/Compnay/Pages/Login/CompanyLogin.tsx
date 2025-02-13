@@ -1,11 +1,11 @@
-import React, { useRef } from "react";
-import Header from "../../Components/Header/Header";
-import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { useDispatch } from "react-redux";
-import { companyLogin } from "../../../redux/slices/authSlice";
-import CompanyHeader from "../../Components/Header/Header";
+import React, { useRef } from 'react';
+import Header from '../../Components/Header/Header';
+import { toast } from 'react-toastify';
+import { Link, useNavigate } from 'react-router-dom';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { useDispatch } from 'react-redux';
+import { companyLogin } from '../../../redux/slices/authSlice';
+import CompanyHeader from '../../Components/Header/Header';
 
 const CompanyLogin = () => {
   const emailRef = useRef<HTMLInputElement | null>(null);
@@ -20,12 +20,12 @@ const CompanyLogin = () => {
     const password = passwordRef.current?.value;
 
     if (!email || !password) {
-      toast.error("Please enter both email and password.");
+      toast.error('Please enter both email and password.');
       return;
     }
 
     try {
-      const response = await axiosInstance.post("/company/login", {
+      const response = await axiosInstance.post('/company/login', {
         email,
         password,
       });
@@ -35,7 +35,7 @@ const CompanyLogin = () => {
         toast.success(response.data.message);
         console.log();
         dispatch(companyLogin({ company, token, user }));
-        console.log("User details:", company);
+        console.log('User details:', company);
         navigate(`/company/home/${company._id}`);
       } else {
         toast.error(response.data.message);
@@ -44,9 +44,9 @@ const CompanyLogin = () => {
       //   const errorMessage = error.response?.data?.error || "Something went wrong";
       //   toast.error(errorMessage);
       const errorMessage =
-        error.response?.data?.message || "Something went wrong";
+        error.response?.data?.message || 'Something went wrong';
       toast.error(errorMessage);
-      console.error("Login error:", error);
+      console.error('Login error:', error);
     }
   };
 
@@ -98,7 +98,7 @@ const CompanyLogin = () => {
             </Link>
           </div>
           <p className="mt-6 text-center text-gray-200">
-            New Company?{" "}
+            New Company?{' '}
             <Link
               to="/company/signin"
               className="text-white font-medium hover:underline"

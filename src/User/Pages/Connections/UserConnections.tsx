@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import Header from "../../Components/Header/Header";
-import Footer from "../../Components/Footer/Footer";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from 'react';
+import Header from '../../Components/Header/Header';
+import Footer from '../../Components/Footer/Footer';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { toast } from 'react-toastify';
 import {
   FaUser,
   FaChevronLeft,
   FaChevronRight,
   FaUserPlus,
   FaUserFriends,
-} from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
-import { generateRoomId } from "../../../Utils/helperFunctions/companyName";
+} from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import { generateRoomId } from '../../../Utils/helperFunctions/companyName';
 
 export interface ConnectionRequest {
   _id: string;
@@ -26,7 +26,7 @@ export interface ConnectionRequest {
       publicId: string;
     };
   };
-  status: "pending" | "rejected" | "accepted";
+  status: 'pending' | 'rejected' | 'accepted';
 }
 
 export interface Connections {
@@ -43,7 +43,7 @@ export interface Connections {
 const Connections = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [pendingRequests, setPendingRequests] = useState<ConnectionRequest[]>(
-    [],
+    []
   );
   const [pendingTotalPages, setPendingTotalPages] = useState(1);
   const [pendingPage, setPendingPage] = useState(1);
@@ -51,9 +51,9 @@ const Connections = () => {
   const [connectionsTotalPages, setConnectionsTotalPages] = useState(1);
   const [connectionsPage, setConnectionsPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   // Fetch Pending Requests
   const fetchPendingRequests = async (page: number) => {
@@ -66,13 +66,13 @@ const Connections = () => {
             page,
             limit,
           },
-        },
+        }
       );
       if (response.data.success) {
         const requests = response.data.data.pendingRequests.map(
-          (request: any) => request._doc || request,
+          (request: any) => request._doc || request
         );
-        console.log("request", requests);
+        console.log('request', requests);
         setPendingRequests(requests);
         setPendingTotalPages(response.data.data.totalPages);
       } else {
@@ -102,7 +102,7 @@ const Connections = () => {
         `/connection-request/user/all-connections/${user?._id}`,
         {
           params: { page, limit, search },
-        },
+        }
       );
       if (response.data.success) {
         setConnections(response.data.data.connections);
@@ -113,7 +113,7 @@ const Connections = () => {
     } catch (error: any) {
       toast.error(
         error.response?.data?.message ||
-          "An error occurred while fetching connections",
+          'An error occurred while fetching connections'
       );
     } finally {
       setLoading(false);
@@ -134,7 +134,7 @@ const Connections = () => {
   const handleRequest = async (requestId: string, action: string) => {
     try {
       const response = await axiosInstance.put(
-        `/connection-request/${requestId}/${action}`,
+        `/connection-request/${requestId}/${action}`
       );
       if (response.data.success) {
         fetchPendingRequests(pendingPage);
@@ -156,14 +156,14 @@ const Connections = () => {
   const renderPaginationControls = (
     currentPage: number,
     totalPages: number,
-    setPage: React.Dispatch<React.SetStateAction<number>>,
+    setPage: React.Dispatch<React.SetStateAction<number>>
   ) => (
     <div className="flex justify-center items-center mt-4">
       <button
         onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
         disabled={currentPage === 1}
         className={`p-2 rounded-full ${
-          currentPage === 1 ? "bg-gray-300" : "bg-blue-500 text-white"
+          currentPage === 1 ? 'bg-gray-300' : 'bg-blue-500 text-white'
         } transition duration-300`}
       >
         <FaChevronLeft />
@@ -175,7 +175,7 @@ const Connections = () => {
         onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
         disabled={currentPage === totalPages}
         className={`p-2 rounded-full ${
-          currentPage === totalPages ? "bg-gray-300" : "bg-blue-500 text-white"
+          currentPage === totalPages ? 'bg-gray-300' : 'bg-blue-500 text-white'
         } transition duration-300`}
       >
         <FaChevronRight />
@@ -254,13 +254,13 @@ const Connections = () => {
                           </div>
                           <div className="flex gap-2 mt-2 sm:mt-0">
                             <button
-                              onClick={() => handleRequest(req._id, "accept")}
+                              onClick={() => handleRequest(req._id, 'accept')}
                               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                             >
                               Accept
                             </button>
                             <button
-                              onClick={() => handleRequest(req._id, "reject")}
+                              onClick={() => handleRequest(req._id, 'reject')}
                               className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
                             >
                               Decline
@@ -284,7 +284,7 @@ const Connections = () => {
                     {renderPaginationControls(
                       pendingPage,
                       pendingTotalPages,
-                      setPendingPage,
+                      setPendingPage
                     )}
                   </div>
                 )}
@@ -365,7 +365,7 @@ const Connections = () => {
                     {renderPaginationControls(
                       connectionsPage,
                       connectionsTotalPages,
-                      setConnectionsPage,
+                      setConnectionsPage
                     )}
                   </div>
                 )}

@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { RootState } from "../../../redux/store";
-import NotAuthenticated from "../../../Shared/Pages/NotAuthenticated";
-import Footer from "../../../User/Components/Footer/Footer";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { HiOutlineEye } from "react-icons/hi";
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { RootState } from '../../../redux/store';
+import NotAuthenticated from '../../../Shared/Pages/NotAuthenticated';
+import Footer from '../../../User/Components/Footer/Footer';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { HiOutlineEye } from 'react-icons/hi';
 import {
   FaBriefcase,
   FaClock,
   FaMapMarkerAlt,
   FaMoneyBillWave,
-} from "react-icons/fa";
-import { motion } from "framer-motion";
-import Header from "../../Components/Header/Header";
+} from 'react-icons/fa';
+import { motion } from 'framer-motion';
+import Header from '../../Components/Header/Header';
 
 export interface SalaryRange {
   min: string;
@@ -68,11 +68,11 @@ export interface JobPost {
 
 const SavedJobPosts = () => {
   const { company, user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
   const [jobPosts, setJobPosts] = useState<JobPost[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [hasMore, setHasMore] = useState(true);
@@ -82,7 +82,7 @@ const SavedJobPosts = () => {
       try {
         const response = await axiosInstance.get(
           `/user/all-saved-job-posts/${user?._id}`,
-          { params: { page, limit } },
+          { params: { page, limit } }
         );
         console.log(response.data);
         let jobPosts = response.data.allSavedJobs;
@@ -94,7 +94,7 @@ const SavedJobPosts = () => {
           setHasMore(true);
         }
       } catch (error) {
-        console.error("Error fetching job posts", error);
+        console.error('Error fetching job posts', error);
       }
     };
     fetchJobPosts();
@@ -158,7 +158,7 @@ const SavedJobPosts = () => {
                       <div className="flex items-center gap-2">
                         <FaMapMarkerAlt className="text-blue-500" />
                         <span>
-                          <strong>Location:</strong> {job.location.city},{" "}
+                          <strong>Location:</strong> {job.location.city},{' '}
                           {job.location.state}, {job.location.country}
                         </span>
                       </div>
@@ -178,12 +178,12 @@ const SavedJobPosts = () => {
                       <div className="flex items-center gap-2">
                         <FaClock className="text-orange-500" />
                         <span>
-                          <strong>Experience Level:</strong>{" "}
+                          <strong>Experience Level:</strong>{' '}
                           {job.experienceLevel}
                         </span>
                       </div>
                       <div>
-                        <strong>Application Deadline:</strong>{" "}
+                        <strong>Application Deadline:</strong>{' '}
                         {new Date(job.applicationDeadline).toLocaleDateString()}
                       </div>
                     </div>

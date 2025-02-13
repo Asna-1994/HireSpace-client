@@ -1,10 +1,10 @@
 export const validateFile = (
   file: File,
   allowedTypes: string[],
-  maxFileSize: number,
+  maxFileSize: number
 ): string | null => {
   if (!allowedTypes.includes(file.type)) {
-    return `Invalid file type. Only ${allowedTypes.join(", ")} files are allowed.`;
+    return `Invalid file type. Only ${allowedTypes.join(', ')} files are allowed.`;
   }
 
   if (file.size > maxFileSize) {

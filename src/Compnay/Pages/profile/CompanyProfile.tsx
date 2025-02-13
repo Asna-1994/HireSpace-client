@@ -1,7 +1,7 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import CompanyHeader from "../../Components/Header/Header";
-import Footer from "../../../User/Components/Footer/Footer";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import CompanyHeader from '../../Components/Header/Header';
+import Footer from '../../../User/Components/Footer/Footer';
 import {
   FaFacebook,
   FaTwitter,
@@ -15,10 +15,10 @@ import {
   FaGlobe,
   FaCalendarAlt,
   FaCertificate,
-} from "react-icons/fa";
-import { useEffect, useState } from "react";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { getCompanyInitials } from "../../../Utils/helperFunctions/companyName";
+} from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { getCompanyInitials } from '../../../Utils/helperFunctions/companyName';
 
 export interface memberObject {
   _id: string;
@@ -29,30 +29,30 @@ export interface memberObject {
 
 const CompanyProfile = () => {
   const { company, user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
 
   const [members, setMembers] = useState<memberObject[]>([]);
   const [additionalDetails, setAdditionalDetails] = useState({
-    mission: "",
-    vision: "",
-    founder: "",
-    ceo: "",
-    description: "",
-    aboutUs: "",
-    website: "",
+    mission: '',
+    vision: '',
+    founder: '',
+    ceo: '',
+    description: '',
+    aboutUs: '',
+    website: '',
     socialLinks: {
-      facebook: "",
-      instagram: "",
-      twitter: "",
-      linkedin: "",
+      facebook: '',
+      instagram: '',
+      twitter: '',
+      linkedin: '',
     },
   });
 
   const getMembers = async () => {
     try {
       const response = await axiosInstance.get(
-        `/company/${company?._id}/all-members`,
+        `/company/${company?._id}/all-members`
       );
       if (response.data.success) {
         setMembers(response.data.data.members);
@@ -65,7 +65,7 @@ const CompanyProfile = () => {
   const getCompanyProfileDetails = async () => {
     try {
       const response = await axiosInstance.get(
-        `/company/company-profile-details/${company?._id}`,
+        `/company/company-profile-details/${company?._id}`
       );
       console.log(response.data.data.profile);
       if (response.data.success) {
@@ -108,10 +108,10 @@ const CompanyProfile = () => {
             </p>
             <p className="mt-2 text-lg flex items-center justify-center">
               <FaIndustry className="mr-2" />
-              Trusted in{" "}
+              Trusted in{' '}
               <span className="font-semibold ml-1">
                 {company?.industry}
-              </span>{" "}
+              </span>{' '}
               industry
             </p>
             <p className="mt-2 text-lg flex items-center justify-center">
@@ -120,17 +120,17 @@ const CompanyProfile = () => {
             </p>
             <p className="mt-2 text-lg flex items-center justify-center">
               <FaCalendarAlt className="mr-2" />
-              Established:{" "}
+              Established:{' '}
               {company?.establishedDate
                 ? new Date(company.establishedDate).toLocaleDateString(
-                    "en-US",
+                    'en-US',
                     {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    },
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    }
                   )
-                : "Unknown"}
+                : 'Unknown'}
             </p>
           </div>
         </section>
@@ -139,33 +139,33 @@ const CompanyProfile = () => {
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                title: "Mission",
+                title: 'Mission',
                 content: additionalDetails.mission,
                 icon: <FaGlobe />,
               },
               {
-                title: "Vision",
+                title: 'Vision',
                 content: additionalDetails.vision,
                 icon: <FaCrown />,
               },
-              { title: "Phone", content: company?.phone, icon: <FaPhone /> },
+              { title: 'Phone', content: company?.phone, icon: <FaPhone /> },
               {
-                title: "CEO",
+                title: 'CEO',
                 content: additionalDetails.ceo,
                 icon: <FaCrown />,
               },
               {
-                title: "Website",
+                title: 'Website',
                 content: additionalDetails.website,
                 icon: <FaGlobe />,
               },
               {
-                title: "Registration Number",
+                title: 'Registration Number',
                 content: company?.documentNumber,
                 icon: <FaCertificate />,
               },
               {
-                title: "App Plan",
+                title: 'App Plan',
                 content: company?.appPlan,
                 icon: <FaGlobe />,
               },
@@ -190,7 +190,7 @@ const CompanyProfile = () => {
               <h2 className="text-2xl font-bold mb-2">Uploaded Documents</h2>
               {/* <img src={company?.verificationDocument.url}></img> */}
 
-              {company?.verificationDocument.url?.endsWith(".pdf") ? (
+              {company?.verificationDocument.url?.endsWith('.pdf') ? (
                 <iframe
                   src={company.verificationDocument.url}
                   title="PDF Preview"
@@ -209,8 +209,8 @@ const CompanyProfile = () => {
               <ul className="list-disc list-inside text-gray-600">
                 {members.map((member, index) => (
                   <li key={index} className="flex items-center">
-                    {member.userName}{" "}
-                    {member.role === "companyAdmin" && (
+                    {member.userName}{' '}
+                    {member.role === 'companyAdmin' && (
                       <span className="ml-2 text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
                         Admin
                       </span>

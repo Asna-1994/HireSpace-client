@@ -1,9 +1,9 @@
-import React, { useRef } from "react";
+import React, { useRef } from 'react';
 
-import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import CompanyHeader from "../../Components/Header/Header";
+import { toast } from 'react-toastify';
+import { Link, useNavigate } from 'react-router-dom';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import CompanyHeader from '../../Components/Header/Header';
 
 const CompanyForgotPassword = () => {
   const emailRef = useRef<HTMLInputElement | null>(null);
@@ -19,16 +19,16 @@ const CompanyForgotPassword = () => {
     const confirmPassword = confirmPasswordRef.current?.value;
 
     if (!email || !newPassword || !confirmPassword) {
-      toast.error("Please enter both email and password.");
+      toast.error('Please enter both email and password.');
       return;
     }
     if (!newPassword || !confirmPassword) {
-      toast.error("Password does not match");
+      toast.error('Password does not match');
       return;
     }
 
     try {
-      const response = await axiosInstance.patch("/company/forgot-password", {
+      const response = await axiosInstance.patch('/company/forgot-password', {
         email,
         newPassword,
       });
@@ -42,9 +42,9 @@ const CompanyForgotPassword = () => {
       }
     } catch (error: any) {
       const errorMessage =
-        error.response?.data?.message || "Something went wrong";
+        error.response?.data?.message || 'Something went wrong';
       toast.error(errorMessage);
-      console.error("Login error:", error);
+      console.error('Login error:', error);
     }
   };
 
@@ -96,7 +96,7 @@ const CompanyForgotPassword = () => {
 
           <div className="flex justify-center items-center mt-4">
             <p className="text-sm text-gray-200 text-center">
-              GoBack to{" "}
+              GoBack to{' '}
               <Link
                 to="/company/login"
                 className="text-white font-medium hover:underline"

@@ -1,27 +1,27 @@
-import React from "react";
-import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { useDispatch } from "react-redux";
-import { userLogin } from "../../../redux/slices/authSlice";
-import * as yup from "yup";
-import Header from "../../../User/Components/Header/Header";
+import React from 'react';
+import { toast } from 'react-toastify';
+import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { useDispatch } from 'react-redux';
+import { userLogin } from '../../../redux/slices/authSlice';
+import * as yup from 'yup';
+import Header from '../../../User/Components/Header/Header';
 
 const schema = yup.object().shape({
   email: yup
     .string()
-    .email("Invalid email format")
-    .required("Email is required"),
+    .email('Invalid email format')
+    .required('Email is required'),
   password: yup
     .string()
-    .min(8, "Password must be at least 8 characters")
+    .min(8, 'Password must be at least 8 characters')
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[a-zA-Z\d@$!%*?&]+$/,
-      "Password must contain uppercase, lowercase, number, and special character",
+      'Password must contain uppercase, lowercase, number, and special character'
     )
-    .required("Password is required"),
+    .required('Password is required'),
 });
 
 const AdminLogin = () => {
@@ -38,7 +38,7 @@ const AdminLogin = () => {
 
   const handleLogin = async (data: { email: string; password: string }) => {
     try {
-      const response = await axiosInstance.post("/admin/login", data);
+      const response = await axiosInstance.post('/admin/login', data);
 
       if (response.data.success) {
         const { token, user } = response.data.data;
@@ -50,9 +50,9 @@ const AdminLogin = () => {
       }
     } catch (error: any) {
       const errorMessage =
-        error.response?.data?.message || "Something went wrong";
+        error.response?.data?.message || 'Something went wrong';
       toast.error(errorMessage);
-      console.error("Login error:", error);
+      console.error('Login error:', error);
     }
   };
 
@@ -70,11 +70,11 @@ const AdminLogin = () => {
           >
             <input
               type="email"
-              {...register("email")}
+              {...register('email')}
               className={`rounded-sm p-2 border ${
-                errors.email ? "border-red-500" : "border-gray-300"
+                errors.email ? 'border-red-500' : 'border-gray-300'
               } focus:outline-none focus:ring-2 ${
-                errors.email ? "focus:ring-red-500" : "focus:ring-blue-400"
+                errors.email ? 'focus:ring-red-500' : 'focus:ring-blue-400'
               }`}
               placeholder="Enter Email"
             />
@@ -84,11 +84,11 @@ const AdminLogin = () => {
 
             <input
               type="password"
-              {...register("password")}
+              {...register('password')}
               className={`rounded-sm p-2 border ${
-                errors.password ? "border-red-500" : "border-gray-300"
+                errors.password ? 'border-red-500' : 'border-gray-300'
               } focus:outline-none focus:ring-2 ${
-                errors.password ? "focus:ring-red-500" : "focus:ring-blue-400"
+                errors.password ? 'focus:ring-red-500' : 'focus:ring-blue-400'
               }`}
               placeholder="Enter Password"
             />

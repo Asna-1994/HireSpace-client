@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import Modal from "react-modal";
-import { toast } from "react-toastify";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import AdminHeader from "../../Components/Header/AdminHeader";
-import { useNavigate, useParams } from "react-router-dom";
-import SideBar from "../../Components/SideBar/SideBar";
-import { Company, Plans } from "../../../Utils/Interfaces/interface";
-import Footer from "../../../User/Components/Footer/Footer";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import React, { useEffect, useState } from 'react';
+import Modal from 'react-modal';
+import { toast } from 'react-toastify';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import AdminHeader from '../../Components/Header/AdminHeader';
+import { useNavigate, useParams } from 'react-router-dom';
+import SideBar from '../../Components/SideBar/SideBar';
+import { Company, Plans } from '../../../Utils/Interfaces/interface';
+import Footer from '../../../User/Components/Footer/Footer';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 
-Modal.setAppElement("#root");
+Modal.setAppElement('#root');
 
 const ManagePlans = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -21,26 +21,26 @@ const ManagePlans = () => {
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [selectedPlanData, setSelectedPlanData] = useState<Plans | null>(null);
   const [formData, setFormData] = useState({
-    planType: "",
+    planType: '',
     price: 0,
     durationInDays: 0,
     features: [] as string[], // Array of features
   });
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [plans, setPlans] = useState<Plans[] | []>();
 
   const navigate = useNavigate();
 
   const fetchPlans = async (searchTerm?: string) => {
-    console.log("search term", searchTerm);
+    console.log('search term', searchTerm);
     try {
-      const response = await axiosInstance.get("/plans/all-plans", {
+      const response = await axiosInstance.get('/plans/all-plans', {
         params: { page, limit, search: searchTerm },
       });
       setPlans(response.data.data.plans);
       setTotalPages(response.data.data.totalPages);
     } catch (error: any) {
-      toast.error("Failed to fetch plans. Please try again.");
+      toast.error('Failed to fetch plans. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -65,7 +65,7 @@ const ManagePlans = () => {
       }
     } else {
       setSelectedPlanId(null);
-      setFormData({ planType: "", price: 0, durationInDays: 0, features: [] });
+      setFormData({ planType: '', price: 0, durationInDays: 0, features: [] });
     }
     setModalIsOpen(true);
   };
@@ -93,7 +93,7 @@ const ManagePlans = () => {
   }, [searchTerm]);
 
   const handleFormChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({
       ...formData,
@@ -102,7 +102,7 @@ const ManagePlans = () => {
   };
   const handleFeatureChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
+    index: number
   ) => {
     const updatedFeatures = [...formData.features];
     updatedFeatures[index] = e.target.value;
@@ -110,7 +110,7 @@ const ManagePlans = () => {
   };
 
   const handleAddFeature = () => {
-    setFormData({ ...formData, features: [...formData.features, ""] });
+    setFormData({ ...formData, features: [...formData.features, ''] });
   };
 
   const handleRemoveFeature = (index: number) => {
@@ -120,12 +120,12 @@ const ManagePlans = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await axiosInstance.post("/plans/create", formData, {
+      const response = await axiosInstance.post('/plans/create', formData, {
         params: { planId: selectedPlanId },
       });
       if (response.data.success) {
         toast.success(
-          selectedPlanId ? "Plan Updated successfully!" : "Plan Created",
+          selectedPlanId ? 'Plan Updated successfully!' : 'Plan Created'
         );
         fetchPlans();
       }
@@ -133,22 +133,22 @@ const ManagePlans = () => {
     } catch (error: any) {
       console.log(error);
 
-      toast.error(error.response?.data?.message || "Something went wrong");
+      toast.error(error.response?.data?.message || 'Something went wrong');
     }
   };
 
   const handleDelete = async () => {
     try {
       const response = await axiosInstance.delete(
-        `/plans/delete/${selectedPlanId}`,
+        `/plans/delete/${selectedPlanId}`
       );
       if (response.data.success) {
-        toast.success("Plan deleted successfully.");
+        toast.success('Plan deleted successfully.');
         fetchPlans();
       }
       closeModal();
     } catch (error: any) {
-      toast.error("Failed to delete plan. Please try again.");
+      toast.error('Failed to delete plan. Please try again.');
     }
   };
 
@@ -187,7 +187,7 @@ const ManagePlans = () => {
         overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
       >
         <h2 className="text-lg font-bold mb-4">
-          {selectedPlanId ? "Edit Plan" : "Create New Plan"}
+          {selectedPlanId ? 'Edit Plan' : 'Create New Plan'}
         </h2>
         <form
           onSubmit={(e) => {

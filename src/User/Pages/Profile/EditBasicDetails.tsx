@@ -1,22 +1,22 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { FaTrash, FaUpload } from "react-icons/fa";
-import Header from "../../Components/Header/Header";
-import Footer from "../../Components/Footer/Footer";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { toast } from "react-toastify";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { validateFile } from "../../../Utils/helperFunctions/fileValidation";
-import { userUpdate } from "../../../redux/slices/authSlice";
-import CompanyHeader from "../../../Compnay/Components/Header/Header";
-import { Area } from "react-easy-crop/types";
-import CropImageModal from "./CropImageModal";
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { FaTrash, FaUpload } from 'react-icons/fa';
+import Header from '../../Components/Header/Header';
+import Footer from '../../Components/Footer/Footer';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { toast } from 'react-toastify';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { validateFile } from '../../../Utils/helperFunctions/fileValidation';
+import { userUpdate } from '../../../redux/slices/authSlice';
+import CompanyHeader from '../../../Compnay/Components/Header/Header';
+import { Area } from 'react-easy-crop/types';
+import CropImageModal from './CropImageModal';
 
 const UserProfileForm: React.FC = () => {
   const { user, company } = useSelector((state: RootState) => state.auth);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
-    user?.profilePhoto?.url || null,
+    user?.profilePhoto?.url || null
   );
   const dispatch = useDispatch();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -25,15 +25,15 @@ const UserProfileForm: React.FC = () => {
     dateOfBirth: string;
     phone: string;
     address: string;
-    userRole: "jobSeeker" | "companyMember" | "companyAdmin" | "admin";
+    userRole: 'jobSeeker' | 'companyMember' | 'companyAdmin' | 'admin';
   }>({
-    userName: user?.userName || "",
+    userName: user?.userName || '',
     dateOfBirth: user?.dateOfBirth
-      ? new Date(user.dateOfBirth).toISOString().split("T")[0]
-      : "",
-    phone: user?.phone || "",
-    address: user?.address || "",
-    userRole: user?.userRole || "jobSeeker",
+      ? new Date(user.dateOfBirth).toISOString().split('T')[0]
+      : '',
+    phone: user?.phone || '',
+    address: user?.address || '',
+    userRole: user?.userRole || 'jobSeeker',
   });
 
   const [isCropping, setIsCropping] = useState(false);
@@ -41,7 +41,7 @@ const UserProfileForm: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    >
   ) => {
     const { name, value } = e.target;
     setForm((prevForm) => ({
@@ -53,7 +53,7 @@ const UserProfileForm: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
       const maxFileSize = 5 * 1024 * 1024;
 
       const validationError = validateFile(file, allowedTypes, maxFileSize);
@@ -74,27 +74,27 @@ const UserProfileForm: React.FC = () => {
 
     const formData = new FormData();
 
-    formData.append("userName", form.userName || "");
-    formData.append("dateOfBirth", form.dateOfBirth || "");
-    formData.append("phone", form.phone || "");
-    formData.append("address", form.address || "");
-    formData.append("userRole", form.userRole || "jobSeeker");
+    formData.append('userName', form.userName || '');
+    formData.append('dateOfBirth', form.dateOfBirth || '');
+    formData.append('phone', form.phone || '');
+    formData.append('address', form.address || '');
+    formData.append('userRole', form.userRole || 'jobSeeker');
 
     try {
       const response = await axiosInstance.patch(
         `/user/update-basic-detail/${user?._id}`,
-        formData,
+        formData
       );
       if (response.data.success) {
         const updatedUser = response.data.data.user;
-        toast.success("Updated successfully");
+        toast.success('Updated successfully');
         dispatch(userUpdate(updatedUser));
       } else {
         toast.error(response.data.message);
       }
     } catch (err: any) {
-      console.error("Error updating details:", err);
-      toast.error(err.response?.data?.message || "Something went wrong");
+      console.error('Error updating details:', err);
+      toast.error(err.response?.data?.message || 'Something went wrong');
     }
   };
 
@@ -102,36 +102,36 @@ const UserProfileForm: React.FC = () => {
     try {
       const response = await fetch(croppedImageUrl);
       const blob = await response.blob();
-      const file = new File([blob], "cropped-image.jpg", {
-        type: "image/jpeg",
+      const file = new File([blob], 'cropped-image.jpg', {
+        type: 'image/jpeg',
       });
 
       setSelectedFile(file);
       setPreviewUrl(croppedImageUrl);
 
       const formData = new FormData();
-      formData.append("profilePhoto", file);
+      formData.append('profilePhoto', file);
 
       const uploadResponse = await axiosInstance.patch(
         `/user/upload-profile-image/${user?._id}`,
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
-        },
+        }
       );
 
       if (uploadResponse.data.success) {
-        toast.success("Profile photo updated successfully!");
+        toast.success('Profile photo updated successfully!');
         const updatedUser = uploadResponse.data.data.user;
         dispatch(userUpdate(updatedUser));
       }
     } catch (error: any) {
-      console.error("Error processing cropped image:", error);
+      console.error('Error processing cropped image:', error);
       toast.error(
         error.response.data.message ||
-          "Error uploading cropped image. Please try again.",
+          'Error uploading cropped image. Please try again.'
       );
     }
   };
@@ -139,10 +139,10 @@ const UserProfileForm: React.FC = () => {
   const handleDeleteImage = async () => {
     try {
       const res = await axiosInstance.delete(
-        `/user/delete-profile-image/${user?._id}`,
+        `/user/delete-profile-image/${user?._id}`
       );
       if (res.data.success) {
-        toast.success("Deleted successfully");
+        toast.success('Deleted successfully');
         const updatedUser = res.data.data.user;
         dispatch(userUpdate(updatedUser));
         setPreviewUrl(null);
@@ -150,7 +150,7 @@ const UserProfileForm: React.FC = () => {
         toast.error(res.data.message);
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Error deleting resume");
+      toast.error(error.response?.data?.message || 'Error deleting resume');
       console.error(error);
     }
   };
@@ -197,7 +197,7 @@ const UserProfileForm: React.FC = () => {
               <input
                 type="text"
                 name="userName"
-                value={form.userName || ""}
+                value={form.userName || ''}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg p-2"
                 placeholder="Enter your name"
@@ -210,7 +210,7 @@ const UserProfileForm: React.FC = () => {
               <input
                 type="date"
                 name="dateOfBirth"
-                value={form.dateOfBirth || ""}
+                value={form.dateOfBirth || ''}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border rounded-lg"
               />
@@ -222,7 +222,7 @@ const UserProfileForm: React.FC = () => {
               <input
                 type="text"
                 name="phone"
-                value={form.phone || ""}
+                value={form.phone || ''}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg p-2"
                 placeholder="Enter your phone number"
@@ -234,7 +234,7 @@ const UserProfileForm: React.FC = () => {
               </label>
               <select
                 name="userRole"
-                value={form.userRole || "jobSeeker"}
+                value={form.userRole || 'jobSeeker'}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg p-2"
               >
@@ -250,7 +250,7 @@ const UserProfileForm: React.FC = () => {
               </label>
               <textarea
                 name="address"
-                value={form.address || ""}
+                value={form.address || ''}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg p-2"
                 placeholder="Enter your address"

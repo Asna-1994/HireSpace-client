@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import Modal from "react-modal";
-import { toast } from "react-toastify";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import AdminHeader from "../../Components/Header/AdminHeader";
-import { useNavigate } from "react-router-dom";
-import SideBar from "../../Components/SideBar/SideBar";
-import { User } from "../../../Utils/Interfaces/interface";
-import Footer from "../../../User/Components/Footer/Footer";
+import React, { useEffect, useState } from 'react';
+import Modal from 'react-modal';
+import { toast } from 'react-toastify';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import AdminHeader from '../../Components/Header/AdminHeader';
+import { useNavigate } from 'react-router-dom';
+import SideBar from '../../Components/SideBar/SideBar';
+import { User } from '../../../Utils/Interfaces/interface';
+import Footer from '../../../User/Components/Footer/Footer';
 
-Modal.setAppElement("#root");
+Modal.setAppElement('#root');
 
 const UserList = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -18,12 +18,12 @@ const UserList = () => {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(8);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [selectedAction, setSelectedAction] = useState<string>("");
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedAction, setSelectedAction] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const navigate = useNavigate();
 
-  const fetchUsers = async (query = "") => {
+  const fetchUsers = async (query = '') => {
     try {
       const response = await axiosInstance.get(`/admin/all-users`, {
         params: { search: query, page, limit },
@@ -34,7 +34,7 @@ const UserList = () => {
       setTotalPages(totalPages);
       setPage(currentPage);
     } catch (err: any) {
-      toast.error("Failed to fetch users.");
+      toast.error('Failed to fetch users.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -51,12 +51,12 @@ const UserList = () => {
 
     try {
       const response = await axiosInstance.patch(
-        `/admin/block-or-unblock-user/${selectedUserId}/${selectedAction}`,
+        `/admin/block-or-unblock-user/${selectedUserId}/${selectedAction}`
       );
 
       if (response.status === 200) {
         toast.success(
-          `User successfully ${selectedAction === "block" ? "blocked" : "unblocked"}`,
+          `User successfully ${selectedAction === 'block' ? 'blocked' : 'unblocked'}`
         );
         fetchUsers();
       }
@@ -64,12 +64,12 @@ const UserList = () => {
       console.error(error.response?.data?.message);
       toast.error(
         error.response?.data?.message ||
-          "An error occurred while blocking the user",
+          'An error occurred while blocking the user'
       );
     } finally {
       setModalIsOpen(false);
       setSelectedUserId(null);
-      setSelectedAction("");
+      setSelectedAction('');
     }
   };
 
@@ -82,7 +82,7 @@ const UserList = () => {
   const closeModal = () => {
     setModalIsOpen(false);
     setSelectedUserId(null);
-    setSelectedAction("");
+    setSelectedAction('');
   };
 
   //search functionality
@@ -112,8 +112,8 @@ const UserList = () => {
       >
         <h2 className="text-lg font-bold mb-4">Confirm Action</h2>
         <p>
-          Are you sure you want to{" "}
-          {selectedAction === "block" ? "block" : "unblock"} this user?
+          Are you sure you want to{' '}
+          {selectedAction === 'block' ? 'block' : 'unblock'} this user?
         </p>
         <div className="mt-4 flex justify-end space-x-4">
           <button
@@ -126,7 +126,7 @@ const UserList = () => {
             onClick={handleAction}
             className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
           >
-            {selectedAction === "block" ? "Block" : "Unblock"}
+            {selectedAction === 'block' ? 'Block' : 'Unblock'}
           </button>
         </div>
       </Modal>
@@ -163,9 +163,9 @@ const UserList = () => {
               {users.map((user, index) => (
                 <tr key={user._id} className="border-b">
                   <td className="px-4 py-2">
-                    {" "}
+                    {' '}
                     {(page - 1) * limit + index + 1}
-                  </td>{" "}
+                  </td>{' '}
                   {/* Serial number */}
                   <td className="px-4 py-2">{user.userName}</td>
                   <td className="px-4 py-2">{user.email}</td>
@@ -175,12 +175,12 @@ const UserList = () => {
                       onClick={() =>
                         openModal(
                           user._id,
-                          user.isBlocked ? "unblock" : "block",
+                          user.isBlocked ? 'unblock' : 'block'
                         )
                       }
                       className="text-white text-sm w-20 hover:underline border bg-blue-700 px-3 py-1 rounded-md"
                     >
-                      {user.isBlocked ? "Unblock" : "Block"}
+                      {user.isBlocked ? 'Unblock' : 'Block'}
                     </button>
                   </td>
                 </tr>

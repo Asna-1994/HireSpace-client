@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { connectSocket, socket } from "../../../services/socket";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import Header from "../Header/Header";
-import { setTotalUnreadChats } from "../../../redux/slices/chatSlice";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { connectSocket, socket } from '../../../services/socket';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import Header from '../Header/Header';
+import { setTotalUnreadChats } from '../../../redux/slices/chatSlice';
 
 interface RecentChat {
   roomId: string;
@@ -32,47 +32,47 @@ const MessagesPage: React.FC = () => {
     if (user?._id) {
       if (!socket.connected) {
         connectSocket();
-        console.log("Attempting to connect socket");
+        console.log('Attempting to connect socket');
       }
 
-      socket.on("connect", () => {
-        console.log("Socket connected successfully");
+      socket.on('connect', () => {
+        console.log('Socket connected successfully');
       });
       if (socket && user?._id) {
-        socket.emit("registerUser", user._id);
+        socket.emit('registerUser', user._id);
       }
 
-      socket.emit("getRecentChats", { userId: user._id });
-      console.log("Requesting recent chats for user:", user._id);
-      socket.emit("getUnreadCount", { userId: user._id });
+      socket.emit('getRecentChats', { userId: user._id });
+      console.log('Requesting recent chats for user:', user._id);
+      socket.emit('getUnreadCount', { userId: user._id });
 
       socket.on(
-        "unreadCounts",
+        'unreadCounts',
         ({ counts }: { counts: { [roomId: string]: number } }) => {
           setChats((prevChats) =>
             prevChats.map((chat) => ({
               ...chat,
               unreadCount: counts[chat.roomId] || 0,
-            })),
+            }))
           );
 
           const totalUnreadChats = Object.values(counts).reduce(
             (total, count) => total + (count > 0 ? 1 : 0),
-            0,
+            0
           );
           dispatch(setTotalUnreadChats(totalUnreadChats));
-        },
+        }
       );
 
-      socket.on("recentChats", (data: { chats: RecentChat[] }) => {
+      socket.on('recentChats', (data: { chats: RecentChat[] }) => {
         setChats(data.chats);
-        console.log("Received recent chats:", data.chats);
+        console.log('Received recent chats:', data.chats);
 
-        socket.emit("getUnreadCount", { userId: user._id });
+        socket.emit('getUnreadCount', { userId: user._id });
       });
 
       socket.on(
-        "message",
+        'message',
         (message: {
           senderId: string;
           roomId: string;
@@ -87,34 +87,34 @@ const MessagesPage: React.FC = () => {
                     lastMessage: message.content,
                     createdAt: message.createdAt,
                   }
-                : chat,
-            ),
+                : chat
+            )
           );
 
           // socket.emit('getUnreadCount', { userId: user._id });
           if (message.senderId !== user._id) {
-            socket.emit("getUnreadCount", { userId: user._id });
+            socket.emit('getUnreadCount', { userId: user._id });
           }
-        },
+        }
       );
 
-      socket.on("messageRead", ({ messageId, roomId }) => {
-        socket.emit("getUnreadCount", { userId: user._id });
+      socket.on('messageRead', ({ messageId, roomId }) => {
+        socket.emit('getUnreadCount', { userId: user._id });
       });
 
-      socket.on("error", (error) => {
-        console.error("Socket error:", error);
+      socket.on('error', (error) => {
+        console.error('Socket error:', error);
       });
 
-      socket.on("connect_error", (error) => {
-        console.error("Connection error:", error);
+      socket.on('connect_error', (error) => {
+        console.error('Connection error:', error);
       });
 
       return () => {
-        socket.off("recentChats");
-        socket.off("unreadCounts");
-        socket.off("message");
-        socket.off("messageRead");
+        socket.off('recentChats');
+        socket.off('unreadCounts');
+        socket.off('message');
+        socket.off('messageRead');
       };
     }
   }, [user, socket, dispatch]);
@@ -142,19 +142,17 @@ const MessagesPage: React.FC = () => {
                   openChat(chat.roomId, chat.otherUser._id, chat.otherUser)
                 }
               >
-   
                 {chat.otherUser?.profilePhoto?.url ? (
-  <img
-    src={chat.otherUser.profilePhoto.url}
-    alt={chat.otherUser?.userName || "User"}
-    className="w-10 h-10 rounded-full object-cover"
-  />
-) : (
-  <div className="w-10 h-10 flex items-center justify-center bg-blue-500 text-white text-xl font-semibold rounded-full">
-    {chat.otherUser?.userName?.charAt(0).toUpperCase() || "?"}
-  </div>
-)}
-
+                  <img
+                    src={chat.otherUser?.profilePhoto?.url}
+                    alt={chat.otherUser?.userName || 'User'}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-10 h-10 flex items-center justify-center bg-blue-500 text-white text-xl font-semibold rounded-full">
+                    {chat.otherUser?.userName?.charAt(0).toUpperCase() || '?'}
+                  </div>
+                )}
 
                 <div className="ml-4 flex-1">
                   <div className="flex justify-between items-center">
@@ -163,8 +161,8 @@ const MessagesPage: React.FC = () => {
                     </span>
                     <span className="text-sm text-gray-500">
                       {new Date(chat.createdAt).toLocaleString([], {
-                        dateStyle: "short",
-                        timeStyle: "short",
+                        dateStyle: 'short',
+                        timeStyle: 'short',
                       })}
                     </span>
                   </div>

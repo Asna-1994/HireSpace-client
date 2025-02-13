@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { toast } from "react-toastify";
-import { validateFile } from "../../../Utils/helperFunctions/fileValidation";
-import Modal from "react-modal";
-import Header from "../../Components/Header/Header";
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { toast } from 'react-toastify';
+import { validateFile } from '../../../Utils/helperFunctions/fileValidation';
+import Modal from 'react-modal';
+import Header from '../../Components/Header/Header';
 
 const UploadResume = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -14,7 +14,7 @@ const UploadResume = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const { user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
   const dispatch = useDispatch();
 
@@ -36,9 +36,9 @@ const UploadResume = () => {
   }, []);
 
   const allowedTypes = [
-    "application/pdf",
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   ];
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +46,7 @@ const UploadResume = () => {
     if (file) {
       if (!allowedTypes.includes(file.type)) {
         toast.error(
-          "Invalid file type. Please upload a .doc, .docx, or .pdf file.",
+          'Invalid file type. Please upload a .doc, .docx, or .pdf file.'
         );
         return;
       }
@@ -64,7 +64,7 @@ const UploadResume = () => {
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      toast.error("Please Select file to upload");
+      toast.error('Please Select file to upload');
       return;
     }
 
@@ -73,7 +73,7 @@ const UploadResume = () => {
     const validationError = validateFile(
       selectedFile,
       allowedTypes,
-      maxFileSize,
+      maxFileSize
     );
     if (validationError) {
       toast.error(validationError);
@@ -81,7 +81,7 @@ const UploadResume = () => {
     }
 
     const formData = new FormData();
-    formData.append("resume", selectedFile);
+    formData.append('resume', selectedFile);
 
     try {
       const response = await axiosInstance.patch(
@@ -89,9 +89,9 @@ const UploadResume = () => {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
-        },
+        }
       );
 
       if (response.data.success) {
@@ -103,8 +103,8 @@ const UploadResume = () => {
         toast.error(response.data.message);
       }
     } catch (error: any) {
-      console.error("Error uploading resume:", error);
-      toast.error(error.response?.data?.message || "Error uploading resume");
+      console.error('Error uploading resume:', error);
+      toast.error(error.response?.data?.message || 'Error uploading resume');
       setIsUploading(false);
     }
   };
@@ -114,13 +114,13 @@ const UploadResume = () => {
     try {
       const res = await axiosInstance.patch(`/user/delete-resume/${user?._id}`);
       if (res.data.success) {
-        toast.success("Deleted successfully");
+        toast.success('Deleted successfully');
         setPreviewUrl(null);
       } else {
         toast.error(res.data.message);
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Error deleting resume");
+      toast.error(error.response?.data?.message || 'Error deleting resume');
       console.error(error);
     }
   };
@@ -170,8 +170,8 @@ const UploadResume = () => {
           <div className="relative flex items-center justify-center mb-4 border-2 border-dashed border-gray-300 rounded-lg p-6">
             {previewUrl ? (
               <div className="relative">
-                {selectedFile?.type === "application/pdf" ||
-                previewUrl?.endsWith(".pdf") ? (
+                {selectedFile?.type === 'application/pdf' ||
+                previewUrl?.endsWith('.pdf') ? (
                   <iframe
                     src={previewUrl}
                     title="PDF Preview"
@@ -229,8 +229,8 @@ const UploadResume = () => {
               disabled={!selectedFile}
               className={`w-full py-2 px-6 text-white rounded-md shadow-md transition duration-300 ${
                 selectedFile
-                  ? "bg-gradient-to-r from-blue-500 to-indigo-600 hover:bg-gradient-to-l"
-                  : "bg-gray-300 cursor-not-allowed"
+                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:bg-gradient-to-l'
+                  : 'bg-gray-300 cursor-not-allowed'
               }`}
             >
               Upload Resume

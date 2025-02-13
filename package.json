@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+      "lint": "eslint 'src/**/*.{ts,tsx}' --fix",
+  "format": "prettier --write 'src/**/*.{ts,tsx,json,css,md}'"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

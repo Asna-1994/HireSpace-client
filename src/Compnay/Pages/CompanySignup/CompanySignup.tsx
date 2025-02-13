@@ -1,55 +1,55 @@
-import React, { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { AxiosResponse } from "axios";
-import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
+import React, { useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { AxiosResponse } from 'axios';
+import { toast } from 'react-toastify';
+import { Link, useNavigate } from 'react-router-dom';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import {
   ApiResponse,
   CompanyFormData,
-} from "../../../Utils/Interfaces/interface";
-import CompanyHeader from "../../Components/Header/Header";
+} from '../../../Utils/Interfaces/interface';
+import CompanyHeader from '../../Components/Header/Header';
 
 const schema = yup.object().shape({
   companyName: yup
     .string()
-    .min(3, "company name must be at least 3 characters")
-    .required("company name is required"),
+    .min(3, 'company name must be at least 3 characters')
+    .required('company name is required'),
   email: yup
     .string()
-    .email("Invalid email format")
-    .required("Email is required"),
+    .email('Invalid email format')
+    .required('Email is required'),
   password: yup
     .string()
-    .min(8, "Password must be at least 8 characters")
+    .min(8, 'Password must be at least 8 characters')
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[a-zA-Z\d@$!%*?&]+$/,
-      "Password must contain uppercase, lowercase, number, and special character",
+      'Password must contain uppercase, lowercase, number, and special character'
     )
-    .required("Password is required"),
+    .required('Password is required'),
   confirmPassword: yup
     .string()
-    .oneOf([yup.ref("password")], "Passwords must match")
-    .required("Confirm Password is required"),
-  establishedDate: yup.date().required("Established year is required"),
+    .oneOf([yup.ref('password')], 'Passwords must match')
+    .required('Confirm Password is required'),
+  establishedDate: yup.date().required('Established year is required'),
   industry: yup
     .string()
-    .min(3, "Industry must be at least 3 characters")
-    .required("Industry is required"),
+    .min(3, 'Industry must be at least 3 characters')
+    .required('Industry is required'),
   phone: yup
     .string()
     .matches(
       /^(?:(?!^[012345])[6-9]\d{9})$/,
-      "Phone number must not start with 0, 1, 2, 3, 4, or 5 and cannot have all digits the same",
+      'Phone number must not start with 0, 1, 2, 3, 4, or 5 and cannot have all digits the same'
     )
-    .required("Phone number is required"),
-  address: yup.string().required("Address is required"),
+    .required('Phone number is required'),
+  address: yup.string().required('Address is required'),
   companyAdminEmail: yup
     .string()
-    .email("Invalid email format")
-    .required("Admin Email is required"),
+    .email('Invalid email format')
+    .required('Admin Email is required'),
 });
 
 const CompanySignup = () => {
@@ -62,9 +62,9 @@ const CompanySignup = () => {
   });
 
   useEffect(() => {
-    document.body.classList.add("bg-slate-950");
+    document.body.classList.add('bg-slate-950');
     return () => {
-      document.body.classList.remove("bg-slate-950");
+      document.body.classList.remove('bg-slate-950');
     };
   }, []);
 
@@ -73,17 +73,17 @@ const CompanySignup = () => {
   const submitSignupForm = async (formData: CompanyFormData): Promise<void> => {
     try {
       const response: AxiosResponse<ApiResponse> = await axiosInstance.post(
-        "/company/signup",
-        formData,
+        '/company/signup',
+        formData
       );
       console.log(response.data.data?.company);
       toast.success(response.data.message);
 
-      navigate("/company/otp-verification", {
+      navigate('/company/otp-verification', {
         state: { company: response.data.data.company },
       });
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      toast.error(error.response?.data?.message || 'Something went wrong');
     }
   };
 
@@ -111,8 +111,8 @@ const CompanySignup = () => {
                   {...field}
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
                     errors.companyName
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-blue-500"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-blue-500'
                   }`}
                   placeholder="Enter your companyName"
                 />
@@ -141,8 +141,8 @@ const CompanySignup = () => {
                   {...field}
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
                     errors.email
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-blue-500"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-blue-500'
                   }`}
                   placeholder="Enter your email"
                 />
@@ -172,13 +172,13 @@ const CompanySignup = () => {
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none 
           ${
             errors.establishedDate
-              ? "border-red-500 focus:ring-red-500"
-              : "border-gray-300 focus:ring-blue-500"
+              ? 'border-red-500 focus:ring-red-500'
+              : 'border-gray-300 focus:ring-blue-500'
           }`}
                   value={
                     field.value
-                      ? new Date(field.value).toISOString().split("T")[0]
-                      : ""
+                      ? new Date(field.value).toISOString().split('T')[0]
+                      : ''
                   }
                   onChange={(e) => field.onChange(new Date(e.target.value))}
                 />
@@ -207,8 +207,8 @@ const CompanySignup = () => {
                   {...field}
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
                     errors.phone
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-blue-500"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-blue-500'
                   }`}
                   placeholder="Enter your phone number"
                 />
@@ -238,8 +238,8 @@ const CompanySignup = () => {
                   rows={4}
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
                     errors.address
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-blue-500"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-blue-500'
                   }`}
                   placeholder="Enter your address"
                 />
@@ -267,8 +267,8 @@ const CompanySignup = () => {
                   {...field}
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
                     errors.companyAdminEmail
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-blue-500"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-blue-500'
                   }`}
                   placeholder="Enter Admin Email"
                 />
@@ -296,8 +296,8 @@ const CompanySignup = () => {
                   {...field}
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
                     errors.industry
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-blue-500"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-blue-500'
                   }`}
                   placeholder="Enter your Industry"
                 />
@@ -327,8 +327,8 @@ const CompanySignup = () => {
                   type="password"
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
                     errors.password
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-blue-500"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-blue-500'
                   }`}
                   placeholder="Enter your password"
                 />
@@ -358,8 +358,8 @@ const CompanySignup = () => {
                   type="password"
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
                     errors.confirmPassword
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-blue-500"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-blue-500'
                   }`}
                   placeholder="Confirm your password"
                 />
@@ -383,8 +383,8 @@ const CompanySignup = () => {
           </div>
         </form>
         <p className="text-center p-3">
-          Already have account ?{" "}
-          <Link className=" hover:text-gray-700" to={"/company/login"}>
+          Already have account ?{' '}
+          <Link className=" hover:text-gray-700" to={'/company/login'}>
             Login
           </Link>
         </p>

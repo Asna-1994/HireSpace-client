@@ -138,14 +138,14 @@
 
 // export default OtpVerificationCompany;
 
-import React, { useEffect, useState } from "react";
-import Header from "../../Components/Header/Header";
-import { toast } from "react-toastify";
-import { useLocation, useNavigate } from "react-router-dom";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
+import React, { useEffect, useState } from 'react';
+import Header from '../../Components/Header/Header';
+import { toast } from 'react-toastify';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
 
 const OtpVerificationCompany = () => {
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState('');
   const [timer, setTimer] = useState(0);
   const [otpExpiryFromCompany, setOtpExpiry] = useState<string | null>(null);
 
@@ -163,7 +163,7 @@ const OtpVerificationCompany = () => {
         if (!isNaN(expiryDate.getTime())) {
           const remainingTime = Math.max(
             0,
-            Math.floor((expiryDate.getTime() - Date.now()) / 1000),
+            Math.floor((expiryDate.getTime() - Date.now()) / 1000)
           );
           setTimer(remainingTime);
           return remainingTime;
@@ -190,7 +190,7 @@ const OtpVerificationCompany = () => {
 
   const handleResendOtp = async () => {
     try {
-      const response = await axiosInstance.post("/company/resend-otp", {
+      const response = await axiosInstance.post('/company/resend-otp', {
         email,
       });
       const company = response.data.data.company;
@@ -198,7 +198,7 @@ const OtpVerificationCompany = () => {
       if (response.data.success) {
         const newOtpExpiry = company?.otpExpiry;
         setOtpExpiry(newOtpExpiry);
-        localStorage.setItem("otpExpiry", newOtpExpiry);
+        localStorage.setItem('otpExpiry', newOtpExpiry);
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
@@ -210,29 +210,29 @@ const OtpVerificationCompany = () => {
   };
 
   const handleOtpVerification = async (
-    event: React.FormEvent,
+    event: React.FormEvent
   ): Promise<void> => {
     event.preventDefault();
     try {
       const otpExpiryDate = otpExpiryFromCompany || otpExpiry;
       if (otpExpiryDate && Date.now() > new Date(otpExpiryDate).getTime()) {
-        toast.error("OTP has expired. Please request a new one.");
+        toast.error('OTP has expired. Please request a new one.');
         return;
       }
-      const response = await axiosInstance.post("/company/verify-otp", {
+      const response = await axiosInstance.post('/company/verify-otp', {
         email,
         otp,
       });
       if (response.data.success) {
         toast.success(response.data.message);
         setOtpExpiry(null); // Clear OTP expiry
-        localStorage.removeItem("otpExpiry"); // Remove OTP expiry
-        navigate("/company/login");
+        localStorage.removeItem('otpExpiry'); // Remove OTP expiry
+        navigate('/company/login');
       } else {
         toast.error(response.data.message);
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      toast.error(error.response?.data?.message || 'Something went wrong');
     }
   };
 
@@ -249,7 +249,7 @@ const OtpVerificationCompany = () => {
             OTP has been sent to <span className="font-semibold">{email}</span>
           </h2>
           <h2 className="text-center text-sm text-gray-600 mb-6">
-            Your OTP will expire after{" "}
+            Your OTP will expire after{' '}
             <span className="font-semibold">{timer} seconds</span>
           </h2>
 

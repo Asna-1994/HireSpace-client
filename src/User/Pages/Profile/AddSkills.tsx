@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import Header from "../../Components/Header/Header";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { toast } from "react-toastify";
-import * as Yup from "yup";
-import { motion } from "framer-motion";
+import React, { useEffect, useState } from 'react';
+import Header from '../../Components/Header/Header';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { toast } from 'react-toastify';
+import * as Yup from 'yup';
+import { motion } from 'framer-motion';
 
 const validationSchema = Yup.object({
   softSkills: Yup.array().of(
-    Yup.string().min(2, "Skill must be at least 2 characters"),
+    Yup.string().min(2, 'Skill must be at least 2 characters')
   ),
   hardSkills: Yup.array().of(
-    Yup.string().min(2, "Skill must be at least 2 characters"),
+    Yup.string().min(2, 'Skill must be at least 2 characters')
   ),
   technicalSkills: Yup.array().of(
-    Yup.string().min(2, "Skill must be at least 2 characters"),
+    Yup.string().min(2, 'Skill must be at least 2 characters')
   ),
 });
 
@@ -44,7 +44,7 @@ const AddSkills: React.FC = () => {
     const { name, value } = e.target;
     setSkills((prevSkills) => ({
       ...prevSkills,
-      [name]: value.split(","),
+      [name]: value.split(','),
     }));
   };
 
@@ -74,10 +74,10 @@ const AddSkills: React.FC = () => {
     try {
       const res = await axiosInstance.patch(
         `/user/add-or-update-skills/${user?._id}`,
-        skills,
+        skills
       );
       if (res.data.success) {
-        toast.success("Skills updated successfully");
+        toast.success('Skills updated successfully');
         getSkills();
         resetForm();
       } else {
@@ -102,7 +102,7 @@ const AddSkills: React.FC = () => {
       if (response.data.success) {
         setSkillsList(response.data.data.skills);
       } else {
-        console.log("Error in fetching skills", response.data.message);
+        console.log('Error in fetching skills', response.data.message);
       }
     } catch (err: any) {
       console.log(err.response?.data?.message);
@@ -123,9 +123,9 @@ const AddSkills: React.FC = () => {
 
   const getArrayValue = (value: string | string[] | undefined): string => {
     if (Array.isArray(value)) {
-      return value.join(",");
+      return value.join(',');
     }
-    return "";
+    return '';
   };
 
   const handleDeleteSkill = async (skillName: string) => {
@@ -134,16 +134,16 @@ const AddSkills: React.FC = () => {
         `/user/${user?._id}/delete-skills`,
         {
           data: { skillName },
-        },
+        }
       );
       if (res.data.success) {
-        toast.success("Skill deleted successfully");
+        toast.success('Skill deleted successfully');
         getSkills();
       } else {
         toast.error(res.data.message);
       }
     } catch (err: any) {
-      toast.error("Error deleting skill");
+      toast.error('Error deleting skill');
     }
   };
 
@@ -167,19 +167,19 @@ const AddSkills: React.FC = () => {
             <form onSubmit={handleAddOrUpdate} className="space-y-6">
               {[
                 {
-                  label: "Soft Skills",
-                  name: "softSkills",
-                  placeholder: "e.g., Communication, Leadership",
+                  label: 'Soft Skills',
+                  name: 'softSkills',
+                  placeholder: 'e.g., Communication, Leadership',
                 },
                 {
-                  label: "Hard Skills",
-                  name: "hardSkills",
-                  placeholder: "e.g., Project Management",
+                  label: 'Hard Skills',
+                  name: 'hardSkills',
+                  placeholder: 'e.g., Project Management',
                 },
                 {
-                  label: "Technical Skills",
-                  name: "technicalSkills",
-                  placeholder: "e.g., JavaScript, React",
+                  label: 'Technical Skills',
+                  name: 'technicalSkills',
+                  placeholder: 'e.g., JavaScript, React',
                 },
               ].map((field, idx) => (
                 <div key={idx}>
@@ -227,10 +227,10 @@ const AddSkills: React.FC = () => {
               <div className="max-h-64 overflow-y-auto">
                 <ul className="space-y-4">
                   {[
-                    { label: "Soft Skills", skills: skillsList.softSkills },
-                    { label: "Hard Skills", skills: skillsList.hardSkills },
+                    { label: 'Soft Skills', skills: skillsList.softSkills },
+                    { label: 'Hard Skills', skills: skillsList.hardSkills },
                     {
-                      label: "Technical Skills",
+                      label: 'Technical Skills',
                       skills: skillsList.technicalSkills,
                     },
                   ].map((category, idx) => (
@@ -246,7 +246,7 @@ const AddSkills: React.FC = () => {
                           <button
                             onClick={() =>
                               handleDeleteSkill(
-                                category.label.toLowerCase().replace(" ", ""),
+                                category.label.toLowerCase().replace(' ', '')
                               )
                             }
                             className="text-red-500 ml-4"

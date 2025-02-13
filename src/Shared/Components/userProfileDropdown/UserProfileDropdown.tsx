@@ -119,9 +119,9 @@
 
 // export default UserProfileDropdown;
 
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { FaPills } from "react-icons/fa";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FaPills } from 'react-icons/fa';
 import {
   FaCrown,
   FaEdit,
@@ -131,8 +131,8 @@ import {
   FaBriefcase,
   FaFileUpload,
   FaSave,
-} from "react-icons/fa";
-import { User } from "../../../Utils/Interfaces/interface";
+} from 'react-icons/fa';
+import { User } from '../../../Utils/Interfaces/interface';
 
 interface UserProfileDropdownProps {
   user: User;
@@ -153,34 +153,34 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
     // { to: `/user/settings/${user._id}`, label: 'User Settings', icon: FaCrown },
     {
       to: `/user/edit-basic-details/${user._id}`,
-      label: "Edit Profile",
+      label: 'Edit Profile',
       icon: FaEdit,
     },
     {
       to: `/user/add-education/${user._id}`,
-      label: "Add Education",
+      label: 'Add Education',
       icon: FaGraduationCap,
     },
     {
       to: `/user/add-work-experience/${user._id}`,
-      label: "Add Work Experience",
+      label: 'Add Work Experience',
       icon: FaBriefcase,
     },
-    { to: `/user/add-skills/${user._id}`, label: "Add Skills", icon: FaPills },
+    { to: `/user/add-skills/${user._id}`, label: 'Add Skills', icon: FaPills },
     {
       to: `/user/add-certificates/${user._id}`,
-      label: "Add Certificates",
+      label: 'Add Certificates',
       icon: FaCertificate,
     },
     {
       to: `/user/upload-resume/${user._id}`,
-      label: "Upload Resume",
+      label: 'Upload Resume',
       icon: FaFileUpload,
     },
-    { to: `/user/saved-jobs/${user._id}`, label: "Saved Jobs", icon: FaSave },
+    { to: `/user/saved-jobs/${user._id}`, label: 'Saved Jobs', icon: FaSave },
     {
       to: `/user/${user._id}/try-premium`,
-      label: "Try Premium",
+      label: 'Try Premium',
       icon: FaCrown,
     },
   ];
@@ -236,7 +236,7 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
                   )}
                   {user.companyId && (
                     <p className="text-xs text-gray-400">
-                      {user?.userRole === "companyAdmin" ? "Admin" : "Member"}
+                      {user?.userRole === 'companyAdmin' ? 'Admin' : 'Member'}
                     </p>
                   )}
                 </div>

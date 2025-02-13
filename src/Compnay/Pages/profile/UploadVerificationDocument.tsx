@@ -1,21 +1,21 @@
-import { useEffect, useState } from "react";
-import CompanyHeader from "../../Components/Header/Header";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { toast } from "react-toastify";
-import { validateFile } from "../../../Utils/helperFunctions/fileValidation";
-import { companyUpdate } from "../../../redux/slices/authSlice";
-import Modal from "react-modal";
+import { useEffect, useState } from 'react';
+import CompanyHeader from '../../Components/Header/Header';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { toast } from 'react-toastify';
+import { validateFile } from '../../../Utils/helperFunctions/fileValidation';
+import { companyUpdate } from '../../../redux/slices/authSlice';
+import Modal from 'react-modal';
 
 const UploadVerificationDocument = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [documentNumber, setDocumentNumber] = useState<string>("");
+  const [documentNumber, setDocumentNumber] = useState<string>('');
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
-    null,
+    null
   );
 
   const { company } = useSelector((state: RootState) => state.auth);
@@ -44,20 +44,20 @@ const UploadVerificationDocument = () => {
 
   const handleUpload = async () => {
     if (!selectedFile || !documentNumber.trim()) {
-      toast.error("Please fill in all required fields");
+      toast.error('Please fill in all required fields');
       return;
     }
 
     const allowedTypes = [
-      "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     ];
     const maxFileSize = 5 * 1024 * 1024; // 5MB
     const validationError = validateFile(
       selectedFile,
       allowedTypes,
-      maxFileSize,
+      maxFileSize
     );
     if (validationError) {
       toast.error(validationError);
@@ -65,8 +65,8 @@ const UploadVerificationDocument = () => {
     }
 
     const formData = new FormData();
-    formData.append("verificationDocument", selectedFile);
-    formData.append("documentNumber", documentNumber);
+    formData.append('verificationDocument', selectedFile);
+    formData.append('documentNumber', documentNumber);
 
     try {
       const response = await axiosInstance.patch(
@@ -74,9 +74,9 @@ const UploadVerificationDocument = () => {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
-        },
+        }
       );
 
       if (response.data.success) {
@@ -88,10 +88,9 @@ const UploadVerificationDocument = () => {
         toast.error(response.data.message);
       }
     } catch (error: any) {
-      console.error("Error uploading verification document:", error);
+      console.error('Error uploading verification document:', error);
       toast.error(
-        error.response?.data?.message ||
-          "Error uploading verification document",
+        error.response?.data?.message || 'Error uploading verification document'
       );
       setIsUploading(false);
     }
@@ -101,7 +100,7 @@ const UploadVerificationDocument = () => {
     setModalIsOpen(false);
     try {
       const res = await axiosInstance.patch(
-        `/company/delete-document/${selectedCompanyId}`,
+        `/company/delete-document/${selectedCompanyId}`
       );
       if (res.data.success) {
         toast.success(res.data.message);
@@ -111,7 +110,7 @@ const UploadVerificationDocument = () => {
       }
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message || "Error deleting verification document",
+        error.response?.data?.message || 'Error deleting verification document'
       );
       console.error(error);
     } finally {
@@ -182,8 +181,8 @@ const UploadVerificationDocument = () => {
           <div className="relative flex items-center justify-center mb-4 border-2 border-dashed border-gray-300 rounded-lg p-6">
             {previewUrl ? (
               <div className="relative">
-                {selectedFile?.type === "application/pdf" ||
-                previewUrl?.endsWith(".pdf") ? (
+                {selectedFile?.type === 'application/pdf' ||
+                previewUrl?.endsWith('.pdf') ? (
                   <iframe
                     src={previewUrl || company?.verificationDocument?.url}
                     title="PDF Preview"
@@ -272,8 +271,8 @@ const UploadVerificationDocument = () => {
               disabled={!selectedFile || !documentNumber.trim()}
               className={`w-full py-2 px-6 text-white rounded-md shadow-md transition duration-300 ${
                 selectedFile && documentNumber.trim()
-                  ? "bg-gradient-to-r from-blue-500 to-indigo-600 hover:bg-gradient-to-l"
-                  : "bg-gray-300 cursor-not-allowed"
+                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:bg-gradient-to-l'
+                  : 'bg-gray-300 cursor-not-allowed'
               }`}
             >
               Upload Document

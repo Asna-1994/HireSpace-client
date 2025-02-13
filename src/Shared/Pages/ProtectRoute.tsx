@@ -1,11 +1,11 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { Navigate, Outlet } from "react-router-dom";
-import { RootState } from "../../redux/store";
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { Navigate, Outlet } from 'react-router-dom';
+import { RootState } from '../../redux/store';
 
 interface ProtectedRouteProps {
   isAuthenticated: boolean;
-  requiredEntity?: "user" | "company";
+  requiredEntity?: 'user' | 'company';
   allowedRoles?: string[];
   redirectPath?: string;
 }
@@ -13,10 +13,10 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredEntity,
   allowedRoles = [],
-  redirectPath = "/",
+  redirectPath = '/',
 }) => {
   const { user, company, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
 
   if (!isAuthenticated) {
@@ -25,15 +25,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (requiredEntity) {
     if (
-      (requiredEntity === "user" && !user) ||
-      (requiredEntity === "company" && !company)
+      (requiredEntity === 'user' && !user) ||
+      (requiredEntity === 'company' && !company)
     ) {
       return <Navigate to="/no-access" replace />;
     }
   }
 
-  if (requiredEntity === "user" && allowedRoles.length > 0) {
-    const userRole = user?.userRole || "";
+  if (requiredEntity === 'user' && allowedRoles.length > 0) {
+    const userRole = user?.userRole || '';
     if (!allowedRoles.includes(userRole)) {
       return <Navigate to="/no-access" replace />;
     }

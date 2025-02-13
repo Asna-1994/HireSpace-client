@@ -1,20 +1,20 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
-import ProtectedRoute from "../Shared/Pages/ProtectRoute";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import AdminLogin from "../Admin/Pages/Login/AdminLogin";
-import AdminHome from "../Admin/Pages/Home/AdminHome";
-import UserList from "../Admin/Pages/UsersList/UserList";
-import CompanyList from "../Admin/Pages/CompanyList/CompanyList";
-import AdminProfile from "../Admin/Pages/Profile/EditBasicDetails";
-import ManagePlans from "../Admin/Pages/ManagePlans/ManagePlans";
-import PremiumUserList from "../Admin/Pages/PremiumUsers/PremiumUsers";
-import SpamList from "../Admin/Pages/Spam/SpamList";
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
+import ProtectedRoute from '../Shared/Pages/ProtectRoute';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import AdminLogin from '../Admin/Pages/Login/AdminLogin';
+import AdminHome from '../Admin/Pages/Home/AdminHome';
+import UserList from '../Admin/Pages/UsersList/UserList';
+import CompanyList from '../Admin/Pages/CompanyList/CompanyList';
+import AdminProfile from '../Admin/Pages/Profile/EditBasicDetails';
+import ManagePlans from '../Admin/Pages/ManagePlans/ManagePlans';
+import PremiumUserList from '../Admin/Pages/PremiumUsers/PremiumUsers';
+import SpamList from '../Admin/Pages/Spam/SpamList';
 
 const AdminRoutes = () => {
   const { company, user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
 
   return (
@@ -25,7 +25,7 @@ const AdminRoutes = () => {
           <ProtectedRoute
             isAuthenticated={isAuthenticated}
             requiredEntity="user"
-            allowedRoles={["admin"]}
+            allowedRoles={['admin']}
             // redirectPath='/login'
           />
         }

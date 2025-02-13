@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import Header from "../../Components/Header/Header";
-import Footer from "../../../User/Components/Footer/Footer";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { toast } from "react-toastify";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { companyUpdate } from "../../../redux/slices/authSlice";
-import CompanyHeader from "../../../Compnay/Components/Header/Header";
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import Header from '../../Components/Header/Header';
+import Footer from '../../../User/Components/Footer/Footer';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { toast } from 'react-toastify';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { companyUpdate } from '../../../redux/slices/authSlice';
+import CompanyHeader from '../../../Compnay/Components/Header/Header';
 
 const EditCompanyDetails: React.FC = () => {
   const { user, company } = useSelector((state: RootState) => state.auth);
@@ -22,31 +22,31 @@ const EditCompanyDetails: React.FC = () => {
   }>({
     companyName: company?.companyName,
     establishedDate: company?.establishedDate
-      ? new Date(company.establishedDate).toISOString().split("T")[0]
-      : "",
+      ? new Date(company.establishedDate).toISOString().split('T')[0]
+      : '',
     industry: company?.industry,
     phone: company?.phone,
     address: company?.address,
   });
 
   const [additionalDetails, setAdditionalDetails] = useState({
-    mission: "",
-    vision: "",
-    founder: "",
-    ceo: "",
-    description: "",
-    aboutUs: "",
-    website: "",
+    mission: '',
+    vision: '',
+    founder: '',
+    ceo: '',
+    description: '',
+    aboutUs: '',
+    website: '',
     socialLinks: {
-      facebook: "",
-      instagram: "",
-      twitter: "",
-      linkedin: "",
+      facebook: '',
+      instagram: '',
+      twitter: '',
+      linkedin: '',
     },
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setForm((prevForm) => ({
@@ -56,11 +56,11 @@ const EditCompanyDetails: React.FC = () => {
   };
 
   const handleAdditionalChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
 
-    if (["facebook", "instagram", "twitter", "linkedin"].includes(name)) {
+    if (['facebook', 'instagram', 'twitter', 'linkedin'].includes(name)) {
       setAdditionalDetails((prevDetails) => ({
         ...prevDetails,
         socialLinks: {
@@ -81,32 +81,32 @@ const EditCompanyDetails: React.FC = () => {
 
     const formData = new FormData();
 
-    formData.append("companyName", form.companyName || "");
-    formData.append("establishedDate", form.establishedDate || "");
-    formData.append("industry", form.industry || "");
-    formData.append("phone", form.phone || "");
-    formData.append("address", form.address || "");
+    formData.append('companyName', form.companyName || '');
+    formData.append('establishedDate', form.establishedDate || '');
+    formData.append('industry', form.industry || '');
+    formData.append('phone', form.phone || '');
+    formData.append('address', form.address || '');
 
     try {
       const response = await axiosInstance.patch(
         `/company/update-basic-detail/${company?._id}`,
-        formData,
+        formData
       );
       if (response.data.success) {
         const updatedCompany = response.data.data.company;
-        toast.success("Updated successfully");
+        toast.success('Updated successfully');
         dispatch(companyUpdate(updatedCompany));
       } else {
         toast.error(response.data.message);
       }
     } catch (err: any) {
-      console.error("Error updating details:", err);
+      console.error('Error updating details:', err);
       toast.error(err.response.data.message);
     }
   };
 
   const handleAdditionalSubmit = async (
-    e: React.FormEvent<HTMLFormElement>,
+    e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
 
@@ -119,17 +119,17 @@ const EditCompanyDetails: React.FC = () => {
     try {
       const response = await axiosInstance.patch(
         `/company/complete-profile/${company?._id}`,
-        payload,
+        payload
       );
       if (response.data.success) {
-        toast.success("Details updated successfully");
+        toast.success('Details updated successfully');
         fetchAdditionalDetails();
       } else {
         toast.error(response.data.message);
       }
     } catch (err: any) {
-      console.error("Error updating additional details:", err);
-      toast.error(err.response?.data?.message || "An error occurred");
+      console.error('Error updating additional details:', err);
+      toast.error(err.response?.data?.message || 'An error occurred');
     }
   };
 
@@ -137,26 +137,26 @@ const EditCompanyDetails: React.FC = () => {
   const fetchAdditionalDetails = async () => {
     try {
       const response = await axiosInstance.get(
-        `/company/company-profile-details/${company?._id}`,
+        `/company/company-profile-details/${company?._id}`
       );
       if (response.data.success) {
         const data = response.data.data.profile;
         setAdditionalDetails({
-          mission: data.mission || "",
-          vision: data.vision || "",
-          founder: data.founder || "",
-          ceo: data.ceo || "",
-          description: data.description || "",
-          aboutUs: data.aboutUs || "",
-          website: data.website || "",
+          mission: data.mission || '',
+          vision: data.vision || '',
+          founder: data.founder || '',
+          ceo: data.ceo || '',
+          description: data.description || '',
+          aboutUs: data.aboutUs || '',
+          website: data.website || '',
           socialLinks: data.socialLinks || {},
         });
       } else {
-        console.log("Failed to fetch additional details.");
+        console.log('Failed to fetch additional details.');
       }
     } catch (err: any) {
-      console.error("Error fetching additional details:", err);
-      console.log(err.response?.data?.message || "An error occurred.");
+      console.error('Error fetching additional details:', err);
+      console.log(err.response?.data?.message || 'An error occurred.');
     }
   };
 
@@ -191,7 +191,7 @@ const EditCompanyDetails: React.FC = () => {
               <input
                 type="text"
                 name="companyName"
-                value={form.companyName || ""}
+                value={form.companyName || ''}
                 onChange={handleChange}
                 className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Enter Company Name"
@@ -204,7 +204,7 @@ const EditCompanyDetails: React.FC = () => {
               <input
                 type="date"
                 name="dateOfBirth"
-                value={form.establishedDate || ""}
+                value={form.establishedDate || ''}
                 onChange={handleChange}
                 className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
@@ -216,7 +216,7 @@ const EditCompanyDetails: React.FC = () => {
               <input
                 type="text"
                 name="phone"
-                value={form.phone || ""}
+                value={form.phone || ''}
                 onChange={handleChange}
                 className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Enter your phone number"
@@ -229,7 +229,7 @@ const EditCompanyDetails: React.FC = () => {
               <input
                 type="text"
                 name="industry"
-                value={form.industry || ""}
+                value={form.industry || ''}
                 onChange={handleChange}
                 className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Enter your industry"
@@ -241,7 +241,7 @@ const EditCompanyDetails: React.FC = () => {
               </label>
               <textarea
                 name="address"
-                value={form.address || ""}
+                value={form.address || ''}
                 onChange={handleChange}
                 className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Enter your address"

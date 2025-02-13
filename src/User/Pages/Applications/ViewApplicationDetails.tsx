@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
-import Header from "../../Components/Header/Header";
-import Footer from "../../Components/Footer/Footer";
+import { useState } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+import Header from '../../Components/Header/Header';
+import Footer from '../../Components/Footer/Footer';
 
 const ViewApplicationDetails = () => {
   const { applicationId } = useParams<{ applicationId: string }>();
@@ -50,7 +50,7 @@ const ViewApplicationDetails = () => {
               </p>
               <p className="text-lg sm:text-xl">
                 <span className="font-semibold">Salary: </span>
-                {jobPostId?.salaryRange?.currency} {jobPostId?.salaryRange?.min}{" "}
+                {jobPostId?.salaryRange?.currency} {jobPostId?.salaryRange?.min}{' '}
                 - {jobPostId?.salaryRange?.max}
               </p>
               <p className="text-lg sm:text-xl">
@@ -108,11 +108,11 @@ const ViewApplicationDetails = () => {
                 {userId.isPremium ? (
                   <span
                     className={`ml-2 ${
-                      status === "pending"
-                        ? "bg-yellow-400"
-                        : status === "accepted"
-                          ? "bg-green-500"
-                          : "bg-red-500"
+                      status === 'pending'
+                        ? 'bg-yellow-400'
+                        : status === 'accepted'
+                          ? 'bg-green-500'
+                          : 'bg-red-500'
                     } text-white px-2 py-1 rounded-lg`}
                   >
                     {status}

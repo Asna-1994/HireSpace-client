@@ -1,10 +1,10 @@
-import axios from "axios";
-import { toast } from "react-toastify";
-import store from "../../redux/store";
-import { logout } from "../../redux/slices/authSlice";
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import store from '../../redux/store';
+import { logout } from '../../redux/slices/authSlice';
 
 const BASE_URL =
-  import.meta.env.MODE === "production"
+  import.meta.env.MODE === 'production'
     ? import.meta.env.VITE_BACKEND_URL
     : `${import.meta.env.VITE_BACKEND_URL}/api`;
 
@@ -12,7 +12,7 @@ const axiosInstance = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
@@ -33,22 +33,22 @@ axiosInstance.interceptors.response.use(
 
       if (
         status === 403 &&
-        data.message === "Account is blocked, Please contact admin"
+        data.message === 'Account is blocked, Please contact admin'
       ) {
         store.dispatch(logout());
-        toast.error("Your account is blocked. You have been logged out.");
-        window.location.href = "/";
+        toast.error('Your account is blocked. You have been logged out.');
+        window.location.href = '/';
       } else if (
         status === 401 &&
-        data.message === "Token expired, please login again"
+        data.message === 'Token expired, please login again'
       ) {
         store.dispatch(logout());
-        toast.error("Session expired. Please log in again.");
-        window.location.href = "/";
+        toast.error('Session expired. Please log in again.');
+        window.location.href = '/';
       }
     }
     return Promise.reject(error);
-  },
+  }
 );
 
 export default axiosInstance;

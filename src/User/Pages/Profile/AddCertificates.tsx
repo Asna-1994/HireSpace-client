@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import Header from "../../Components/Header/Header";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { toast } from "react-toastify";
-import { motion } from "framer-motion";
-import * as yup from "yup";
+import React, { useEffect, useState } from 'react';
+import Header from '../../Components/Header/Header';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { toast } from 'react-toastify';
+import { motion } from 'framer-motion';
+import * as yup from 'yup';
 
 export interface CertificateObject {
   certificateTitle: string;
@@ -17,41 +17,41 @@ export interface CertificateObject {
 }
 
 const certificateSchema = yup.object().shape({
-  certificateTitle: yup.string().required("Certificate Title is required"),
+  certificateTitle: yup.string().required('Certificate Title is required'),
   description: yup.string().optional(),
   certificateUrl: yup
     .string()
     .nullable()
     .notRequired()
-    .matches(/^(https?:\/\/[^\s]+)?$/, "Must be a valid URL (if provided)"),
-  issuer: yup.string().required("Issuer is required"),
+    .matches(/^(https?:\/\/[^\s]+)?$/, 'Must be a valid URL (if provided)'),
+  issuer: yup.string().required('Issuer is required'),
   issuedDate: yup
     .string()
-    .matches(/^\d{2}-\d{2}-\d{4}$/, "Date must be in DD-MM-YYYY format")
-    .test("isValidDate", "Invalid date", (value) => {
+    .matches(/^\d{2}-\d{2}-\d{4}$/, 'Date must be in DD-MM-YYYY format')
+    .test('isValidDate', 'Invalid date', (value) => {
       if (!value) return false;
-      const [day, month, year] = value.split("-").map(Number);
+      const [day, month, year] = value.split('-').map(Number);
       const parsedDate = new Date(`${year}-${month}-${day}`);
       return !isNaN(parsedDate.getTime()) && parsedDate.getDate() === day;
     })
-    .test("isPastOrToday", "Issued Date cannot be in the future", (value) => {
+    .test('isPastOrToday', 'Issued Date cannot be in the future', (value) => {
       if (!value) return false;
-      const [day, month, year] = value.split("-").map(Number);
+      const [day, month, year] = value.split('-').map(Number);
       const parsedDate = new Date(`${year}-${month}-${day}`);
       return parsedDate.getTime() <= new Date().getTime();
     })
-    .required("Issued Date is required"),
+    .required('Issued Date is required'),
 });
 
 const AddCertificates: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [certificates, setCertificates] = useState<CertificateObject[]>([]);
   const [form, setForm] = useState<CertificateObject>({
-    certificateTitle: "",
-    description: "",
-    certificateUrl: "",
-    issuer: "",
-    issuedDate: "",
+    certificateTitle: '',
+    description: '',
+    certificateUrl: '',
+    issuer: '',
+    issuedDate: '',
   });
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [certificateId, setCertificateId] = useState<string | null>(null);
@@ -75,18 +75,18 @@ const AddCertificates: React.FC = () => {
       const res = await axiosInstance.patch(
         `/user/add-or-update-certificates/${user?._id}`,
         form,
-        { params: { certificateId } },
+        { params: { certificateId } }
       );
 
       if (res.data.success) {
-        toast.success("Certificate updated successfully");
+        toast.success('Certificate updated successfully');
         getCertificates();
         resetForm();
       } else {
         toast.error(res.data.message);
       }
     } catch (err: any) {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         const validationErrors: { [key: string]: string } = {};
         err.inner.forEach((error: any) => {
           validationErrors[error.path] = error.message;
@@ -106,11 +106,11 @@ const AddCertificates: React.FC = () => {
 
   const resetForm = () => {
     setForm({
-      certificateTitle: "",
-      description: "",
-      certificateUrl: "",
-      issuer: "",
-      issuedDate: "",
+      certificateTitle: '',
+      description: '',
+      certificateUrl: '',
+      issuer: '',
+      issuedDate: '',
     });
     setEditIndex(null);
     setCertificateId(null);
@@ -120,12 +120,12 @@ const AddCertificates: React.FC = () => {
   const getCertificates = async () => {
     try {
       const response = await axiosInstance.get(
-        `/user/${user?._id}/all-certificates`,
+        `/user/${user?._id}/all-certificates`
       );
       if (response.data.success) {
         setCertificates(response.data.data.certificates);
       } else {
-        console.log("Error in fetching certificates", response.data.message);
+        console.log('Error in fetching certificates', response.data.message);
       }
     } catch (err: any) {
       console.log(err.response?.data?.message);
@@ -139,10 +139,10 @@ const AddCertificates: React.FC = () => {
   const handleDelete = async (index: number, certificateId: string) => {
     try {
       const response = await axiosInstance.delete(
-        `/user/${user?._id}/certificates/${certificateId}`,
+        `/user/${user?._id}/certificates/${certificateId}`
       );
       if (response.data.success) {
-        toast.success("Successfully deleted");
+        toast.success('Successfully deleted');
         setCertificates(response.data.data.certificates);
       } else {
         toast.error(response.data.message);
@@ -169,35 +169,35 @@ const AddCertificates: React.FC = () => {
           {/* Form Section */}
           <div className="bg-gray-50 p-6 rounded-lg shadow-md">
             <h3 className="text-2xl font-semibold text-blue-700 mb-6 text-center">
-              {editIndex !== null ? "Update Certificate" : "Add Certificate"}
+              {editIndex !== null ? 'Update Certificate' : 'Add Certificate'}
             </h3>
 
             <form onSubmit={handleAddOrUpdate} className="space-y-6">
               {[
                 {
-                  label: "Certificate Title",
-                  name: "certificateTitle",
-                  placeholder: "e.g., React Certification",
+                  label: 'Certificate Title',
+                  name: 'certificateTitle',
+                  placeholder: 'e.g., React Certification',
                 },
                 {
-                  label: "Description",
-                  name: "description",
-                  placeholder: "e.g., Front End Developer",
+                  label: 'Description',
+                  name: 'description',
+                  placeholder: 'e.g., Front End Developer',
                 },
                 {
-                  label: "Issuer",
-                  name: "issuer",
-                  placeholder: "e.g., Google",
+                  label: 'Issuer',
+                  name: 'issuer',
+                  placeholder: 'e.g., Google',
                 },
                 {
-                  label: "Issued Date",
-                  name: "issuedDate",
-                  placeholder: "e.g., 22-06-2023",
+                  label: 'Issued Date',
+                  name: 'issuedDate',
+                  placeholder: 'e.g., 22-06-2023',
                 },
                 {
-                  label: "Certificate URL",
-                  name: "certificateUrl",
-                  placeholder: "e.g., https://certificate.com",
+                  label: 'Certificate URL',
+                  name: 'certificateUrl',
+                  placeholder: 'e.g., https://certificate.com',
                 },
               ].map((field, idx) => (
                 <div key={idx}>
@@ -229,7 +229,7 @@ const AddCertificates: React.FC = () => {
                   type="submit"
                   className="bg-blue-600 text-white py-1 px-6 rounded-lg shadow-md hover:bg-blue-700 transition"
                 >
-                  {editIndex !== null ? "Update" : "Add"} Certificate
+                  {editIndex !== null ? 'Update' : 'Add'} Certificate
                 </button>
               </div>
             </form>

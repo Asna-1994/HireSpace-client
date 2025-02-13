@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from "react";
-import Cropper from "react-easy-crop";
-import { Area } from "react-easy-crop/types";
-import { getCroppedImg } from "../../../Utils/helperFunctions/cropImage";
+import React, { useState, useCallback } from 'react';
+import Cropper from 'react-easy-crop';
+import { Area } from 'react-easy-crop/types';
+import { getCroppedImg } from '../../../Utils/helperFunctions/cropImage';
 
 interface CropImageModalProps {
   image: string;
@@ -22,7 +22,7 @@ const CropImageModal: React.FC<CropImageModalProps> = ({
     (croppedArea: Area, croppedAreaPixels: Area) => {
       setCroppedAreaPixels(croppedAreaPixels);
     },
-    [],
+    []
   );
 
   const handleSave = async () => {
@@ -34,7 +34,7 @@ const CropImageModal: React.FC<CropImageModalProps> = ({
         }
       }
     } catch (error) {
-      console.error("Error cropping image:", error);
+      console.error('Error cropping image:', error);
     }
   };
 

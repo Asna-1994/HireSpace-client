@@ -1,9 +1,9 @@
-import React, { useRef } from "react";
-import Header from "../../Components/Header/Header";
-import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { useDispatch } from "react-redux";
+import React, { useRef } from 'react';
+import Header from '../../Components/Header/Header';
+import { toast } from 'react-toastify';
+import { Link, useNavigate } from 'react-router-dom';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { useDispatch } from 'react-redux';
 
 const ForgotPassword = () => {
   const emailRef = useRef<HTMLInputElement | null>(null);
@@ -19,16 +19,16 @@ const ForgotPassword = () => {
     const confirmPassword = confirmPasswordRef.current?.value;
 
     if (!email || !newPassword || !confirmPassword) {
-      toast.error("Please enter both email and password.");
+      toast.error('Please enter both email and password.');
       return;
     }
     if (!newPassword || !confirmPassword) {
-      toast.error("Password does not match");
+      toast.error('Password does not match');
       return;
     }
 
     try {
-      const response = await axiosInstance.patch("/user/forgot-password", {
+      const response = await axiosInstance.patch('/user/forgot-password', {
         email,
         newPassword,
       });
@@ -42,9 +42,9 @@ const ForgotPassword = () => {
       }
     } catch (error: any) {
       const errorMessage =
-        error.response?.data?.message || "Something went wrong";
+        error.response?.data?.message || 'Something went wrong';
       toast.error(errorMessage);
-      console.error("Login error:", error);
+      console.error('Login error:', error);
     }
   };
 
@@ -95,7 +95,7 @@ const ForgotPassword = () => {
           </form>
 
           <p className="mt-6 text-center text-gray-200">
-            {" "}
+            {' '}
             <Link
               to="/user/login"
               className="text-white font-medium hover:underline"

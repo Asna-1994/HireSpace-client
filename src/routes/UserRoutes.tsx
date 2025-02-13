@@ -1,36 +1,36 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
-import SignUp from "../User/Pages/SignUp/UserSignUp";
-import OtpVerification from "../User/Pages/OTPverification/OtpVerification";
-import Login from "../User/Pages/Login/Login";
-import ForgotPassword from "../User/Pages/ForgotPassword/ForgotPassword";
-import UserHome from "../User/Pages/UserHome/UserHome";
-import ProtectedRoute from "../Shared/Pages/ProtectRoute";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import AddEducation from "../User/Pages/Profile/AddEducation";
-import UploadResume from "../User/Pages/Profile/UploadResume";
-import EditBasicProfile from "../User/Pages/Profile/EditBasicDetails";
-import AddWorkExperience from "../User/Pages/Profile/AddWorkExperience";
-import AddSkills from "../User/Pages/Profile/AddSkills";
-import AddCertificates from "../User/Pages/Profile/AddCertificates";
-import ViewProfile from "../User/Pages/Profile/ViewProfile";
-import ViewAllPosts from "../User/Pages/JobPosts/ViewPosts";
-import ViewJobDetails from "../User/Pages/JobPosts/ViewJobDetails";
-import MyApplications from "../User/Pages/Applications/MyApplications";
-import ViewApplicationDetails from "../User/Pages/Applications/ViewApplicationDetails";
-import SavedJobPosts from "../User/Pages/JobPosts/AllSavedJobs";
-import Connections from "../User/Pages/Connections/UserConnections";
-import AllConnections from "../User/Pages/Connections/ViewAllConnections";
-import MessagesPage from "../User/Components/chat/MessagePage";
-import ChatComponent from "../User/Components/chat/ChatComponent";
-import PremiumPlans from "../User/Pages/Profile/TryPremium";
-import PaymentSuccess from "../User/Pages/Profile/PaymentSuccess";
-import PaymentFailure from "../User/Pages/Profile/PaymentFailure";
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
+import SignUp from '../User/Pages/SignUp/UserSignUp';
+import OtpVerification from '../User/Pages/OTPverification/OtpVerification';
+import Login from '../User/Pages/Login/Login';
+import ForgotPassword from '../User/Pages/ForgotPassword/ForgotPassword';
+import UserHome from '../User/Pages/UserHome/UserHome';
+import ProtectedRoute from '../Shared/Pages/ProtectRoute';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import AddEducation from '../User/Pages/Profile/AddEducation';
+import UploadResume from '../User/Pages/Profile/UploadResume';
+import EditBasicProfile from '../User/Pages/Profile/EditBasicDetails';
+import AddWorkExperience from '../User/Pages/Profile/AddWorkExperience';
+import AddSkills from '../User/Pages/Profile/AddSkills';
+import AddCertificates from '../User/Pages/Profile/AddCertificates';
+import ViewProfile from '../User/Pages/Profile/ViewProfile';
+import ViewAllPosts from '../User/Pages/JobPosts/ViewPosts';
+import ViewJobDetails from '../User/Pages/JobPosts/ViewJobDetails';
+import MyApplications from '../User/Pages/Applications/MyApplications';
+import ViewApplicationDetails from '../User/Pages/Applications/ViewApplicationDetails';
+import SavedJobPosts from '../User/Pages/JobPosts/AllSavedJobs';
+import Connections from '../User/Pages/Connections/UserConnections';
+import AllConnections from '../User/Pages/Connections/ViewAllConnections';
+import MessagesPage from '../User/Components/chat/MessagePage';
+import ChatComponent from '../User/Components/chat/ChatComponent';
+import PremiumPlans from '../User/Pages/Profile/TryPremium';
+import PaymentSuccess from '../User/Pages/Profile/PaymentSuccess';
+import PaymentFailure from '../User/Pages/Profile/PaymentFailure';
 
 const UserRoutes: React.FC = () => {
   const { company, user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
 
   return (

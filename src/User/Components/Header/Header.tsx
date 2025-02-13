@@ -1,8 +1,8 @@
-import { FC, useEffect, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { connectSocket, socket } from "../../../services/socket";
-import { RootState } from "../../../redux/store";
+import { FC, useEffect, useState } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { connectSocket, socket } from '../../../services/socket';
+import { RootState } from '../../../redux/store';
 import {
   FaHome,
   FaInfoCircle,
@@ -12,11 +12,11 @@ import {
   FaUserCircle,
   FaBriefcase,
   FaEnvelope,
-} from "react-icons/fa";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { logout } from "../../../redux/slices/authSlice";
-import { toast } from "react-toastify";
-import UserProfileDropdown from "../../../Shared/Components/userProfileDropdown/UserProfileDropdown";
+} from 'react-icons/fa';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { logout } from '../../../redux/slices/authSlice';
+import { toast } from 'react-toastify';
+import UserProfileDropdown from '../../../Shared/Components/userProfileDropdown/UserProfileDropdown';
 
 interface UnreadCounts {
   [key: string]: number;
@@ -26,7 +26,7 @@ const Header: FC = () => {
   const [unreadChatsCount, setUnreadChatsCount] = useState(0);
   const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
   const { user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
   const [menuOpen, setMenuOpen] = useState(false);
   // New state for toggling mobile user profile dropdown
@@ -37,28 +37,28 @@ const Header: FC = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axiosInstance.post("/user/logout");
+      const response = await axiosInstance.post('/user/logout');
       dispatch(logout());
-      navigate("/");
+      navigate('/');
       toast.success(response.data.message);
     } catch (err: any) {
       console.error(err);
-      toast.error(err?.response?.data?.message || "Something went wrong!");
+      toast.error(err?.response?.data?.message || 'Something went wrong!');
     }
   };
 
   useEffect(() => {
     if (socket && user?._id) {
       // Initial fetch of counts
-      socket.emit("getUnreadCount", { userId: user._id });
-      socket.emit("getPendingRequestsCount", { userId: user._id });
+      socket.emit('getUnreadCount', { userId: user._id });
+      socket.emit('getPendingRequestsCount', { userId: user._id });
 
       // Listen for unread message updates
-      socket.on("unreadCounts", (data: { counts: UnreadCounts }) => {
+      socket.on('unreadCounts', (data: { counts: UnreadCounts }) => {
         if (data.counts) {
           const totalUnread = Object.values(data.counts).reduce(
             (sum, count) => sum + count,
-            0,
+            0
           );
           setUnreadChatsCount(totalUnread || 0);
         } else {
@@ -67,27 +67,27 @@ const Header: FC = () => {
       });
 
       // Listen for pending requests updates
-      socket.on("pendingRequestsCount", (data: { count: number }) => {
+      socket.on('pendingRequestsCount', (data: { count: number }) => {
         setPendingRequestsCount(data.count || 0);
       });
 
       // Listen for new messages
-      socket.on("message", (message: any) => {
-        if (message.receiverId === user._id && message.status === "unread") {
-          socket.emit("getUnreadCount", { userId: user._id });
+      socket.on('message', (message: any) => {
+        if (message.receiverId === user._id && message.status === 'unread') {
+          socket.emit('getUnreadCount', { userId: user._id });
         }
       });
 
       // Listen for message read status changes
-      socket.on("messageRead", () => {
-        socket.emit("getUnreadCount", { userId: user._id });
+      socket.on('messageRead', () => {
+        socket.emit('getUnreadCount', { userId: user._id });
       });
 
       return () => {
-        socket.off("unreadCounts");
-        socket.off("pendingRequestsCount");
-        socket.off("message");
-        socket.off("messageRead");
+        socket.off('unreadCounts');
+        socket.off('pendingRequestsCount');
+        socket.off('message');
+        socket.off('messageRead');
       };
     }
   }, [user?._id]);

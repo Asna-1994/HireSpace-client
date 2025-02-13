@@ -1,5 +1,5 @@
-import React from "react";
-import Header from "../../User/Components/Header/Header";
+import React from 'react';
+import Header from '../../User/Components/Header/Header';
 
 const About: React.FC = () => {
   return (

@@ -1,7 +1,7 @@
-import { FC, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
+import { FC, useState } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
 import {
   FaHome,
   FaInfoCircle,
@@ -15,15 +15,15 @@ import {
   FaUpload,
   FaSignOutAlt,
   FaBriefcase,
-} from "react-icons/fa";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { logout } from "../../../redux/slices/authSlice";
-import { toast } from "react-toastify";
-import { getCompanyInitials } from "../../../Utils/helperFunctions/companyName";
+} from 'react-icons/fa';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { logout } from '../../../redux/slices/authSlice';
+import { toast } from 'react-toastify';
+import { getCompanyInitials } from '../../../Utils/helperFunctions/companyName';
 
 const CompanyHeader: FC = () => {
   const { company, isAuthenticated, user } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
   const [menuOpen, setMenuOpen] = useState(false);
   const [companyDropdownOpen, setCompanyDropdownOpen] = useState(false);
@@ -33,13 +33,13 @@ const CompanyHeader: FC = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axiosInstance.post("/user/logout");
+      const response = await axiosInstance.post('/user/logout');
       dispatch(logout());
-      navigate("/");
+      navigate('/');
       toast.success(response.data.message);
     } catch (err: any) {
       console.error(err);
-      toast.error(err?.response?.data?.message || "Something went wrong!");
+      toast.error(err?.response?.data?.message || 'Something went wrong!');
     }
   };
 
@@ -182,9 +182,9 @@ const CompanyHeader: FC = () => {
                         <h3 className="font-bold">{user.userName}</h3>
                         <p className="text-sm text-gray-500">{user.email}</p>
                         <p className="text-xs text-gray-400">
-                          {user.userRole === "companyAdmin"
-                            ? "Admin"
-                            : "Member"}
+                          {user.userRole === 'companyAdmin'
+                            ? 'Admin'
+                            : 'Member'}
                         </p>
                       </div>
                     </div>
@@ -192,12 +192,12 @@ const CompanyHeader: FC = () => {
                     {[
                       {
                         to: `/user/profile/${user._id}`,
-                        label: "View Profile",
+                        label: 'View Profile',
                         icon: FaCrown,
                       },
                       {
                         to: `/user/edit-basic-details/${user._id}`,
-                        label: "Edit Profile",
+                        label: 'Edit Profile',
                         icon: FaEdit,
                       },
                     ].map(({ to, label, icon: Icon }, index) => (
@@ -275,22 +275,22 @@ const CompanyHeader: FC = () => {
                       {
                         to: `/company/edit-profile/${company._id}`,
                         icon: FaEdit,
-                        label: "Edit Profile",
+                        label: 'Edit Profile',
                       },
                       {
                         to: `/company/upload-logo/${company._id}`,
                         icon: FaUpload,
-                        label: "Upload Logo",
+                        label: 'Upload Logo',
                       },
                       {
                         to: `/company/${company._id}/add-members`,
                         icon: FaUsers,
-                        label: "Add Members",
+                        label: 'Add Members',
                       },
                       {
                         to: `/company/document-upload/${company._id}`,
                         icon: FaUpload,
-                        label: "Upload Document",
+                        label: 'Upload Document',
                       },
                     ].map(({ to, icon: Icon, label }, index) => (
                       <Link
@@ -382,9 +382,9 @@ const CompanyHeader: FC = () => {
                               {user.email}
                             </p>
                             <p className="text-xs text-gray-400">
-                              {user.userRole === "companyAdmin"
-                                ? "Admin"
-                                : "Member"}
+                              {user.userRole === 'companyAdmin'
+                                ? 'Admin'
+                                : 'Member'}
                             </p>
                           </div>
                         </div>
@@ -392,12 +392,12 @@ const CompanyHeader: FC = () => {
                         {[
                           {
                             to: `/user/profile/${user._id}`,
-                            label: "View Profile",
+                            label: 'View Profile',
                             icon: FaCrown,
                           },
                           {
                             to: `/user/edit-basic-details/${user._id}`,
-                            label: "Edit Profile",
+                            label: 'Edit Profile',
                             icon: FaEdit,
                           },
                         ].map(({ to, label, icon: Icon }, index) => (
@@ -475,22 +475,22 @@ const CompanyHeader: FC = () => {
                           {
                             to: `/company/edit-profile/${company._id}`,
                             icon: FaEdit,
-                            label: "Edit Profile",
+                            label: 'Edit Profile',
                           },
                           {
                             to: `/company/upload-logo/${company._id}`,
                             icon: FaUpload,
-                            label: "Upload Logo",
+                            label: 'Upload Logo',
                           },
                           {
                             to: `/company/${company._id}/add-members`,
                             icon: FaUsers,
-                            label: "Add Members",
+                            label: 'Add Members',
                           },
                           {
                             to: `/company/document-upload/${company._id}`,
                             icon: FaUpload,
-                            label: "Upload Document",
+                            label: 'Upload Document',
                           },
                         ].map(({ to, icon: Icon, label }, index) => (
                           <Link

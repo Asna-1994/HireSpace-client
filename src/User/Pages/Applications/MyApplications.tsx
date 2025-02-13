@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { Link } from "react-router-dom";
-import Header from "../../Components/Header/Header";
-import Footer from "../../Components/Footer/Footer";
-import { FaBriefcase, FaTimes } from "react-icons/fa";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { Link } from 'react-router-dom';
+import Header from '../../Components/Header/Header';
+import Footer from '../../Components/Footer/Footer';
+import { FaBriefcase, FaTimes } from 'react-icons/fa';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
 
 const MyApplications = () => {
   const { user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -29,14 +29,14 @@ const MyApplications = () => {
               limit: 10,
               searchTerm,
             },
-          },
+          }
         );
         setApplications(response.data.allApplications);
         setTotalPages(response.data.totalPages);
         console.log(response.data.allApplications);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching applications:", error);
+        console.error('Error fetching applications:', error);
         setLoading(false);
       }
     };
@@ -115,10 +115,10 @@ const MyApplications = () => {
                         {application.jobPostId?.companyId.companyName}
                       </h5>
                       <p className="text-gray-600 text-sm">
-                        Applied on{" "}
+                        Applied on{' '}
                         <span className="font-semibold">
                           {new Date(
-                            application.appliedDate,
+                            application.appliedDate
                           ).toLocaleDateString()}
                         </span>
                       </p>
@@ -128,11 +128,11 @@ const MyApplications = () => {
                     {user?.isPremium && (
                       <span
                         className={`${
-                          application.status === "pending"
-                            ? "bg-yellow-400"
-                            : application.status === "accepted"
-                              ? "bg-green-500"
-                              : "bg-red-500"
+                          application.status === 'pending'
+                            ? 'bg-yellow-400'
+                            : application.status === 'accepted'
+                              ? 'bg-green-500'
+                              : 'bg-red-500'
                         } text-white px-4 py-2 rounded-lg text-sm`}
                       >
                         {application.status}

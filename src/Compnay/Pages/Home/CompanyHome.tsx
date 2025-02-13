@@ -1,13 +1,13 @@
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { RootState } from "../../../redux/store";
-import CompanyHeader from "../../Components/Header/Header";
-import NotAuthenticated from "../../../Shared/Pages/NotAuthenticated";
-import Footer from "../../../User/Components/Footer/Footer";
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { RootState } from '../../../redux/store';
+import CompanyHeader from '../../Components/Header/Header';
+import NotAuthenticated from '../../../Shared/Pages/NotAuthenticated';
+import Footer from '../../../User/Components/Footer/Footer';
 
 const CompanyHome = () => {
   const { company, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
   const isVerified = company?.isVerified;
 
@@ -96,22 +96,22 @@ const CompanyHome = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
-                  title: "Streamlined Job Postings",
+                  title: 'Streamlined Job Postings',
                   description:
-                    "Effortlessly post jobs and reach qualified candidates.",
-                  icon: "fas fa-briefcase",
+                    'Effortlessly post jobs and reach qualified candidates.',
+                  icon: 'fas fa-briefcase',
                 },
                 {
-                  title: "Candidate Management",
+                  title: 'Candidate Management',
                   description:
-                    "Track applications and manage interviews in one place.",
-                  icon: "fas fa-user-check",
+                    'Track applications and manage interviews in one place.',
+                  icon: 'fas fa-user-check',
                 },
                 {
-                  title: "Insights & Analytics",
+                  title: 'Insights & Analytics',
                   description:
-                    "Get data-driven insights on job performance and trends.",
-                  icon: "fas fa-chart-line",
+                    'Get data-driven insights on job performance and trends.',
+                  icon: 'fas fa-chart-line',
                 },
               ].map((feature, index) => (
                 <div

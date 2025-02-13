@@ -186,12 +186,12 @@
 // };
 
 // export default ListApplications;
-import { useEffect, useState, useCallback } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { FaUser } from "react-icons/fa";
-import CompanyHeader from "../../Components/Header/Header";
-import Footer from "../../../User/Components/Footer/Footer";
+import { useEffect, useState, useCallback } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { FaUser } from 'react-icons/fa';
+import CompanyHeader from '../../Components/Header/Header';
+import Footer from '../../../User/Components/Footer/Footer';
 
 const ListApplications = () => {
   const { companyId } = useParams<{ companyId: string }>();
@@ -202,8 +202,8 @@ const ListApplications = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [statusFilter, setStatusFilter] = useState<string>("");
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const fetchApplications = useCallback(async () => {
     try {
@@ -218,14 +218,14 @@ const ListApplications = () => {
             search: searchTerm,
             jobPostId: jobPost?._id,
           },
-        },
+        }
       );
       if (response.data.success) {
         setApplications(response.data.applications);
         setTotalPages(response.data.totalPages);
       }
     } catch (error) {
-      console.error("Error fetching applications:", error);
+      console.error('Error fetching applications:', error);
     } finally {
       setLoading(false);
     }
@@ -281,7 +281,7 @@ const ListApplications = () => {
                 className="bg-white p-6 rounded-lg shadow-lg border-l-4 border-blue-500"
               >
                 <h3 className="text-xl font-semibold text-gray-800 flex items-center">
-                  <FaUser className="mr-2 text-blue-500" />{" "}
+                  <FaUser className="mr-2 text-blue-500" />{' '}
                   {application.userId.userName}
                 </h3>
                 <p className="text-gray-800">{application.userId.email}</p>
@@ -289,16 +289,16 @@ const ListApplications = () => {
                   <strong>Job:</strong> {application.jobPostId.jobTitle}
                 </p>
                 <p className="text-lg">
-                  <strong>Applied On:</strong>{" "}
+                  <strong>Applied On:</strong>{' '}
                   {new Date(application.appliedDate).toLocaleDateString()}
                 </p>
                 <span
                   className={`mt-3 inline-block px-4 py-2 text-white rounded-lg ${
-                    application.status === "pending"
-                      ? "bg-yellow-400"
-                      : application.status === "accepted"
-                        ? "bg-green-500"
-                        : "bg-red-500"
+                    application.status === 'pending'
+                      ? 'bg-yellow-400'
+                      : application.status === 'accepted'
+                        ? 'bg-green-500'
+                        : 'bg-red-500'
                   }`}
                 >
                   {application.status}

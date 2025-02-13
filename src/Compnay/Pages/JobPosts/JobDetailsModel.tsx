@@ -1,12 +1,12 @@
-import React from "react";
-import { JobPost } from "./AllJobPosts";
-import "./profile.css";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { toast } from "react-toastify";
-import axios from "axios";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
+import React from 'react';
+import { JobPost } from './AllJobPosts';
+import './profile.css';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { toast } from 'react-toastify';
+import axios from 'axios';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
 
 interface JobDetailsModalProps {
   jobPost: JobPost | null;
@@ -21,18 +21,18 @@ const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
 }) => {
   const navigate = useNavigate();
   const { company, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
 
   React.useEffect(() => {
     if (isOpen) {
-      document.body.classList.add("overflow-hidden");
+      document.body.classList.add('overflow-hidden');
     } else {
-      document.body.classList.remove("overflow-hidden");
+      document.body.classList.remove('overflow-hidden');
     }
 
     return () => {
-      document.body.classList.remove("overflow-hidden");
+      document.body.classList.remove('overflow-hidden');
     };
   }, [isOpen]);
 
@@ -47,7 +47,7 @@ const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
   const handleDelete = async () => {
     try {
       const response = await axiosInstance.delete(
-        `/company/job-post/${jobPost._id}`,
+        `/company/job-post/${jobPost._id}`
       );
       if (response.data.success) {
         toast.success(response.data.message);
@@ -99,11 +99,11 @@ const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
           </ul>
         </div>
         <p>
-          <strong>Location:</strong> {jobPost.location.city},{" "}
+          <strong>Location:</strong> {jobPost.location.city},{' '}
           {jobPost.location.state}, {jobPost.location.country}
         </p>
         <p>
-          <strong>Remote:</strong> {jobPost.location.remote ? "Yes" : "No"}
+          <strong>Remote:</strong> {jobPost.location.remote ? 'Yes' : 'No'}
         </p>
         <p>
           <strong>Salary:</strong> {jobPost.salaryRange.currency}
@@ -119,11 +119,11 @@ const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
           <strong>Education Required:</strong> {jobPost.educationRequired}
         </p>
         <p>
-          <strong>Application Deadline:</strong>{" "}
+          <strong>Application Deadline:</strong>{' '}
           {new Date(jobPost.applicationDeadline).toLocaleDateString()}
         </p>
         <p>
-          <strong>Employment Start Date:</strong>{" "}
+          <strong>Employment Start Date:</strong>{' '}
           {new Date(jobPost.employmentStartDate).toLocaleDateString()}
         </p>
         <p>

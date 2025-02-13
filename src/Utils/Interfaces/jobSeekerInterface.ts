@@ -1,4 +1,4 @@
-import { ImageObject } from "./interface";
+import { ImageObject } from './interface';
 
 export interface EducationObject {
   educationName: string;

@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import CompanyHeader from "../../Components/Header/Header";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { toast } from "react-toastify";
-import { validateFile } from "../../../Utils/helperFunctions/fileValidation";
-import { companyUpdate } from "../../../redux/slices/authSlice";
-import Modal from "react-modal";
+import { useEffect, useState } from 'react';
+import CompanyHeader from '../../Components/Header/Header';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { toast } from 'react-toastify';
+import { validateFile } from '../../../Utils/helperFunctions/fileValidation';
+import { companyUpdate } from '../../../redux/slices/authSlice';
+import Modal from 'react-modal';
 
 const UploadLogo = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -14,7 +14,7 @@ const UploadLogo = () => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
-    null,
+    null
   );
 
   const { company } = useSelector((state: RootState) => state.auth);
@@ -42,15 +42,15 @@ const UploadLogo = () => {
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      toast.error("Please select a file");
+      toast.error('Please select a file');
       return;
     }
-    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
     const maxFileSize = 5 * 1024 * 1024; // 5MB
     const validationError = validateFile(
       selectedFile,
       allowedTypes,
-      maxFileSize,
+      maxFileSize
     );
     // const validationError = validateFileForLogoAndProfile(selectedFile);
     if (validationError) {
@@ -59,7 +59,7 @@ const UploadLogo = () => {
     }
 
     const formData = new FormData();
-    formData.append("companyLogo", selectedFile);
+    formData.append('companyLogo', selectedFile);
 
     try {
       const response = await axiosInstance.patch(
@@ -67,23 +67,23 @@ const UploadLogo = () => {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
-        },
+        }
       );
 
       if (response.data.success) {
         toast.success(response.data.message);
         dispatch(companyUpdate(response.data.data.company));
         setIsUploading(false); // Upload completed
-        console.log("Response data:", response.data.data);
+        console.log('Response data:', response.data.data);
       } else {
         toast.error(response.data.message);
         console.log(response.data.message);
       }
     } catch (error: any) {
-      console.error("Error uploading logo:", error);
-      toast.error(error.response?.data?.message || "Error uploading logo");
+      console.error('Error uploading logo:', error);
+      toast.error(error.response?.data?.message || 'Error uploading logo');
       setIsUploading(false); // Reset upload state on error
     }
   };
@@ -91,7 +91,7 @@ const UploadLogo = () => {
   const handleDeleteLogoFromProfile = async () => {
     try {
       const res = await axiosInstance.patch(
-        `/company/delete-logo/${selectedCompanyId}`,
+        `/company/delete-logo/${selectedCompanyId}`
       );
       if (res.data.success) {
         toast.success(res.data.message);
@@ -100,7 +100,7 @@ const UploadLogo = () => {
         toast.error(res.data.message);
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Error deleting logo");
+      toast.error(error.response?.data?.message || 'Error deleting logo');
       console.log(error);
     } finally {
       setModalIsOpen(false);
@@ -206,8 +206,8 @@ const UploadLogo = () => {
               disabled={!selectedFile}
               className={`w-full py-2 px-6 text-white rounded-md shadow-md transition duration-300 ${
                 selectedFile
-                  ? "bg-gradient-to-r from-blue-500 to-indigo-600 hover:bg-gradient-to-l"
-                  : "bg-gray-300 cursor-not-allowed"
+                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:bg-gradient-to-l'
+                  : 'bg-gray-300 cursor-not-allowed'
               }`}
             >
               Upload Logo

@@ -188,22 +188,22 @@
 
 // export default CompanyJobPosts;
 
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { RootState } from "../../../redux/store";
-import CompanyHeader from "../../Components/Header/Header";
-import NotAuthenticated from "../../../Shared/Pages/NotAuthenticated";
-import Footer from "../../../User/Components/Footer/Footer";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import JobDetailsModal from "./JobDetailsModel";
-import { HiOutlineEye } from "react-icons/hi";
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { RootState } from '../../../redux/store';
+import CompanyHeader from '../../Components/Header/Header';
+import NotAuthenticated from '../../../Shared/Pages/NotAuthenticated';
+import Footer from '../../../User/Components/Footer/Footer';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import JobDetailsModal from './JobDetailsModel';
+import { HiOutlineEye } from 'react-icons/hi';
 import {
   FaBriefcase,
   FaClock,
   FaMapMarkerAlt,
   FaMoneyBillWave,
-} from "react-icons/fa";
+} from 'react-icons/fa';
 
 export interface SalaryRange {
   min: string;
@@ -258,7 +258,7 @@ export interface JobPost {
 
 const CompanyJobPosts = () => {
   const { company, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
   const [jobPosts, setJobPosts] = useState<JobPost[]>([]);
   const [selectedJobPost, setSelectedJobPost] = useState<JobPost | null>(null);
@@ -268,13 +268,13 @@ const CompanyJobPosts = () => {
     const fetchJobPosts = async () => {
       try {
         const response = await axiosInstance.get(
-          `/company/all-job-posts/${company?._id}`,
+          `/company/all-job-posts/${company?._id}`
         );
         let jobPosts = response.data.allJobPost;
         jobPosts = jobPosts.map((post: any) => post._doc);
         setJobPosts(jobPosts);
       } catch (error) {
-        console.error("Error fetching job posts", error);
+        console.error('Error fetching job posts', error);
       }
     };
     fetchJobPosts();
@@ -342,7 +342,7 @@ const CompanyJobPosts = () => {
                     <div className="text-gray-600 mb-4 space-y-2">
                       <p className="flex items-center gap-2">
                         <FaMapMarkerAlt className="text-blue-600" />
-                        <strong>Location:</strong> {job.location.city},{" "}
+                        <strong>Location:</strong> {job.location.city},{' '}
                         {job.location.state}, {job.location.country}
                       </p>
                       <p className="flex items-center gap-2">
@@ -359,7 +359,7 @@ const CompanyJobPosts = () => {
                         <strong>Experience Level:</strong> {job.experienceLevel}
                       </p>
                       <p>
-                        <strong>Application Deadline:</strong>{" "}
+                        <strong>Application Deadline:</strong>{' '}
                         {new Date(job.applicationDeadline).toLocaleDateString()}
                       </p>
                     </div>

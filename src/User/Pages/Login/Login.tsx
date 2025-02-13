@@ -1,11 +1,11 @@
-import React, { useRef } from "react";
-import Header from "../../Components/Header/Header";
-import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { useDispatch } from "react-redux";
-import { userLogin } from "../../../redux/slices/authSlice";
-import GoogleSignInButton from "../../Components/GoogleSignin/GoogleSignin";
+import React, { useRef } from 'react';
+import Header from '../../Components/Header/Header';
+import { toast } from 'react-toastify';
+import { Link, useNavigate } from 'react-router-dom';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { useDispatch } from 'react-redux';
+import { userLogin } from '../../../redux/slices/authSlice';
+import GoogleSignInButton from '../../Components/GoogleSignin/GoogleSignin';
 
 const Login = () => {
   const emailRef = useRef<HTMLInputElement | null>(null);
@@ -20,12 +20,12 @@ const Login = () => {
     const password = passwordRef.current?.value;
 
     if (!email || !password) {
-      toast.error("Please enter both email and password.");
+      toast.error('Please enter both email and password.');
       return;
     }
 
     try {
-      const response = await axiosInstance.post("/user/login", {
+      const response = await axiosInstance.post('/user/login', {
         email,
         password,
       });
@@ -35,10 +35,10 @@ const Login = () => {
         // console.log(jobSeekerProfile)
         toast.success(response.data.message);
         dispatch(userLogin({ user, token }));
-        console.log("User details:", user);
+        console.log('User details:', user);
         if (
-          user.userRole === "companyAdmin" ||
-          user.userRole === "companyMember"
+          user.userRole === 'companyAdmin' ||
+          user.userRole === 'companyMember'
         ) {
           navigate(`/company/home/${user.companyId}`);
         } else {
@@ -49,9 +49,9 @@ const Login = () => {
       }
     } catch (error: any) {
       const errorMessage =
-        error.response?.data?.message || "Something went wrong";
+        error.response?.data?.message || 'Something went wrong';
       toast.error(errorMessage);
-      console.error("Login error:", error);
+      console.error('Login error:', error);
     }
   };
 
@@ -99,7 +99,7 @@ const Login = () => {
               Forgot Password?
             </Link>
             <p className="text-sm text-gray-200">
-              New Here?{" "}
+              New Here?{' '}
               <Link
                 to="/user/signup"
                 className="text-white font-medium hover:underline"
@@ -111,12 +111,10 @@ const Login = () => {
 
           <p className="p-2 text-center">OR</p>
           <div className="w-full flex justify-center">
-  <div className="w-full">
-    <GoogleSignInButton />
-  </div>
-</div>
-
-    
+            <div className="w-full">
+              <GoogleSignInButton />
+            </div>
+          </div>
         </div>
       </div>
     </>

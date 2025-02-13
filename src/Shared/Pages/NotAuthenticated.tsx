@@ -1,7 +1,7 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import Header from "../../User/Components/Header/Header";
-import Footer from "../../User/Components/Footer/Footer";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import Header from '../../User/Components/Header/Header';
+import Footer from '../../User/Components/Footer/Footer';
 
 const NotAuthenticated: React.FC = () => {
   return (
@@ -12,10 +12,10 @@ const NotAuthenticated: React.FC = () => {
           You are not logged in
         </h2>
         <p className="mt-4 text-gray-600">
-          Please{" "}
+          Please{' '}
           <Link to="/" className="text-blue-600">
             login
-          </Link>{" "}
+          </Link>{' '}
           to view your home page.
         </p>
       </div>

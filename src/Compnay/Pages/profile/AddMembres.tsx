@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from 'react';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { toast } from 'react-toastify';
 import {
   FaUserPlus,
   FaEnvelope,
   FaUser,
   FaSpinner,
   FaTrashAlt,
-} from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import CompanyHeader from "../../Components/Header/Header";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { motion } from "framer-motion";
-import Footer from "../../../User/Components/Footer/Footer";
+} from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import CompanyHeader from '../../Components/Header/Header';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { motion } from 'framer-motion';
+import Footer from '../../../User/Components/Footer/Footer';
 
 interface Member {
   _id: string;
@@ -24,10 +24,10 @@ interface Member {
 
 const AddMembers = () => {
   const { company, user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState("member");
+  const [email, setEmail] = useState('');
+  const [role, setRole] = useState('member');
   const [loading, setLoading] = useState(false);
   const [members, setMembers] = useState<Member[]>([]);
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ const AddMembers = () => {
   const fetchMembers = async () => {
     try {
       const response = await axiosInstance.get(
-        `/company/${company?._id}/all-members`,
+        `/company/${company?._id}/all-members`
       );
       setMembers(response.data.data.members);
     } catch (error) {
@@ -55,19 +55,19 @@ const AddMembers = () => {
     try {
       const response = await axiosInstance.patch(
         `/company/${company?._id}/add-member`,
-        { userEmail: email, userRole: role },
+        { userEmail: email, userRole: role }
       );
 
       if (response.data.success) {
         toast.success(response.data.message);
         setMembers([...members, response.data.data.newMember]);
-        setEmail("");
-        setRole("member");
+        setEmail('');
+        setRole('member');
       } else {
         toast.error(response.data.message);
       }
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to add member");
+      toast.error(err?.response?.data?.message || 'Failed to add member');
     } finally {
       setLoading(false);
     }
@@ -76,22 +76,22 @@ const AddMembers = () => {
   const handleRemove = async (memberId: string) => {
     try {
       const response = await axiosInstance.delete(
-        `/company/${company?._id}/remove-member/${memberId}`,
+        `/company/${company?._id}/remove-member/${memberId}`
       );
 
       if (response.data.success) {
-        toast.success("Member removed successfully");
+        toast.success('Member removed successfully');
         setMembers(members.filter((member) => member._id !== memberId));
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      toast.error("Failed to remove member");
+      toast.error('Failed to remove member');
     }
   };
 
   const isAdmin = members.some(
-    (member) => member.email === user?.email && member.role === "companyAdmin",
+    (member) => member.email === user?.email && member.role === 'companyAdmin'
   );
 
   return (
@@ -136,7 +136,7 @@ const AddMembers = () => {
                       <td className="px-4 py-3 border-b">{member.userName}</td>
                       <td className="px-4 py-3 border-b">{member.email}</td>
                       <td className="px-4 py-3 border-b">
-                        {member.role === "companyAdmin" ? "Admin" : "Member"}
+                        {member.role === 'companyAdmin' ? 'Admin' : 'Member'}
                       </td>
                       <td className="px-4 py-3 border-b">
                         <button
@@ -187,12 +187,12 @@ const AddMembers = () => {
               <button
                 type="submit"
                 disabled={loading || !isAdmin}
-                className={`w-full py-3 text-white bg-blue-600 rounded-md ${loading ? "opacity-50" : ""}`}
+                className={`w-full py-3 text-white bg-blue-600 rounded-md ${loading ? 'opacity-50' : ''}`}
               >
                 {loading ? (
                   <FaSpinner className="animate-spin mx-auto" />
                 ) : (
-                  "Add Member"
+                  'Add Member'
                 )}
               </button>
             </form>

@@ -1,5 +1,5 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const NoAccess: React.FC = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const NoAccess: React.FC = () => {
           mistake.
         </p>
         <button
-          onClick={() => navigate("/user-login")}
+          onClick={() => navigate('/user-login')}
           className="w-full py-3 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
         >
           Go to Login

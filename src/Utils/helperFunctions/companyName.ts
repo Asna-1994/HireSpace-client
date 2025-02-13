@@ -1,5 +1,5 @@
 export function getCompanyInitials(name: string) {
-  if (!name) return "NA";
+  if (!name) return 'NA';
   const words = name.trim().split(/\s+/);
   if (words.length > 1) {
     return (words[0][0] + words[1][0]).toUpperCase();
@@ -10,7 +10,7 @@ export function getCompanyInitials(name: string) {
 
 export const generateRoomId = (
   senderId: string,
-  receiverId: string,
+  receiverId: string
 ): string => {
-  return [senderId, receiverId].sort().join("_");
+  return [senderId, receiverId].sort().join('_');
 };

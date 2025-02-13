@@ -1,10 +1,10 @@
-import { useLocation } from "react-router-dom";
-import CompanyHeader from "../../Components/Header/Header";
-import { HiDocumentText } from "react-icons/hi";
-import { motion } from "framer-motion";
-import { useState } from "react";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
-import { toast } from "react-toastify";
+import { useLocation } from 'react-router-dom';
+import CompanyHeader from '../../Components/Header/Header';
+import { HiDocumentText } from 'react-icons/hi';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { toast } from 'react-toastify';
 
 const ApplicationDetails = () => {
   const location = useLocation();
@@ -16,11 +16,11 @@ const ApplicationDetails = () => {
     try {
       const response = await axiosInstance.patch(
         `/company/job-application-status/${application._id}`,
-        { status },
+        { status }
       );
       if (response.data.success) {
         setStatus(response.data.application.status);
-        toast.success("status updated");
+        toast.success('status updated');
       } else {
         toast.error(response.data.message);
       }
@@ -38,7 +38,7 @@ const ApplicationDetails = () => {
           className="bg-gradient-to-r from-indigo-500 to-purple-600 shadow-lg text-white rounded-lg p-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
         >
           <h2 className="text-3xl font-bold">Application Details</h2>
           <p className="mt-2 text-lg font-light">
@@ -61,49 +61,49 @@ const ApplicationDetails = () => {
               </h3>
               <div className="space-y-3 text-gray-700">
                 <p>
-                  <span className="font-semibold text-gray-800">Name:</span>{" "}
+                  <span className="font-semibold text-gray-800">Name:</span>{' '}
                   {application.userId.userName}
                 </p>
                 <p>
-                  <span className="font-semibold text-gray-800">Email:</span>{" "}
+                  <span className="font-semibold text-gray-800">Email:</span>{' '}
                   {application.userId.email}
                 </p>
                 <p>
                   <span className="font-semibold text-gray-800">
                     Job Title:
-                  </span>{" "}
+                  </span>{' '}
                   {application.jobPostId.jobTitle}
                 </p>
                 <p>
                   <span className="font-semibold text-gray-800">
                     Applied On:
-                  </span>{" "}
+                  </span>{' '}
                   {new Date(application.appliedDate).toLocaleDateString()}
                 </p>
                 <div className="flex items-center space-x-2">
                   <span className="font-semibold text-gray-800">Status:</span>
                   <div
                     className={`relative inline-block rounded-lg overflow-hidden border ${
-                      status === "pending"
-                        ? "bg-yellow-100 border-yellow-300"
-                        : status === "accepted"
-                          ? "bg-green-100 border-green-300"
-                          : status === "rejected"
-                            ? "bg-red-100 border-red-300"
-                            : "bg-blue-100 border-blue-300"
+                      status === 'pending'
+                        ? 'bg-yellow-100 border-yellow-300'
+                        : status === 'accepted'
+                          ? 'bg-green-100 border-green-300'
+                          : status === 'rejected'
+                            ? 'bg-red-100 border-red-300'
+                            : 'bg-blue-100 border-blue-300'
                     }`}
                   >
                     <select
                       value={status}
                       onChange={(e) => setStatus(e.target.value)}
                       className={`w-full h-full px-4 py-2 rounded-lg text-sm font-semibold ${
-                        status === "pending"
-                          ? "text-yellow-800"
-                          : status === "accepted"
-                            ? "text-green-800"
-                            : status === "rejected"
-                              ? "text-red-800"
-                              : "text-blue-800"
+                        status === 'pending'
+                          ? 'text-yellow-800'
+                          : status === 'accepted'
+                            ? 'text-green-800'
+                            : status === 'rejected'
+                              ? 'text-red-800'
+                              : 'text-blue-800'
                       } appearance-none bg-transparent`}
                     >
                       <option value="pending">Pending</option>
@@ -130,7 +130,7 @@ const ApplicationDetails = () => {
                   Resume
                 </h4>
                 <div className="mt-4 flex flex-col space-y-4">
-                  {application.resumeUrl.endsWith(".pdf") ? (
+                  {application.resumeUrl.endsWith('.pdf') ? (
                     <iframe
                       src={application.resumeUrl}
                       title="Resume PDF"

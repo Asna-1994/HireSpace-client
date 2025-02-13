@@ -1,59 +1,59 @@
-import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import Header from "../../Components/Header/Header";
-import { subYears } from "date-fns";
-import { AxiosResponse } from "axios";
-import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
-import axiosInstance from "../../../Utils/Instance/axiosInstance";
+import React, { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import Header from '../../Components/Header/Header';
+import { subYears } from 'date-fns';
+import { AxiosResponse } from 'axios';
+import { toast } from 'react-toastify';
+import { Link, useNavigate } from 'react-router-dom';
+import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import {
   ApiResponse,
   SignupFormData,
   User,
-} from "../../../Utils/Interfaces/interface";
+} from '../../../Utils/Interfaces/interface';
 
-import GoogleSignInButton from "../../Components/GoogleSignin/GoogleSignin";
+import GoogleSignInButton from '../../Components/GoogleSignin/GoogleSignin';
 
 const schema = yup.object().shape({
   userName: yup
     .string()
-    .min(3, "Username must be at least 3 characters")
-    .required("Username is required"),
+    .min(3, 'Username must be at least 3 characters')
+    .required('Username is required'),
   email: yup
     .string()
-    .email("Invalid email format")
-    .required("Email is required"),
+    .email('Invalid email format')
+    .required('Email is required'),
   password: yup
     .string()
-    .min(8, "Password must be at least 8 characters")
+    .min(8, 'Password must be at least 8 characters')
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[a-zA-Z\d@$!%*?&]+$/,
-      "Password must contain uppercase, lowercase, number, and special character",
+      'Password must contain uppercase, lowercase, number, and special character'
     )
-    .required("Password is required"),
+    .required('Password is required'),
   confirmPassword: yup
     .string()
-    .oneOf([yup.ref("password")], "Passwords must match")
-    .required("Confirm Password is required"),
+    .oneOf([yup.ref('password')], 'Passwords must match')
+    .required('Confirm Password is required'),
   dateOfBirth: yup
     .date()
-    .max(subYears(new Date(), 18), "Must be 18 years old or older")
-    .required("Date of birth is required"),
+    .max(subYears(new Date(), 18), 'Must be 18 years old or older')
+    .required('Date of birth is required'),
   phone: yup
     .string()
     .matches(
       /^(?:(?!^[012345])[6-9]\d{9})$/,
-      "Phone number must not start with 0, 1, 2, 3, 4, or 5 and cannot have all digits the same",
+      'Phone number must not start with 0, 1, 2, 3, 4, or 5 and cannot have all digits the same'
     )
-    .required("Phone number is required"),
-  address: yup.string().required("Address is required"),
-  userRole: yup.string().required("User role is required"),
+    .required('Phone number is required'),
+  address: yup.string().required('Address is required'),
+  userRole: yup.string().required('User role is required'),
 });
 
 const UserSignUp = () => {
-  const [userRole, setUserRole] = useState<string>("");
+  const [userRole, setUserRole] = useState<string>('');
   const {
     control,
     handleSubmit,
@@ -67,14 +67,14 @@ const UserSignUp = () => {
   const submitSignupForm = async (formData: SignupFormData): Promise<void> => {
     try {
       const response: AxiosResponse<ApiResponse> = await axiosInstance.post(
-        "/user/signup",
-        formData,
+        '/user/signup',
+        formData
       );
       console.log(response.data.data.user);
       if (response.data.success && response.data.data?.user) {
         const user = response.data.data.user;
         toast.success(response.data.message);
-        navigate("/user/verify-otp", { state: { user } });
+        navigate('/user/verify-otp', { state: { user } });
       } else {
         toast.error(response.data.message);
       }
@@ -108,8 +108,8 @@ const UserSignUp = () => {
                   {...field}
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
                     errors.userName
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-purple-700"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-purple-700'
                   }`}
                   placeholder="Enter your username"
                 />
@@ -138,8 +138,8 @@ const UserSignUp = () => {
                   {...field}
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
                     errors.email
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-purple-700"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-purple-700'
                   }`}
                   placeholder="Enter your email"
                 />
@@ -170,13 +170,13 @@ const UserSignUp = () => {
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none 
           ${
             errors.dateOfBirth
-              ? "border-red-500 focus:ring-red-500"
-              : "border-gray-300 focus:ring-purple-700"
+              ? 'border-red-500 focus:ring-red-500'
+              : 'border-gray-300 focus:ring-purple-700'
           }`}
                   value={
                     field.value
-                      ? new Date(field.value).toISOString().split("T")[0]
-                      : ""
+                      ? new Date(field.value).toISOString().split('T')[0]
+                      : ''
                   }
                   onChange={(e) => field.onChange(new Date(e.target.value))}
                 />
@@ -205,8 +205,8 @@ const UserSignUp = () => {
                   {...field}
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
                     errors.phone
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-purple-700"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-purple-700'
                   }`}
                   placeholder="Enter your phone number"
                 />
@@ -236,8 +236,8 @@ const UserSignUp = () => {
                   rows={4}
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
                     errors.address
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-purple-700"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-purple-700'
                   }`}
                   placeholder="Enter your address"
                 />
@@ -267,8 +267,8 @@ const UserSignUp = () => {
                   defaultValue=""
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
                     errors.userRole
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-purple-700"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-purple-700'
                   }`}
                   onChange={(e) => {
                     field.onChange(e);
@@ -276,15 +276,15 @@ const UserSignUp = () => {
                   }}
                 >
                   <option value="" disabled>
-                    {" "}
+                    {' '}
                     Select Role
                   </option>
                   <option value="jobSeeker">Job Seeker</option>
                   <option value="companyAdmin"> Company Admin</option>
                   <option value="companyMember">Company Member</option>
                   <option value="admin" disabled>
-                    {" "}
-                    Admin{" "}
+                    {' '}
+                    Admin{' '}
                   </option>
                 </select>
               )}
@@ -313,8 +313,8 @@ const UserSignUp = () => {
                   type="password"
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
                     errors.password
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-purple-700"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-purple-700'
                   }`}
                   placeholder="Enter your password"
                 />
@@ -344,8 +344,8 @@ const UserSignUp = () => {
                   type="password"
                   className={`w-full mt-1 p-2 border rounded-lg shadow-sm focus:outline-none focus:ring ${
                     errors.confirmPassword
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-purple-700"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-purple-700'
                   }`}
                   placeholder="Confirm your password"
                 />
@@ -371,14 +371,14 @@ const UserSignUp = () => {
           <GoogleSignInButton />
         </form>
         <p className="text-center p-3">
-          Already have account ?{" "}
-          <Link className=" hover:text-gray-700" to={"/user/login"}>
+          Already have account ?{' '}
+          <Link className=" hover:text-gray-700" to={'/user/login'}>
             Login
           </Link>
         </p>
         <p className="text-center ">
-          Register for company ?{" "}
-          <Link className=" hover:text-gray-700" to={"/company/signin"}>
+          Register for company ?{' '}
+          <Link className=" hover:text-gray-700" to={'/company/signin'}>
             Click Here
           </Link>
         </p>

@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import {
   FaUsers,
   FaBuilding,
   FaUserAlt,
   FaExclamationCircle,
   FaClipboard,
-} from "react-icons/fa";
-import { HiOutlineHome, HiOutlineMenu } from "react-icons/hi";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
+} from 'react-icons/fa';
+import { HiOutlineHome, HiOutlineMenu } from 'react-icons/hi';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
 
 const SideBar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -24,7 +24,7 @@ const SideBar = () => {
       {/* Sidebar */}
       <aside
         className={`bg-blue-800 text-white flex flex-col transform ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } transition-transform duration-300 ease-in-out md:translate-x-0 w-64 z-50`}
       >
         <div className="p-4 text-2xl font-bold text-center border-b border-blue-700">
