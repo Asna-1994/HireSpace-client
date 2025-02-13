@@ -8,6 +8,7 @@ import Header from '../Header/Header';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { IoSendSharp } from 'react-icons/io5';
 import { BsCameraVideo } from 'react-icons/bs';
+import { getCompanyInitials } from '../../../Utils/helperFunctions/companyName';
 import VideoCall from './VideoCall';
 const ChatComponent: React.FC = () => {
   const location = useLocation();
@@ -224,7 +225,7 @@ const ChatComponent: React.FC = () => {
             {/* Chat Header */}
             <div className="flex  justify-between px-6 py-4 bg-gradient-to-r from-green-400 to-blue-500 border-b border-gray-200 rounded-t-lg">
               <div className="flex items-center space-x-4">
-                {receiver.profilePhoto ? (
+                {receiver.profilePhoto?.url ? (
                   <img
                     src={receiver?.profilePhoto?.url}
                     alt={receiver?.userName}
@@ -232,6 +233,7 @@ const ChatComponent: React.FC = () => {
                   />
                 ) : (
                   <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xl font-bold rounded-full">
+            
                     {receiver?.userName?.charAt(0).toUpperCase() || '?'}
                   </div>
                 )}
