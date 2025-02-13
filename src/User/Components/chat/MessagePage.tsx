@@ -142,17 +142,19 @@ const MessagesPage: React.FC = () => {
                   openChat(chat.roomId, chat.otherUser._id, chat.otherUser)
                 }
               >
-                {chat.otherUser.profilePhoto ? (
-                  <img
-                    src={chat.otherUser.profilePhoto.url}
-                    alt={chat.otherUser.userName}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-14 h-14 flex items-center justify-center bg-blue-500 text-white text-2xl font-semibold rounded-full">
-                    {chat.otherUser.userName[0].toUpperCase()}
-                  </div>
-                )}
+   
+                {chat.otherUser?.profilePhoto?.url ? (
+  <img
+    src={chat.otherUser.profilePhoto.url}
+    alt={chat.otherUser?.userName || "User"}
+    className="w-10 h-10 rounded-full object-cover"
+  />
+) : (
+  <div className="w-10 h-10 flex items-center justify-center bg-blue-500 text-white text-xl font-semibold rounded-full">
+    {chat.otherUser?.userName?.charAt(0).toUpperCase() || "?"}
+  </div>
+)}
+
 
                 <div className="ml-4 flex-1">
                   <div className="flex justify-between items-center">
