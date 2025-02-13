@@ -110,7 +110,13 @@ const Login = () => {
           </div>
 
           <p className="p-2 text-center">OR</p>
-          <GoogleSignInButton />
+          <div className="w-full flex justify-center">
+  <div className="w-full">
+    <GoogleSignInButton />
+  </div>
+</div>
+
+    
         </div>
       </div>
     </>

@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 console.log("Stripe Promise:", stripePromise);
+console.log('publishable key', import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
 const PricingCard: React.FC<{
   plan: Plans;
