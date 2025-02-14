@@ -55,19 +55,12 @@ const VideoCall: React.FC<VideoCallProps> = ({
 
   const ICE_SERVERS = [
     { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: 'stun:stun2.l.google.com:19302' },
-    { urls: 'stun:stun3.l.google.com:19302' },
     {
       urls: 'turn:openrelay.metered.ca:80',
       username: 'openrelayproject',
       credential: 'openrelayproject',
     },
-    {
-      urls: 'turn:openrelay.metered.ca:443',
-      username: 'openrelayproject',
-      credential: 'openrelayproject',
-    },
+
   ];
 
   const createPeerConnection = async () => {
@@ -102,16 +95,6 @@ const VideoCall: React.FC<VideoCallProps> = ({
         }
       };
 
-      // pc.ontrack = (event) => {
-      //   console.log("Remote track received:", event.streams[0]?.getTracks());
-      //   if (event.streams && event.streams[0]) {
-      //     setRemoteStream(event.streams[0]);
-      //     if (remoteVideoRef.current) {
-      //       remoteVideoRef.current.srcObject = event.streams[0];
-      //     }
-      //   }
-      // };
-      // In VideoCall component, modify the ontrack handler:
       pc.ontrack = (event) => {
         if (event.streams[0]) {
           console.log('Received remote track:', event.track.kind);
@@ -550,3 +533,5 @@ const VideoCall: React.FC<VideoCallProps> = ({
   );
 };
 export default VideoCall;
+
+

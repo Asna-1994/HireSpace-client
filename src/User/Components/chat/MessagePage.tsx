@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import Header from '../Header/Header';
 import { setTotalUnreadChats } from '../../../redux/slices/chatSlice';
+import { truncateMessage } from '../../../Utils/helperFunctions/companyName';
 
 interface RecentChat {
   roomId: string;
@@ -167,9 +168,12 @@ const MessagesPage: React.FC = () => {
                     </span>
                   </div>
                   <div className="flex justify-between items-center mt-1">
-                    <p className="text-sm text-gray-600 truncate flex-1">
+                    {/* <p className="text-sm text-gray-600 truncate flex-1">
                       {chat.lastMessage}
-                    </p>
+                    </p> */}
+                    <p className="text-sm text-gray-600 truncate flex-1">
+  {truncateMessage(chat.lastMessage, 5)}
+</p>
                     {chat.unreadCount !== undefined && chat.unreadCount > 0 && (
                       <span className="ml-2 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold">
                         {chat.unreadCount}

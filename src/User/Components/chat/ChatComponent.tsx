@@ -225,7 +225,7 @@ const ChatComponent: React.FC = () => {
             {/* Chat Header */}
             <div className="flex  justify-between px-6 py-4 bg-gradient-to-r from-green-400 to-blue-500 border-b border-gray-200 rounded-t-lg">
               <div className="flex items-center space-x-4">
-                {receiver.profilePhoto?.url ? (
+                {receiver?.profilePhoto?.url ? (
                   <img
                     src={receiver?.profilePhoto?.url}
                     alt={receiver?.userName}
