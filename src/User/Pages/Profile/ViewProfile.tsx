@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { motion } from 'framer-motion';
 import Header from '../../Components/Header/Header';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { Education } from './AddEducation';
 import { Skills } from './AddSkills';
 import { ExperienceObject } from './AddWorkExperience';
 import { CertificateObject } from './AddCertificates';
 import { ImageObject } from '../../../Utils/Interfaces/interface';
 import { Link } from 'react-router-dom';
+import { fetchProfile } from '../../../services/user/userProfileService';
 
 const ViewProfile = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -28,11 +27,9 @@ const ViewProfile = () => {
 
   const fetchProfileDetails = async () => {
     try {
-      const response = await axiosInstance.get(
-        `/user/${user?._id}/complete-profile`
-      );
-      setProfile(response.data.data.profile);
-      console.log(response.data.data.profile);
+      const data = await fetchProfile(user?._id as string)
+      setProfile(data.data.profile);
+      console.log(data.data.profile);
     } catch (error) {
       console.error('Error fetching profile details', error);
     }

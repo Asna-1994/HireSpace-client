@@ -1,9 +1,8 @@
 import React, { useRef } from 'react';
-
 import { toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import CompanyHeader from '../../Components/Header/Header';
+import { updatePassword } from '../../../services/company/authService';
 
 const CompanyForgotPassword = () => {
   const emailRef = useRef<HTMLInputElement | null>(null);
@@ -28,23 +27,16 @@ const CompanyForgotPassword = () => {
     }
 
     try {
-      const response = await axiosInstance.patch('/company/forgot-password', {
-        email,
-        newPassword,
-      });
-
-      if (response.data.success) {
-        toast.success(response.data.message);
-        console.log(response.data);
+      const data = await updatePassword(email, newPassword)
+      if (data.success) {
+        toast.success(data.message);
+        console.log(data);
         navigate(`/company/login`);
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || 'Something went wrong';
-      toast.error(errorMessage);
-      console.error('Login error:', error);
+      toast.error(error);
     }
   };
 

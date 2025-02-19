@@ -1,11 +1,10 @@
 import React, { useRef } from 'react';
-import Header from '../../Components/Header/Header';
 import { toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { useDispatch } from 'react-redux';
 import { companyLogin } from '../../../redux/slices/authSlice';
 import CompanyHeader from '../../Components/Header/Header';
+import { loginCompany } from '../../../services/company/authService';
 
 const CompanyLogin = () => {
   const emailRef = useRef<HTMLInputElement | null>(null);
@@ -25,28 +24,19 @@ const CompanyLogin = () => {
     }
 
     try {
-      const response = await axiosInstance.post('/company/login', {
-        email,
-        password,
-      });
-
-      if (response.data.success) {
-        const { token, company, user } = response.data.data;
-        toast.success(response.data.message);
+const data = await loginCompany(email, password)
+      if (data.success) {
+        const { token, company, user } = data.data;
+        toast.success(data.message);
         console.log();
         dispatch(companyLogin({ company, token, user }));
         console.log('User details:', company);
         navigate(`/company/home/${company._id}`);
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (error: any) {
-      //   const errorMessage = error.response?.data?.error || "Something went wrong";
-      //   toast.error(errorMessage);
-      const errorMessage =
-        error.response?.data?.message || 'Something went wrong';
-      toast.error(errorMessage);
-      console.error('Login error:', error);
+      toast.error(error);
     }
   };
 

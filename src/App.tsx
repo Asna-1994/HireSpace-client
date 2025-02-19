@@ -15,11 +15,10 @@ import ErrorPage from './Shared/Pages/ErrorPage';
 import NoAccess from './Shared/Pages/NoAccess';
 import Contact from './Shared/Pages/Contact';
 import About from './Shared/Pages/About';
+import SocketManager from './User/Components/chat/SocketManager';
 
 function App() {
-  const { company, user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth
-  );
+
   const theme = useSelector((state: RootState) => state.theme.theme);
 
   useEffect(() => {
@@ -29,6 +28,7 @@ function App() {
   const client_id = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   return (
     <>
+    {/* <SocketManager/> */}
       <ToastContainer autoClose={1500} />
       <GoogleOAuthProvider clientId={client_id}>
         <Routes>

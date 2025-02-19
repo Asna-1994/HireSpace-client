@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import {
-  useStripe,
-  useElements,
-  CardElement,
-  Elements,
-} from '@stripe/react-stripe-js';
+import { useStripe, useElements, CardElement, Elements} from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { motion } from 'framer-motion';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { FaCheck, FaCrown } from 'react-icons/fa';
 import { Plans } from '../../../Utils/Interfaces/interface';
 import { toast } from 'react-toastify';
@@ -15,7 +9,8 @@ import Header from '../../Components/Header/Header';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { userUpdate } from '../../../redux/slices/authSlice';
-import { useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
+import { confirmPayment, createPaymentIntentService, fetchPremiumPlans } from '../../../services/user/paymentService';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -82,81 +77,132 @@ const CheckoutForm: React.FC<{ selectedPlan: Plans }> = ({ selectedPlan }) => {
   const elements = useElements();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { user, company } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+
+  //   try {
+  //     if (!stripe || !elements) {
+  //       setError(
+  //         'Stripe is not properly initialized. Please refresh the page.'
+  //       );
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     if (user?.isPremium) {
+  //       toast.error('User already have a premium subscription');
+  //       return;
+  //     }
+  //     const data = await createPaymentIntentService(selectedPlan.price, selectedPlan.durationInDays, user?._id as string, selectedPlan._id as string);
+
+  //     const clientSecret = data.data.clientSecret;
+  //     const cardElement = elements.getElement(CardElement);
+
+  //     if (!cardElement) {
+  //       throw new Error('CardElement not found');
+  //     }
+
+  //     const { paymentIntent, error } = await stripe.confirmCardPayment(
+  //       clientSecret,
+  //       {
+  //         payment_method: {
+  //           card: cardElement,
+  //         },
+  //       }
+  //     );
+  //     if (response.status === 409) {
+  //       toast.error(data.message);
+  //     }
+  //     if (error) {
+  //       console.error('Payment failed:', error.message);
+  //       navigate(`/user/${user?._id}/payment-failed`); 
+  //     } else if (paymentIntent?.status === 'succeeded') {
+  //       elements?.getElement(CardElement)?.clear();
+  //       await confirmPaymentOnServer(paymentIntent.id);
+  //     }
+  //   } catch (err: any) {
+  //     navigate(`/user/${user?._id}/payment-failed`);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
+  
     try {
       if (!stripe || !elements) {
-        setError(
-          'Stripe is not properly initialized. Please refresh the page.'
-        );
+        setError('Stripe is not properly initialized. Please refresh the page.');
         setLoading(false);
         return;
       }
-
+  
       if (user?.isPremium) {
-        toast.error('User already have a premium subscription');
+        toast.error('User already has a premium subscription');
         return;
       }
-      const response = await axiosInstance.post(
-        `/payments/create-intent`,
-        {
-          planPrice: selectedPlan.price,
-          planDuration: selectedPlan.durationInDays,
-        },
-        {
-          params: {
-            userId: user?._id,
-            planId: selectedPlan._id,
-          },
-        }
+  
+      // Call the API to create a payment intent
+      const { clientSecret, message } = await createPaymentIntentService(
+        selectedPlan.price, 
+        selectedPlan.durationInDays, 
+        user?._id as string, 
+        selectedPlan._id as string
       );
-
-      const clientSecret = response.data.data.clientSecret;
+  
+      if (!clientSecret) {
+        toast.error(message || 'Failed to create payment intent');
+        return;
+      }
+  
       const cardElement = elements.getElement(CardElement);
-
       if (!cardElement) {
         throw new Error('CardElement not found');
       }
-
+  
+      // Confirm the payment
       const { paymentIntent, error } = await stripe.confirmCardPayment(
         clientSecret,
         {
-          payment_method: {
-            card: cardElement,
-          },
+          payment_method: { card: cardElement },
         }
       );
-      if (response.status === 409) {
-        toast.error(response.data.message);
-      }
+  
       if (error) {
         console.error('Payment failed:', error.message);
-        navigate(`/user/${user?._id}/payment-failed`); // Redirect to success page
-      } else if (paymentIntent?.status === 'succeeded') {
-        elements?.getElement(CardElement)?.clear();
+        toast.error(error.message);
+        navigate(`/user/${user?._id}/payment-failed`);
+        return;
+      }
+  
+      if (paymentIntent?.status === 'succeeded') {
+        elements.getElement(CardElement)?.clear();
         await confirmPaymentOnServer(paymentIntent.id);
+        navigate(`/user/${user?._id}/activated-premium`);
       }
     } catch (err: any) {
+      console.error('Payment process error:', err);
+      toast.error('An error occurred during payment');
       navigate(`/user/${user?._id}/payment-failed`);
     } finally {
       setLoading(false);
     }
   };
+  
 
   const confirmPaymentOnServer = async (paymentIntentId: string) => {
     try {
-      const response = await axiosInstance.post(`/payments/success`, {
-        paymentIntentId,
-      });
-      if (response.data.success) {
-        console.log('Payment confirmed on server:', response.data);
-        const { updatedUser, subscription } = response.data.data;
+      const data = await confirmPayment(paymentIntentId)
+      if (data.success) {
+        console.log('Payment confirmed on server:', data);
+        const { updatedUser } = data.data;
         dispatch(userUpdate(updatedUser));
 
         navigate(`/user/${user?._id}/activated-premium`);
@@ -209,9 +255,9 @@ const PremiumPlans: React.FC = () => {
   useEffect(() => {
     const fetchPlans = async () => {
       try {
-        const response = await axiosInstance.get('/plans/all-plans');
-        setPlans(response.data.data.plans);
-        console.log(response.data.data.plans);
+        const data = await fetchPremiumPlans()
+        setPlans(data.data.plans);
+        console.log(data.data.plans);
       } catch (error: any) {
         toast.error('Failed to fetch plans. Please try again.');
       } finally {

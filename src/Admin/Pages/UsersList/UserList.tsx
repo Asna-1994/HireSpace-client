@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { toast } from 'react-toastify';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import AdminHeader from '../../Components/Header/AdminHeader';
-import { useNavigate } from 'react-router-dom';
 import SideBar from '../../Components/SideBar/SideBar';
 import { User } from '../../../Utils/Interfaces/interface';
-import Footer from '../../../User/Components/Footer/Footer';
+import { blockOrUnblockUser, getAllUsers } from '../../../services/admin/userService';
+
 
 Modal.setAppElement('#root');
 
@@ -21,15 +20,12 @@ const UserList = () => {
   const [selectedAction, setSelectedAction] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const navigate = useNavigate();
+
 
   const fetchUsers = async (query = '') => {
     try {
-      const response = await axiosInstance.get(`/admin/all-users`, {
-        params: { search: query, page, limit },
-      });
-
-      const { users, totalPages, currentPage } = response.data.data;
+const data = await getAllUsers(query, page , limit )
+      const { users, totalPages, currentPage } = data.data;
       setUsers(users);
       setTotalPages(totalPages);
       setPage(currentPage);
@@ -50,10 +46,7 @@ const UserList = () => {
     console.log(selectedUserId);
 
     try {
-      const response = await axiosInstance.patch(
-        `/admin/block-or-unblock-user/${selectedUserId}/${selectedAction}`
-      );
-
+const response = await blockOrUnblockUser(selectedUserId, selectedAction)
       if (response.status === 200) {
         toast.success(
           `User successfully ${selectedAction === 'block' ? 'blocked' : 'unblocked'}`

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import  { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { motion } from 'framer-motion';
@@ -14,33 +14,27 @@ import Footer from '../../Components/Footer/Footer';
 import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { JobPost } from '../../../Compnay/Pages/JobPosts/AllJobPosts';
 import { userUpdate } from '../../../redux/slices/authSlice';
+import { fetchJobPostFromDB, saveJobToDB } from '../../../services/user/jobServices';
 
 const ViewAllPosts = () => {
-  const { user, isAuthenticated } = useSelector(
+  const { user } = useSelector(
     (state: RootState) => state.auth
   );
   const [jobPosts, setJobPosts] = useState<JobPost[]>([]);
   const [savedJobs, setSavedJobs] = useState<JobPost[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [hasMore, setHasMore] = useState(true);
 
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchJobPosts = async () => {
       try {
-        const response = await axiosInstance.get('/user/all-job-posts', {
-          params: {
-            page: currentPage,
-            limit,
-            search: searchTerm,
-          },
-        });
-        const jobPosts = response.data.allJobPost.map((post: any) => post._doc);
+        const data  = await fetchJobPostFromDB(currentPage, limit, searchTerm)
+        const jobPosts = data.allJobPost.map((post: any) => post._doc);
+        console.log(jobPosts)
         setJobPosts(jobPosts);
         if (jobPosts.length < limit) {
           setHasMore(false);
@@ -48,7 +42,7 @@ const ViewAllPosts = () => {
           setHasMore(true);
         }
       } catch (error) {
-        console.error('Error fetching job posts:', error);
+        console.error(error);
       }
     };
 
@@ -61,16 +55,14 @@ const ViewAllPosts = () => {
 
   const handleSaveJob = async (jobPost: JobPost) => {
     try {
-      const response = await axiosInstance.patch(
-        `/user/save-job-post/${user?._id}/${jobPost._id}`
-      );
-      if (response.data.success) {
-        const user = response.data.user;
+       const data = await saveJobToDB(user?._id!, jobPost._id!)
+      if (data.success) {
+        const user = data.user;
         dispatch(userUpdate(user));
 
-        console.log(response.data.message);
+        console.log(data.message);
       } else {
-        console.log(response.data.message);
+        console.log(data.message);
       }
     } catch (err) {
       console.log(err);

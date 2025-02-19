@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Header from '../../Components/Header/Header';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
-import * as yup from 'yup';
+import useCertificate from '../../../CustomHooks/user/useCertificate';
 
 export interface CertificateObject {
   certificateTitle: string;
@@ -16,141 +14,21 @@ export interface CertificateObject {
   _id?: string;
 }
 
-const certificateSchema = yup.object().shape({
-  certificateTitle: yup.string().required('Certificate Title is required'),
-  description: yup.string().optional(),
-  certificateUrl: yup
-    .string()
-    .nullable()
-    .notRequired()
-    .matches(/^(https?:\/\/[^\s]+)?$/, 'Must be a valid URL (if provided)'),
-  issuer: yup.string().required('Issuer is required'),
-  issuedDate: yup
-    .string()
-    .matches(/^\d{2}-\d{2}-\d{4}$/, 'Date must be in DD-MM-YYYY format')
-    .test('isValidDate', 'Invalid date', (value) => {
-      if (!value) return false;
-      const [day, month, year] = value.split('-').map(Number);
-      const parsedDate = new Date(`${year}-${month}-${day}`);
-      return !isNaN(parsedDate.getTime()) && parsedDate.getDate() === day;
-    })
-    .test('isPastOrToday', 'Issued Date cannot be in the future', (value) => {
-      if (!value) return false;
-      const [day, month, year] = value.split('-').map(Number);
-      const parsedDate = new Date(`${year}-${month}-${day}`);
-      return parsedDate.getTime() <= new Date().getTime();
-    })
-    .required('Issued Date is required'),
-});
 
 const AddCertificates: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const [certificates, setCertificates] = useState<CertificateObject[]>([]);
-  const [form, setForm] = useState<CertificateObject>({
-    certificateTitle: '',
-    description: '',
-    certificateUrl: '',
-    issuer: '',
-    issuedDate: '',
-  });
-  const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [certificateId, setCertificateId] = useState<string | null>(null);
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  
+  const {     certificates,
+    loading,
+    form,
+    errors,
+    editIndex,
+    handleChange,
+    addOrUpdateCertificate,
+    removeCertificate,
+    handleEdit,
+    } = useCertificate(user?._id)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: value,
-    }));
-  };
-
-  const handleAddOrUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    try {
-      await certificateSchema.validate(form, { abortEarly: false });
-      setErrors({});
-
-      const res = await axiosInstance.patch(
-        `/user/add-or-update-certificates/${user?._id}`,
-        form,
-        { params: { certificateId } }
-      );
-
-      if (res.data.success) {
-        toast.success('Certificate updated successfully');
-        getCertificates();
-        resetForm();
-      } else {
-        toast.error(res.data.message);
-      }
-    } catch (err: any) {
-      if (err.name === 'ValidationError') {
-        const validationErrors: { [key: string]: string } = {};
-        err.inner.forEach((error: any) => {
-          validationErrors[error.path] = error.message;
-        });
-        setErrors(validationErrors);
-      } else {
-        toast.error(err.response?.data?.message);
-      }
-    }
-  };
-
-  const handleEdit = (index: number, certificateId: string) => {
-    setForm(certificates[index]);
-    setEditIndex(index);
-    setCertificateId(certificateId);
-  };
-
-  const resetForm = () => {
-    setForm({
-      certificateTitle: '',
-      description: '',
-      certificateUrl: '',
-      issuer: '',
-      issuedDate: '',
-    });
-    setEditIndex(null);
-    setCertificateId(null);
-    setErrors({});
-  };
-
-  const getCertificates = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `/user/${user?._id}/all-certificates`
-      );
-      if (response.data.success) {
-        setCertificates(response.data.data.certificates);
-      } else {
-        console.log('Error in fetching certificates', response.data.message);
-      }
-    } catch (err: any) {
-      console.log(err.response?.data?.message);
-    }
-  };
-
-  useEffect(() => {
-    getCertificates();
-  }, []);
-
-  const handleDelete = async (index: number, certificateId: string) => {
-    try {
-      const response = await axiosInstance.delete(
-        `/user/${user?._id}/certificates/${certificateId}`
-      );
-      if (response.data.success) {
-        toast.success('Successfully deleted');
-        setCertificates(response.data.data.certificates);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message);
-    }
-  };
 
   return (
     <>
@@ -172,7 +50,13 @@ const AddCertificates: React.FC = () => {
               {editIndex !== null ? 'Update Certificate' : 'Add Certificate'}
             </h3>
 
-            <form onSubmit={handleAddOrUpdate} className="space-y-6">
+            {/* <form onSubmit={handleAddOrUpdate} className="space-y-6"> */}
+            <form onSubmit={(e) => {
+          e.preventDefault();
+          addOrUpdateCertificate();
+        }} 
+        className='space-y-6'
+        >
               {[
                 {
                   label: 'Certificate Title',
@@ -262,13 +146,13 @@ const AddCertificates: React.FC = () => {
                     </div>
                     <div className="flex space-x-4">
                       <button
-                        onClick={() => handleEdit(index, cert._id as string)}
+                        onClick={() => handleEdit(index, cert._id!)}
                         className="text-blue-600 hover:text-blue-800"
                       >
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDelete(index, cert._id as string)}
+                        onClick={() => removeCertificate(cert._id!)}
                         className="text-red-600 hover:text-red-800"
                       >
                         Delete

@@ -27,11 +27,10 @@ import ChatComponent from '../User/Components/chat/ChatComponent';
 import PremiumPlans from '../User/Pages/Profile/TryPremium';
 import PaymentSuccess from '../User/Pages/Profile/PaymentSuccess';
 import PaymentFailure from '../User/Pages/Profile/PaymentFailure';
+import ChatLayout from '../User/Components/chat/ChatLayout';
 
 const UserRoutes: React.FC = () => {
-  const { company, user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth
-  );
+
 
   return (
     <Routes>
@@ -64,11 +63,14 @@ const UserRoutes: React.FC = () => {
       <Route path="saved-jobs/:userId" element={<SavedJobPosts />} />
       <Route path="user-connections/:userId" element={<Connections />} />
       <Route path="view-connections/:userId" element={<AllConnections />} />
-      <Route path="messages/:userId" element={<MessagesPage />} />
+      {/* <Route path="messages/:userId" element={<MessagesPage />} />
       <Route
         path="messages/chats/:roomId/:receiverId"
         element={<ChatComponent />}
-      />
+      /> */}
+        <Route path="messages" element={<ChatLayout />}>
+    <Route path="chats/:roomId/:receiverId" element={<ChatLayout />} />
+  </Route>
       <Route path=":userId/try-premium" element={<PremiumPlans />} />
       <Route path=":userId/activated-premium" element={<PaymentSuccess />} />
       <Route path=":userId/payment-failed" element={<PaymentFailure />} />

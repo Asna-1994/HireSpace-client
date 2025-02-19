@@ -3,10 +3,9 @@ import Modal from 'react-modal';
 import { toast } from 'react-toastify';
 import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import AdminHeader from '../../Components/Header/AdminHeader';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import SideBar from '../../Components/SideBar/SideBar';
-import { Company, Plans } from '../../../Utils/Interfaces/interface';
-import Footer from '../../../User/Components/Footer/Footer';
+import {  Plans } from '../../../Utils/Interfaces/interface';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
 Modal.setAppElement('#root');
@@ -29,7 +28,7 @@ const ManagePlans = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [plans, setPlans] = useState<Plans[] | []>();
 
-  const navigate = useNavigate();
+
 
   const fetchPlans = async (searchTerm?: string) => {
     console.log('search term', searchTerm);

@@ -1,23 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Header from '../../Components/Header/Header';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import { toast } from 'react-toastify';
-import * as Yup from 'yup';
 import { motion } from 'framer-motion';
+import { useSkills } from '../../../CustomHooks/user/useSkills';
 
-const validationSchema = Yup.object({
-  softSkills: Yup.array().of(
-    Yup.string().min(2, 'Skill must be at least 2 characters')
-  ),
-  hardSkills: Yup.array().of(
-    Yup.string().min(2, 'Skill must be at least 2 characters')
-  ),
-  technicalSkills: Yup.array().of(
-    Yup.string().min(2, 'Skill must be at least 2 characters')
-  ),
-});
 
 export interface Skills {
   softSkills?: string[];
@@ -28,98 +15,14 @@ export interface Skills {
 
 const AddSkills: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const [skills, setSkills] = useState<Skills>({
-    softSkills: [],
-    hardSkills: [],
-    technicalSkills: [],
-  });
-  const [skillsList, setSkillsList] = useState<Skills>({
-    softSkills: [],
-    hardSkills: [],
-    technicalSkills: [],
-  });
-  const [errors, setErrors] = useState<any>({});
+  const {    skills,
+    skillsList,
+    errors,
+    handleAddOrUpdate,
+    handleDeleteSkill,
+    handleEdit,
+    handleChange,} = useSkills(user?._id)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setSkills((prevSkills) => ({
-      ...prevSkills,
-      [name]: value.split(','),
-    }));
-  };
-
-  const validate = async () => {
-    try {
-      await validationSchema.validate(skills, { abortEarly: false });
-      setErrors({});
-      return true;
-    } catch (err: any) {
-      const validationErrors: any = {};
-      err.inner.forEach((error: any) => {
-        validationErrors[error.path] = error.message;
-      });
-      setErrors(validationErrors);
-      return false;
-    }
-  };
-
-  const handleAddOrUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const isValid = await validate();
-    if (!isValid) {
-      return;
-    }
-
-    try {
-      const res = await axiosInstance.patch(
-        `/user/add-or-update-skills/${user?._id}`,
-        skills
-      );
-      if (res.data.success) {
-        toast.success('Skills updated successfully');
-        getSkills();
-        resetForm();
-      } else {
-        toast.error(res.data.message);
-      }
-    } catch (err: any) {
-      toast.error(err.response.data.message);
-    }
-  };
-
-  const resetForm = () => {
-    setSkills({
-      softSkills: [],
-      hardSkills: [],
-      technicalSkills: [],
-    });
-  };
-
-  const getSkills = async () => {
-    try {
-      const response = await axiosInstance.get(`/user/${user?._id}/all-skills`);
-      if (response.data.success) {
-        setSkillsList(response.data.data.skills);
-      } else {
-        console.log('Error in fetching skills', response.data.message);
-      }
-    } catch (err: any) {
-      console.log(err.response?.data?.message);
-    }
-  };
-
-  useEffect(() => {
-    getSkills();
-  }, []);
-
-  const handleEdit = () => {
-    setSkills({
-      softSkills: skillsList.softSkills || [],
-      hardSkills: skillsList.hardSkills || [],
-      technicalSkills: skillsList.technicalSkills || [],
-    });
-  };
 
   const getArrayValue = (value: string | string[] | undefined): string => {
     if (Array.isArray(value)) {
@@ -128,24 +31,7 @@ const AddSkills: React.FC = () => {
     return '';
   };
 
-  const handleDeleteSkill = async (skillName: string) => {
-    try {
-      const res = await axiosInstance.delete(
-        `/user/${user?._id}/delete-skills`,
-        {
-          data: { skillName },
-        }
-      );
-      if (res.data.success) {
-        toast.success('Skill deleted successfully');
-        getSkills();
-      } else {
-        toast.error(res.data.message);
-      }
-    } catch (err: any) {
-      toast.error('Error deleting skill');
-    }
-  };
+
 
   return (
     <>

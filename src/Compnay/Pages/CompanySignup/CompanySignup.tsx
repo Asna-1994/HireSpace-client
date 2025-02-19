@@ -2,15 +2,13 @@ import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import {
-  ApiResponse,
   CompanyFormData,
 } from '../../../Utils/Interfaces/interface';
 import CompanyHeader from '../../Components/Header/Header';
+import { registerNewCompany } from '../../../services/company/authService';
 
 const schema = yup.object().shape({
   companyName: yup
@@ -72,18 +70,14 @@ const CompanySignup = () => {
 
   const submitSignupForm = async (formData: CompanyFormData): Promise<void> => {
     try {
-      const response: AxiosResponse<ApiResponse> = await axiosInstance.post(
-        '/company/signup',
-        formData
-      );
-      console.log(response.data.data?.company);
-      toast.success(response.data.message);
-
+      const data = await registerNewCompany(formData)
+      console.log(data.data?.company);
+      toast.success(data.message);
       navigate('/company/otp-verification', {
-        state: { company: response.data.data.company },
+        state: { company: data.data.company },
       });
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
+      toast.error(error);
     }
   };
 

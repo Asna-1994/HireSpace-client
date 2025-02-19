@@ -8,11 +8,11 @@ import { toast } from 'react-toastify';
 import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { validateFile } from '../../../Utils/helperFunctions/fileValidation';
 import { userUpdate } from '../../../redux/slices/authSlice';
-import CompanyHeader from '../../../Compnay/Components/Header/Header';
 import AdminHeader from '../../Components/Header/AdminHeader';
+import { uploadProfilePictureToDB } from '../../../services/user/basicDetailsService';
 
 const AdminProfile: React.FC = () => {
-  const { user, company } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     user?.profilePhoto?.url || null
   );
@@ -94,30 +94,20 @@ const AdminProfile: React.FC = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('profilePhoto', selectedFile);
+
 
     try {
-      const response = await axiosInstance.patch(
-        `/user/upload-profile-image/${user?._id}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
 
-      if (response.data.success) {
+      const data = await uploadProfilePictureToDB(user?._id!,selectedFile)
+      if (data.success) {
         toast.success('Profile photo updated successfully!');
 
-        const updatedUser = response.data.data.user;
+        const updatedUser = data.data.user;
         setPreviewUrl(updatedUser.profilePhoto.url);
         dispatch(userUpdate(updatedUser));
       }
-    } catch (err) {
-      console.error('Error uploading photo:', err);
-      toast.error('Error uploading photo. Please try again.');
+    } catch (err : any) {
+      toast.error(err);
     }
   };
 

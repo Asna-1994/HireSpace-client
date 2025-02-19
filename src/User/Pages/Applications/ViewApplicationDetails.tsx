@@ -1,11 +1,9 @@
-import { useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+
+import { useLocation} from 'react-router-dom';
 import Header from '../../Components/Header/Header';
 import Footer from '../../Components/Footer/Footer';
 
 const ViewApplicationDetails = () => {
-  const { applicationId } = useParams<{ applicationId: string }>();
-  const [loading, setLoading] = useState<boolean>(true);
   const location = useLocation();
 
   // Application data passed via state

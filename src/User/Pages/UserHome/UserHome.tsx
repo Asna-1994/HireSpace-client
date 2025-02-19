@@ -11,7 +11,6 @@ import {
   FaClock,
 } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { toast } from 'react-toastify';
 import { userUpdate } from '../../../redux/slices/authSlice';
 import TaglineSection from './Tagline';
@@ -21,6 +20,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { fetchRecommendationForJobs, fetchTotalApplicationCount, updateTagline } from '../../../services/user/userHomeService';
 
 const UserHome = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -33,34 +33,27 @@ const UserHome = () => {
 
   const totalConnections = user?.connections.length;
 
-  const handleTaglineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTagline(e.target.value);
-  };
-
   const saveTagline = async () => {
     try {
-      const response = await axiosInstance.patch(
-        `/user/profile-tag-line/${user?._id}`,
-        { tagline }
-      );
-      if (response.data.success) {
+      const data = await updateTagline(user?._id as string, tagline)
+      if (data.success) {
         toast.success('Tagline updated');
-        dispatch(userUpdate(response.data.user));
+        dispatch(userUpdate(data.user));
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
-    } catch (err: any) {
-      toast.error(err.response.data.message);
+    } catch (err :any) {
+      toast.error(err);
     }
   };
 
   useEffect(() => {
     const fetchTotalJobsAndApplications = async () => {
       try {
-        const response = await axiosInstance.get(`/user/${user?._id}/statics`);
-        if (response.data.success) {
-          setTotalApplications(response.data.data.totalJobApplications);
-          setTotalJobPosts(response.data.data.totalJobPosts);
+        const data = await fetchTotalApplicationCount(user?._id as string)
+        if (data.success) {
+          setTotalApplications(data.data.totalJobApplications);
+          setTotalJobPosts(data.data.totalJobPosts);
         }
       } catch (err) {
         console.error('Error fetching job stats:', err);
@@ -69,11 +62,9 @@ const UserHome = () => {
 
     const fetchRecommendedJobs = async () => {
       try {
-        const response = await axiosInstance.get(
-          `/user/all-job-posts?tagLine=${tagline}`
-        );
-        if (response.data.success) {
-          const jobPosts = response.data.allJobPost.map(
+         const data = await fetchRecommendationForJobs(tagline)
+        if (data.success) {
+          const jobPosts = data.allJobPost.map(
             (post: any) => post._doc
           );
           setRecommendedJobs(jobPosts);

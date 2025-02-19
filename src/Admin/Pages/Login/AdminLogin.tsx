@@ -1,13 +1,14 @@
-import React from 'react';
+
 import { toast } from 'react-toastify';
-import { Link, useNavigate } from 'react-router-dom';
+import {   useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { useDispatch } from 'react-redux';
 import { userLogin } from '../../../redux/slices/authSlice';
 import * as yup from 'yup';
 import Header from '../../../User/Components/Header/Header';
+import { adminLogin } from '../../../services/admin/dashBoardService';
+
 
 const schema = yup.object().shape({
   email: yup
@@ -38,21 +39,18 @@ const AdminLogin = () => {
 
   const handleLogin = async (data: { email: string; password: string }) => {
     try {
-      const response = await axiosInstance.post('/admin/login', data);
-
-      if (response.data.success) {
-        const { token, user } = response.data.data;
-        toast.success(response.data.message);
+      // const response = await axiosInstance.post('/admin/login', data);
+const result = await adminLogin(data)
+      if (result.success) {
+        const { token, user } = result.data;
+        toast.success(result.message);
         dispatch(userLogin({ user, token }));
         navigate(`/admin/home/${user._id}`);
       } else {
-        toast.error(response.data.message);
+        toast.error(result.message);
       }
     } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || 'Something went wrong';
-      toast.error(errorMessage);
-      console.error('Login error:', error);
+      toast.error(error);
     }
   };
 

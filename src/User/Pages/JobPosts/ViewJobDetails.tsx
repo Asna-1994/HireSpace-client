@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { JobPost } from '../../../Compnay/Pages/JobPosts/AllJobPosts';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation} from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import Header from '../../Components/Header/Header';
@@ -10,14 +10,14 @@ import ApplyModal from './ApplyModal';
 import ReportSpamModal from '../../../Shared/CompanyProfileUtilities/companyProfileUtilities';
 
 const ViewJobDetails: React.FC = () => {
-  const { company, user, isAuthenticated } = useSelector(
+  const {  user} = useSelector(
     (state: RootState) => state.auth
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const location = useLocation();
   const { jobPost } = location.state as { jobPost: JobPost };
-  const navigate = useNavigate();
+
 
   const handleApplyClick = () => {
     setIsModalOpen(true);
@@ -49,15 +49,16 @@ const ViewJobDetails: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-4 mb-4 md:mb-0">
                 <div className="text-blue-500 border-2 rounded-full p-2">
-                  {jobPost?.companyId?.companyLogo ? (
-                    <img
-                      src={jobPost.companyId.companyLogo.url}
-                      alt="Company Logo"
-                      className="h-11 w-11 object-cover"
-                    />
-                  ) : (
-                    <FaBriefcase className="text-2xl" />
-                  )}
+  
+                             {jobPost?.companyId?.companyLogo?.url ? (
+                      <img
+                        src={jobPost.companyId.companyLogo.url}
+                        alt="Company Logo"
+                        className="h-11 w-11 object-cover rounded-full"
+                      />
+                    ) : (
+                      <FaBriefcase className="text-2xl text-gray-500" />
+                    )}
                 </div>
                 <h2 className="text-gray-600 font-bold text-2xl">
                   {jobPost.companyId?.companyName}

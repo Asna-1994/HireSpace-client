@@ -3,12 +3,12 @@ import { IconType } from 'react-icons';
 import { FiTrendingDown, FiTrendingUp } from 'react-icons/fi';
 
 interface StatsCardProps {
-  title: string; // The title of the card
-  value: number | string; // The value to display, can be a number or string
-  icon: IconType; // The icon component, from react-icons
-  trend?: number; // Optional trend value, a number representing the percentage change
-  color: string; // A string representing the Tailwind CSS color classes
-  isLoading?: boolean; // Optional prop to handle loading state
+  title: string;
+  value: number | string;
+  icon: IconType; 
+  trend?: number; 
+  color: string; 
+  isLoading?: boolean; 
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({

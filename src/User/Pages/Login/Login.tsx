@@ -1,58 +1,24 @@
 import React, { useRef } from 'react';
 import Header from '../../Components/Header/Header';
-import { toast } from 'react-toastify';
-import { Link, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
-import { useDispatch } from 'react-redux';
-import { userLogin } from '../../../redux/slices/authSlice';
+import { Link } from 'react-router-dom';
 import GoogleSignInButton from '../../Components/GoogleSignin/GoogleSignin';
+import useLogin from '../../../CustomHooks/user/useLogin';
 
 const Login = () => {
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+
+const {loginUser, loading} = useLogin()
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const email = emailRef.current?.value;
-    const password = passwordRef.current?.value;
+    const email = emailRef.current?.value || '';
+    const password = passwordRef.current?.value || '';
 
-    if (!email || !password) {
-      toast.error('Please enter both email and password.');
-      return;
-    }
 
-    try {
-      const response = await axiosInstance.post('/user/login', {
-        email,
-        password,
-      });
+    loginUser(email, password)
 
-      if (response.data.success) {
-        const { token, user } = response.data.data;
-        // console.log(jobSeekerProfile)
-        toast.success(response.data.message);
-        dispatch(userLogin({ user, token }));
-        console.log('User details:', user);
-        if (
-          user.userRole === 'companyAdmin' ||
-          user.userRole === 'companyMember'
-        ) {
-          navigate(`/company/home/${user.companyId}`);
-        } else {
-          navigate(`/user/home/${user._id}`);
-        }
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || 'Something went wrong';
-      toast.error(errorMessage);
-      console.error('Login error:', error);
-    }
   };
 
   return (

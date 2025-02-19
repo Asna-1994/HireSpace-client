@@ -5,8 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { toast } from 'react-toastify';
-import axios from 'axios';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { deleteJobPost } from '../../../services/company/applicationService';
 
 interface JobDetailsModalProps {
   jobPost: JobPost | null;
@@ -46,18 +45,16 @@ const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
 
   const handleDelete = async () => {
     try {
-      const response = await axiosInstance.delete(
-        `/company/job-post/${jobPost._id}`
-      );
-      if (response.data.success) {
-        toast.success(response.data.message);
+      const data = await deleteJobPost(jobPost._id!)
+      if (data.success) {
+        toast.success(data.message);
         onClose();
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (err: any) {
-      toast.error(err.response.data.message);
-      console.log(err);
+      toast.error(err);
+
     }
   };
 

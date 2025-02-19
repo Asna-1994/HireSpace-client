@@ -1,12 +1,12 @@
-import React, { FC, useState } from 'react';
+import  { FC, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { logout } from '../../../redux/slices/authSlice';
 import { toast } from 'react-toastify';
 import { FaUserCircle } from 'react-icons/fa';
 import { HiMenuAlt3, HiX } from 'react-icons/hi';
+import { logoutUser } from '../../../services/user/authServices';
 
 const AdminHeader: FC = () => {
   const { user, isAuthenticated } = useSelector(
@@ -19,13 +19,12 @@ const AdminHeader: FC = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axiosInstance.post('/user/logout');
+      const data = await logoutUser()
       dispatch(logout());
       navigate('/');
-      toast.success(response.data.message);
+      toast.success(data.message);
     } catch (err: any) {
-      console.error(err);
-      toast.error(err?.response?.data?.message || 'Something went wrong!');
+      toast.error(err);
     }
   };
 

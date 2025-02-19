@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom';
 import { RootState } from '../../../redux/store';
 import NotAuthenticated from '../../../Shared/Pages/NotAuthenticated';
 import Footer from '../../../User/Components/Footer/Footer';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
-import { HiOutlineEye } from 'react-icons/hi';
 import {
   FaBriefcase,
   FaClock,
@@ -14,6 +12,7 @@ import {
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import Header from '../../Components/Header/Header';
+import { getSavedJobsForUser } from '../../../services/user/jobServices';
 
 export interface SalaryRange {
   min: string;
@@ -67,12 +66,11 @@ export interface JobPost {
 }
 
 const SavedJobPosts = () => {
-  const { company, user, isAuthenticated } = useSelector(
+  const {  user, isAuthenticated } = useSelector(
     (state: RootState) => state.auth
   );
   const [jobPosts, setJobPosts] = useState<JobPost[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchTerm, setSearchTerm] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [hasMore, setHasMore] = useState(true);
@@ -80,12 +78,8 @@ const SavedJobPosts = () => {
   useEffect(() => {
     const fetchJobPosts = async () => {
       try {
-        const response = await axiosInstance.get(
-          `/user/all-saved-job-posts/${user?._id}`,
-          { params: { page, limit } }
-        );
-        console.log(response.data);
-        let jobPosts = response.data.allSavedJobs;
+        const data = await getSavedJobsForUser(user?._id!, page , limit)
+        let jobPosts = data.allSavedJobs;
         jobPosts = jobPosts.map((post: any) => post._doc);
         setJobPosts(jobPosts);
         if (jobPosts.length < limit) {

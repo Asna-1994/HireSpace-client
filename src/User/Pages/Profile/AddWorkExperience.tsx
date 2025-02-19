@@ -1,24 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Header from '../../Components/Header/Header';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
-import * as Yup from 'yup';
+import useExperience from '../../../CustomHooks/user/useExperience';
 
-const experienceValidationSchema = Yup.object().shape({
-  company: Yup.string().required('Company name is required'),
-  designation: Yup.string().required('Designation is required'),
-  yearCompleted: Yup.string()
-    .required('Year completed is required')
-    .matches(/^\d{4}$/, 'Year must be a valid 4-digit year'),
-  dateFrom: Yup.string().required('Start date is required'),
-  dateTo: Yup.string().required('End date is required'),
-  skillsGained: Yup.array()
-    .of(Yup.string())
-    .min(1, 'At least one skill is required'),
-});
 
 export interface ExperienceObject {
   company: string;
@@ -32,122 +18,19 @@ export interface ExperienceObject {
 
 const AddWorkExperience: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const [experiences, setExperiences] = useState<ExperienceObject[]>([]);
-  const [form, setForm] = useState<ExperienceObject>({
-    company: '',
-    designation: '',
-    yearCompleted: '',
-    dateFrom: '',
-    dateTo: '',
-    skillsGained: [],
-  });
-  const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [experienceId, setExperienceId] = useState<string | null>(null);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: name === 'skillsGained' ? value.split(',') : value,
-    }));
-  };
+  const {    
+    experiences,
+    form,
+    errors,
+    editIndex,
+    handleChange,
+    handleSubmit,
+    handleEdit,
+    removeExperience
+ } = useExperience(user?._id);
 
-  const validateForm = async () => {
-    try {
-      await experienceValidationSchema.validate(form, { abortEarly: false });
-      setErrors({});
-      return true;
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const newErrors: Record<string, string> = {};
-        err.inner.forEach((error) => {
-          if (error.path) newErrors[error.path] = error.message;
-        });
-        setErrors(newErrors);
-      }
-      return false;
-    }
-  };
-
-  const handleAddOrUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const isValid = await validateForm();
-    if (!isValid) return;
-
-    try {
-      const res = await axiosInstance.patch(
-        `/user/add-or-update-experience/${user?._id}`,
-        form,
-        { params: { experienceId } }
-      );
-      if (res.data.success) {
-        toast.success('Work experience updated successfully');
-        getExperiences();
-        resetForm();
-      } else {
-        toast.error(res.data.message);
-      }
-    } catch (err: any) {
-      toast.error(err.response.data.message);
-    }
-  };
-
-  const handleEdit = (index: number, experienceId: string) => {
-    setForm(experiences[index]);
-    setEditIndex(index);
-    setExperienceId(experienceId);
-  };
-
-  const resetForm = () => {
-    setForm({
-      company: '',
-      designation: '',
-      yearCompleted: '',
-      dateFrom: '',
-      dateTo: '',
-      skillsGained: [],
-    });
-    setEditIndex(null);
-    setExperienceId(null);
-  };
-
-  const handleDelete = async (index: number, experienceId: string) => {
-    try {
-      const response = await axiosInstance.delete(
-        `/user/${user?._id}/experience/${experienceId}`
-      );
-      if (response.data.success) {
-        toast.success('Successfully deleted');
-        setExperiences(response.data.data.experience);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message);
-    }
-  };
-
-  const getExperiences = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `/user/${user?._id}/all-experience`
-      );
-      if (response.data.success) {
-        setExperiences(response.data.data.experience);
-      } else {
-        console.log('Error in fetching experiences', response.data.message);
-      }
-    } catch (err: any) {
-      console.log(err.response?.data?.message);
-    }
-  };
-
-  useEffect(() => {
-    getExperiences();
-  }, []);
 
   return (
     <>
@@ -169,7 +52,7 @@ const AddWorkExperience: React.FC = () => {
                 ? 'Update Work Experience'
                 : 'Add Work Experience'}
             </h3>
-            <form onSubmit={handleAddOrUpdate} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               {[
                 {
                   label: 'Company',
@@ -217,7 +100,6 @@ const AddWorkExperience: React.FC = () => {
                     onChange={handleChange}
                     placeholder={field.placeholder}
                     className="mt-1 w-full px-1 py-1 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    required
                   />
                   {errors[field.name] && (
                     <p className="text-red-500 text-xs mt-1">
@@ -274,7 +156,7 @@ const AddWorkExperience: React.FC = () => {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDelete(index, exp?._id as string)}
+                        onClick={() => removeExperience( exp?._id as string)}
                         className="text-red-600 hover:text-red-800"
                       >
                         Delete

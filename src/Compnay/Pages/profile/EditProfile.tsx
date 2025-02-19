@@ -8,6 +8,8 @@ import { toast } from 'react-toastify';
 import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { companyUpdate } from '../../../redux/slices/authSlice';
 import CompanyHeader from '../../../Compnay/Components/Header/Header';
+import { getAdditionalDetails, updateCompanyDetails } from '../../../services/company/profileService';
+
 
 const EditCompanyDetails: React.FC = () => {
   const { user, company } = useSelector((state: RootState) => state.auth);
@@ -65,13 +67,13 @@ const EditCompanyDetails: React.FC = () => {
         ...prevDetails,
         socialLinks: {
           ...prevDetails.socialLinks,
-          [name]: value, // Update the specific social link field
+          [name]: value, 
         },
       }));
     } else {
       setAdditionalDetails((prevDetails) => ({
         ...prevDetails,
-        [name]: value, // Update other fields
+        [name]: value, 
       }));
     }
   };
@@ -79,29 +81,17 @@ const EditCompanyDetails: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const formData = new FormData();
-
-    formData.append('companyName', form.companyName || '');
-    formData.append('establishedDate', form.establishedDate || '');
-    formData.append('industry', form.industry || '');
-    formData.append('phone', form.phone || '');
-    formData.append('address', form.address || '');
-
     try {
-      const response = await axiosInstance.patch(
-        `/company/update-basic-detail/${company?._id}`,
-        formData
-      );
-      if (response.data.success) {
-        const updatedCompany = response.data.data.company;
+      const data  =await updateCompanyDetails(company?._id!, form.companyName!, form.establishedDate!, form.industry!, form.phone!, form.address!)
+      if (data.success) {
+        const updatedCompany = data.data.company;
         toast.success('Updated successfully');
         dispatch(companyUpdate(updatedCompany));
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (err: any) {
-      console.error('Error updating details:', err);
-      toast.error(err.response.data.message);
+      toast.error(err);
     }
   };
 
@@ -136,11 +126,9 @@ const EditCompanyDetails: React.FC = () => {
   //fetch companyProfile
   const fetchAdditionalDetails = async () => {
     try {
-      const response = await axiosInstance.get(
-        `/company/company-profile-details/${company?._id}`
-      );
-      if (response.data.success) {
-        const data = response.data.data.profile;
+      const result = await getAdditionalDetails(company?._id!)
+      if (result.success) {
+        const data = result.data.profile;
         setAdditionalDetails({
           mission: data.mission || '',
           vision: data.vision || '',

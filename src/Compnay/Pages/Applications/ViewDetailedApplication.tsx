@@ -3,8 +3,8 @@ import CompanyHeader from '../../Components/Header/Header';
 import { HiDocumentText } from 'react-icons/hi';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { toast } from 'react-toastify';
+import { updateStatus } from '../../../services/company/applicationService';
 
 const ApplicationDetails = () => {
   const location = useLocation();
@@ -14,18 +14,15 @@ const ApplicationDetails = () => {
 
   const handleStatusUpdate = async () => {
     try {
-      const response = await axiosInstance.patch(
-        `/company/job-application-status/${application._id}`,
-        { status }
-      );
-      if (response.data.success) {
-        setStatus(response.data.application.status);
+      const data = await updateStatus(application._id, status)
+      if (data.success) {
+        setStatus(data.application.status);
         toast.success('status updated');
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (err: any) {
-      toast.error(err.response.data.message);
+      toast.error(err);
     }
   };
 

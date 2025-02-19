@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { toast } from 'react-toastify';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import AdminHeader from '../../Components/Header/AdminHeader';
-import { useNavigate } from 'react-router-dom';
 import SideBar from '../../Components/SideBar/SideBar';
 import { Company } from '../../../Utils/Interfaces/interface';
-import Footer from '../../../User/Components/Footer/Footer';
+import { blockOrUnblock, companyVerification, getAllCompanies} from '../../../services/admin/companyServices';
+
+
 
 Modal.setAppElement('#root');
 
@@ -25,20 +25,16 @@ const CompanyList = () => {
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const navigate = useNavigate();
 
   const fetchCompanies = async (query: string = '') => {
     try {
-      const response = await axiosInstance.get(`/admin/all-companies`, {
-        params: { search: query, page, limit },
-      });
-      const { companies, totalPages, currentPage } = response.data.data;
+      const data = await getAllCompanies(query, page, limit)
+      const { companies, totalPages, currentPage } = data.data;
       setCompanies(companies);
       setTotalPages(totalPages);
       setPage(currentPage);
     } catch (err: any) {
-      toast.error(err?.response?.data?.message);
-      console.error(err);
+      toast.error(err);
     } finally {
       setLoading(false);
     }
@@ -51,18 +47,15 @@ const CompanyList = () => {
   const handleAction = async () => {
     if (!selectedCompanyId) return;
     try {
-      const response = await axiosInstance.patch(
-        `/admin/block-or-unblock-company/${selectedCompanyId}/${selectedAction}`
-      );
-      if (response.data.success) {
+      const data = await blockOrUnblock(selectedCompanyId, selectedAction)
+      if (data.success) {
         toast.success(
           `Company successfully ${selectedAction === 'block' ? 'blocked' : 'unblocked'}`
         );
         fetchCompanies();
       }
     } catch (error: any) {
-      console.error(error.response?.data?.message);
-      toast.error(error.response?.data?.message);
+      toast.error(error);
     } finally {
       setModalIsOpen(false);
       setSelectedCompanyId(null);
@@ -94,18 +87,15 @@ const CompanyList = () => {
 
   const verifyCompany = async (companyId: string) => {
     try {
-      const res = await axiosInstance.patch(
-        `/admin/${companyId}/verify-company`
-      );
-      if (res.data.success) {
-        toast.success(res.data.message);
+      const data = await companyVerification(companyId)
+      if (data.success) {
+        toast.success(data.message);
         fetchCompanies();
       } else {
-        toast.error(res.data.message);
+        toast.error(data.message);
       }
     } catch (err: any) {
-      toast.error(err.response.data.message);
-      console.log(err);
+      toast.error(err);
     }
   };
 

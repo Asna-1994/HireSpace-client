@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { toast } from 'react-toastify';
 import {
-  FaUserPlus,
   FaEnvelope,
-  FaUser,
   FaSpinner,
   FaTrashAlt,
 } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
 import CompanyHeader from '../../Components/Header/Header';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { motion } from 'framer-motion';
 import Footer from '../../../User/Components/Footer/Footer';
+import { addMember, getAllMembers, removeMember } from '../../../services/company/profileService';
 
 interface Member {
   _id: string;
@@ -23,22 +20,25 @@ interface Member {
 }
 
 const AddMembers = () => {
-  const { company, user, isAuthenticated } = useSelector(
+  const { company, user } = useSelector(
     (state: RootState) => state.auth
   );
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('member');
   const [loading, setLoading] = useState(false);
   const [members, setMembers] = useState<Member[]>([]);
-  const navigate = useNavigate();
+
 
   // Fetching member details
   const fetchMembers = async () => {
     try {
-      const response = await axiosInstance.get(
-        `/company/${company?._id}/all-members`
-      );
-      setMembers(response.data.data.members);
+      const data = await getAllMembers(company?._id!)
+      if(data.success){
+        setMembers(data.data.members);
+      }
+   else{
+    console.log(data.message)
+   }
     } catch (error) {
       console.log(error);
     }
@@ -53,21 +53,17 @@ const AddMembers = () => {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.patch(
-        `/company/${company?._id}/add-member`,
-        { userEmail: email, userRole: role }
-      );
-
-      if (response.data.success) {
-        toast.success(response.data.message);
-        setMembers([...members, response.data.data.newMember]);
+const  data = await addMember(company?._id!, email, role)
+      if (data.success) {
+        toast.success(data.message);
+        setMembers([...members, data.data.newMember]);
         setEmail('');
         setRole('member');
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Failed to add member');
+      toast.error(err);
     } finally {
       setLoading(false);
     }
@@ -75,18 +71,15 @@ const AddMembers = () => {
 
   const handleRemove = async (memberId: string) => {
     try {
-      const response = await axiosInstance.delete(
-        `/company/${company?._id}/remove-member/${memberId}`
-      );
-
-      if (response.data.success) {
+       const data = await removeMember(company?._id!, memberId)
+      if (data.success) {
         toast.success('Member removed successfully');
         setMembers(members.filter((member) => member._id !== memberId));
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
-    } catch (error) {
-      toast.error('Failed to remove member');
+    } catch (error : any) {
+      toast.error(error);
     }
   };
 

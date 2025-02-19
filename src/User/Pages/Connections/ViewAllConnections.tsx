@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../Components/Header/Header';
 import Footer from '../../Components/Footer/Footer';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { toast } from 'react-toastify';
@@ -10,6 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import { generateRoomId } from '../../../Utils/helperFunctions/companyName';
 import { User } from '../../../Utils/Interfaces/interface';
 import { Connections } from './UserConnections';
+import { fetchUsersFromDb, getRecommendationFromDB, sendConnectionRequest } from '../../../services/user/requestService';
+
 
 const AllConnections = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -27,25 +28,21 @@ const AllConnections = () => {
   // Fetch Recommendations
   const fetchRecommendations = async (page: number) => {
     try {
-      const response = await axiosInstance.get(
-        `/connection-request/recommendations/${user?._id}?page=${page}&limit=${limit}`
-      );
-      if (response.data.success) {
+const data = await getRecommendationFromDB(user?._id!, page , limit)
+      if (data.success) {
         const connectedUserIds = new Set(user?.connections);
         const filteredRecommendations =
-          response.data.data.recommendations.filter(
+          data.data.recommendations.filter(
             (recommendation: Connections) =>
               !connectedUserIds.has(recommendation._id)
           );
         setRecommendations(filteredRecommendations);
-        setRecommendationsTotalPages(response.data.data.totalPages);
+        setRecommendationsTotalPages(data.data.totalPages);
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (error: any) {
-      toast.error(
-        error?.response?.data?.message || 'Failed to fetch recommendations'
-      );
+      toast.error(error);
     }
   };
 
@@ -53,13 +50,12 @@ const AllConnections = () => {
   const fetchUsers = async (query: string, page: number) => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get(`/admin/all-users`, {
-        params: { search: query, page, limit, role: 'jobSeeker' },
-      });
-      if (response.data.success) {
-        setSearchResult(response.data.data.users);
-        console.log('user search result', response.data.data.users);
-        setSearchTotalPages(response.data.data.totalPages);
+
+      const data = await fetchUsersFromDb(query, page, limit)
+      if (data.success) {
+        setSearchResult(data.data.users);
+        console.log('user search result', data.data.users);
+        setSearchTotalPages(data.data.totalPages);
       } else {
         setSearchResult([]);
       }
@@ -76,19 +72,14 @@ const AllConnections = () => {
     receiver: string
   ) => {
     try {
-      const response = await axiosInstance.post(`/connection-request`, {
-        fromUser: sender,
-        toUser: receiver,
-      });
-      if (response.data.success) {
+const data = await sendConnectionRequest(sender, receiver)
+      if (data.success) {
         toast.success('Request has been sent');
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (error: any) {
-      toast.error(
-        error?.response?.data?.message || 'Failed to send connection request'
-      );
+      toast.error(error);
     }
   };
 

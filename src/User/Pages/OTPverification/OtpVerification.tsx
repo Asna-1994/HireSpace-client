@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Header from '../../Components/Header/Header';
 import { toast } from 'react-toastify';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { resendOtp, verifyOtp } from '../../../services/user/authServices';
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState('');
@@ -45,25 +45,25 @@ const OtpVerification = () => {
           return prev - 1;
         });
       }, 1000);
-      return () => clearInterval(interval); // Cleanup interval
+      return () => clearInterval(interval);
     }
   }, [otpExpiry, otpExpiryFromUser]);
 
   const handleResendOtp = async () => {
     try {
-      const response = await axiosInstance.post('/user/resend-otp', { email });
-      const user = response.data.data.user;
+      const data = await resendOtp(email)
+      const user = data.data.user;
 
-      if (response.data.success) {
+      if (data.success) {
         const newOtpExpiry = user?.otpExpiry;
         setOtpExpiry(newOtpExpiry);
         localStorage.setItem('otpExpiry', newOtpExpiry);
-        toast.success(response.data.message);
+        toast.success(data.message);
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (error: any) {
-      toast.error(error.response.data.message);
+      toast.error(error);
       console.error(error);
     }
   };
@@ -78,20 +78,17 @@ const OtpVerification = () => {
         toast.error('OTP has expired. Please request a new one.');
         return;
       }
-      const response = await axiosInstance.post('/user/verify-otp', {
-        email,
-        otp,
-      });
-      if (response.data.success) {
-        toast.success(response.data.message);
-        setOtpExpiry(null); // Clear OTP expiry
-        localStorage.removeItem('otpExpiry'); // Remove OTP expiry
+      const data = await verifyOtp(email, otp)
+      if (data.success) {
+        toast.success(data.message);
+        setOtpExpiry(null); 
+        localStorage.removeItem('otpExpiry');
         navigate('/user/login');
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
+      toast.error(error);
     }
   };
 

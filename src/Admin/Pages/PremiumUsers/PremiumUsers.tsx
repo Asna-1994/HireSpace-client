@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { toast } from 'react-toastify';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import AdminHeader from '../../Components/Header/AdminHeader';
 import SideBar from '../../Components/SideBar/SideBar';
 import { User } from '../../../Utils/Interfaces/interface';
-import Footer from '../../../User/Components/Footer/Footer';
+import { blockOrUnblockUser, getPremiumUsers } from '../../../services/admin/userService';
+
 
 Modal.setAppElement('#root');
 
@@ -23,11 +23,9 @@ const PremiumUserList = () => {
   const fetchUsers = async (query = '') => {
     console.log(query);
     try {
-      const response = await axiosInstance.get(`/admin/premium-users`, {
-        params: { search: query, page, limit },
-      });
 
-      const { users, totalPages, currentPage } = response.data.data;
+      const data = await getPremiumUsers(query, page, limit)
+      const { users, totalPages, currentPage } = data.data;
       setUsers(users);
       console.log(users);
       setTotalPages(totalPages);
@@ -49,10 +47,7 @@ const PremiumUserList = () => {
     console.log(selectedUserId);
 
     try {
-      const response = await axiosInstance.patch(
-        `/admin/block-or-unblock-user/${selectedUserId}/${selectedAction}`
-      );
-
+const response = await blockOrUnblockUser(selectedUserId, selectedAction)
       if (response.status === 200) {
         toast.success(
           `User successfully ${selectedAction === 'block' ? 'blocked' : 'unblocked'}`
@@ -60,11 +55,7 @@ const PremiumUserList = () => {
         fetchUsers();
       }
     } catch (error: any) {
-      console.error(error.response?.data?.message);
-      toast.error(
-        error.response?.data?.message ||
-          'An error occurred while blocking the user'
-      );
+      toast.error(error);
     } finally {
       setModalIsOpen(false);
       setSelectedUserId(null);

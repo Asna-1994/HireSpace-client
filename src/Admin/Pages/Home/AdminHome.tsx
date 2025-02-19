@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import AdminHeader from '../../Components/Header/AdminHeader';
 import SideBar from '../../Components/SideBar/SideBar';
 import { useSelector } from 'react-redux';
@@ -7,8 +7,6 @@ import Footer from '../../../User/Components/Footer/Footer';
 import {
   LineChart,
   Line,
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -20,17 +18,15 @@ import {
   Cell,
 } from 'recharts';
 import {
-  FiTrendingUp,
-  FiTrendingDown,
   FiUsers,
   FiBriefcase,
   FiAward,
   FiAlertTriangle,
   FiFileText,
 } from 'react-icons/fi';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { toast } from 'react-toastify';
 import StatsCard from './StateCard';
+import { getAllDashboardStats } from '../../../services/admin/dashBoardService';
 
 interface DashboardStats {
   totalUsers: number;
@@ -106,25 +102,18 @@ const AdminHome = () => {
     const fetchDashboardStats = async () => {
       try {
         setIsLoading(true);
-        // Convert the dates to the beginning and end of the day
         const start = new Date(startDate);
         start.setHours(0, 0, 0, 0);
 
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
-
-        const response = await axiosInstance.get('/admin/dashboard-stats', {
-          params: {
-            startDate: start.toISOString(),
-            endDate: end.toISOString(),
-          },
-        });
-        if (response.data.success) {
-          setStats(response.data.stats);
+        const data  = await getAllDashboardStats(start,end)
+        if (data.success) {
+          setStats(data.stats);
         }
-        console.log(response.data.stats);
-      } catch (error) {
-        toast.error('Failed to fetch dashboard statistics');
+        console.log(data.stats);
+      } catch (error : any) {
+        toast.error(error);
       } finally {
         setIsLoading(false);
       }

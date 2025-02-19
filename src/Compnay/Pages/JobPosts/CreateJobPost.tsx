@@ -17,10 +17,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { JobPost } from './AllJobPosts';
 import CompanyHeader from '../../Components/Header/Header';
 import Footer from '../../../User/Components/Footer/Footer';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { toast } from 'react-toastify';
+import { createOrUpdateJobPost } from '../../../services/company/jobPostService';
 
 const InputField: React.FC<InputFieldProps> = ({
   label,
@@ -163,20 +163,15 @@ const CreateJobPostPage: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post(
-        `/company/job-post/${company?._id}/${user?._id}`,
-        jobData,
-        { params: { jobPostId: jobPost?._id } }
-      );
-      if (response.data.success) {
-        toast.success(response.data.message);
+      const data = await createOrUpdateJobPost(company?._id!,  user?._id!,jobData, jobPostId)
+      if (data.success) {
+        toast.success(data.message);
         navigate(`/company/${company?._id}/view-job-posts`);
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (err: any) {
-      toast.error(err.response?.data?.message ?? 'An error occurred');
-      console.error(err);
+      toast.error(err);
     }
   };
 

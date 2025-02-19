@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import Header from '../../Components/Header/Header';
 import Footer from '../../Components/Footer/Footer';
 import { FaBriefcase, FaTimes } from 'react-icons/fa';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { getAllApplication } from '../../../services/user/jobServices';
 
 const MyApplications = () => {
   const { user, isAuthenticated } = useSelector(
@@ -21,19 +21,10 @@ const MyApplications = () => {
     const fetchApplications = async () => {
       setLoading(true);
       try {
-        const response = await axiosInstance.get(
-          `/user/all-job-applications/${user?._id}`,
-          {
-            params: {
-              page: currentPage,
-              limit: 10,
-              searchTerm,
-            },
-          }
-        );
-        setApplications(response.data.allApplications);
-        setTotalPages(response.data.totalPages);
-        console.log(response.data.allApplications);
+        const data = await getAllApplication(user?._id! , currentPage, searchTerm )
+        setApplications(data.allApplications);
+        setTotalPages(data.totalPages);
+        console.log(data.allApplications);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching applications:', error);

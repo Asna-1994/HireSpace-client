@@ -17,8 +17,8 @@ import {
   FaCertificate,
 } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { getCompanyInitials } from '../../../Utils/helperFunctions/companyName';
+import { getAllMembers, getCompanyProfile } from '../../../services/company/profileService';
 
 export interface memberObject {
   _id: string;
@@ -28,7 +28,7 @@ export interface memberObject {
 }
 
 const CompanyProfile = () => {
-  const { company, user, isAuthenticated } = useSelector(
+  const { company } = useSelector(
     (state: RootState) => state.auth
   );
 
@@ -51,11 +51,9 @@ const CompanyProfile = () => {
 
   const getMembers = async () => {
     try {
-      const response = await axiosInstance.get(
-        `/company/${company?._id}/all-members`
-      );
-      if (response.data.success) {
-        setMembers(response.data.data.members);
+      const data = await getAllMembers(company?._id!)
+      if (data.success) {
+        setMembers(data.data.members);
       }
     } catch (err: any) {
       console.log(err);
@@ -64,13 +62,10 @@ const CompanyProfile = () => {
 
   const getCompanyProfileDetails = async () => {
     try {
-      const response = await axiosInstance.get(
-        `/company/company-profile-details/${company?._id}`
-      );
-      console.log(response.data.data.profile);
-      if (response.data.success) {
-        setAdditionalDetails(response.data.data.profile);
-        console.log(response.data.data.profile);
+
+      const data = await getCompanyProfile(company?._id!)
+      if (data.success) {
+        setAdditionalDetails(data.data.profile);
       }
     } catch (err: any) {
       console.log(err);

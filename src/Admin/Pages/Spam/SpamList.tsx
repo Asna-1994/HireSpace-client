@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { toast } from 'react-toastify';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import AdminHeader from '../../Components/Header/AdminHeader';
 import SideBar from '../../Components/SideBar/SideBar';
-import { User } from '../../../Utils/Interfaces/interface';
-import Footer from '../../../User/Components/Footer/Footer';
+import { blockOrUnblock } from '../../../services/admin/companyServices';
+import { getAllSpam } from '../../../services/admin/userService';
+
+
 
 Modal.setAppElement('#root');
 
@@ -45,13 +46,12 @@ const SpamList = () => {
   const fetchSpams = async (query = '') => {
     console.log(query);
     try {
-      const response = await axiosInstance.get(`/admin/spam-reports`, {
-        params: { search: query, page, limit },
-      });
 
-      const { rawSpams, totalPages, currentPage } = response.data.data;
+      const data = await getAllSpam(query, page,limit)
 
-      // Extract data from `_doc`
+      const { rawSpams, totalPages, currentPage } = data.data;
+
+
       const spams = rawSpams.map((spam: any) => spam._doc);
       console.log(spams);
       setSpams(spams); // Set normalized spam data
@@ -74,22 +74,16 @@ const SpamList = () => {
     console.log(selectedCompanyId);
 
     try {
-      const response = await axiosInstance.patch(
-        `/admin/block-or-unblock-company/${selectedCompanyId}/${selectedAction}`
-      );
 
-      if (response.status === 200) {
+const data = await blockOrUnblock(selectedCompanyId, selectedAction)
+      if (data.success) {
         toast.success(
           `Successfully ${selectedAction === 'block' ? 'blocked' : 'unblocked'}`
         );
         fetchSpams();
       }
     } catch (error: any) {
-      console.error(error.response?.data?.message);
-      toast.error(
-        error.response?.data?.message ||
-          'An error occurred while blocking the user'
-      );
+      toast.error(error)
     } finally {
       setModalIsOpen(false);
       setSelectedCompanyId(null);

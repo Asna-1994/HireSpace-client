@@ -1,10 +1,10 @@
 import React from 'react';
 import { GoogleLogin } from '@react-oauth/google';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { toast } from 'react-toastify';
 import { userLogin } from '../../../redux/slices/authSlice';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { googleSignin } from '../../../services/user/authServices';
 
 const GoogleSignInButton: React.FC = () => {
   const dispatch = useDispatch();
@@ -13,20 +13,18 @@ const GoogleSignInButton: React.FC = () => {
   const handleGoogleSignup = async (response: any) => {
     try {
       const idToken = response.credential;
-      const res = await axiosInstance.post('/user/google/callback', {
-        credential: idToken,
-      });
+      const data = await googleSignin(idToken)
 
-      if (res.data.success) {
-        const { token, user } = res.data.data;
+      if (data.success) {
+        const { token, user } = data.data;
         console.log(token);
         dispatch(userLogin({ user, token }));
         console.log('User details:', user);
         navigate(`/user/home/${user._id}`);
         toast.success('Login successful');
       } else {
-        toast.error(res.data.message);
-        console.error('Error during Google Sign-In:', res.data.message);
+        toast.error(data.message);
+        console.error('Error during Google Sign-In:', data.message);
       }
     } catch (err: any) {
       console.error('Error during Google Sign-In:', err);

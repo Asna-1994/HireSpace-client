@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import CompanyHeader from '../../Components/Header/Header';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { toast } from 'react-toastify';
 import { validateFile } from '../../../Utils/helperFunctions/fileValidation';
 import { companyUpdate } from '../../../redux/slices/authSlice';
 import Modal from 'react-modal';
+import { deleteCompanyDocument, uploadCompanyDocument } from '../../../services/company/profileService';
 
 const UploadVerificationDocument = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -64,34 +64,21 @@ const UploadVerificationDocument = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('verificationDocument', selectedFile);
-    formData.append('documentNumber', documentNumber);
+
 
     try {
-      const response = await axiosInstance.patch(
-        `/company/upload-document/${company?._id}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-
-      if (response.data.success) {
-        toast.success(response.data.message);
-        dispatch(companyUpdate(response.data.data.company));
-        console.log(response.data.data.company);
+      const data = await uploadCompanyDocument(selectedFile, documentNumber, selectedCompanyId!)
+      if (data.success) {
+        toast.success(data.message);
+        dispatch(companyUpdate(data.data.company));
+        console.log(data.data.company);
         setIsUploading(false);
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (error: any) {
       console.error('Error uploading verification document:', error);
-      toast.error(
-        error.response?.data?.message || 'Error uploading verification document'
-      );
+      toast.error(error);
       setIsUploading(false);
     }
   };
@@ -99,20 +86,15 @@ const UploadVerificationDocument = () => {
   const handleDeleteDocument = async () => {
     setModalIsOpen(false);
     try {
-      const res = await axiosInstance.patch(
-        `/company/delete-document/${selectedCompanyId}`
-      );
-      if (res.data.success) {
-        toast.success(res.data.message);
-        dispatch(companyUpdate(res.data.data.company));
+      const data = await deleteCompanyDocument(selectedCompanyId!)
+      if (data.success) {
+        toast.success(data.message);
+        dispatch(companyUpdate(data.data.company));
       } else {
-        toast.error(res.data.message);
+        toast.error(data.message);
       }
     } catch (error: any) {
-      toast.error(
-        error.response?.data?.message || 'Error deleting verification document'
-      );
-      console.error(error);
+      toast.error(error);
     } finally {
       setSelectedCompanyId(null);
     }

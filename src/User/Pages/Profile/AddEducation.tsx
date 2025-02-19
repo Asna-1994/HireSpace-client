@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Header from '../../Components/Header/Header';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
-import * as Yup from 'yup';
+import useEducation from '../../../CustomHooks/user/useEducation';
 
 export interface Education {
   educationName: string;
@@ -19,142 +17,17 @@ export interface Education {
 
 const AddEducation: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const [educations, setEducations] = useState<Education[]>([]);
-  const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [educationId, setEducationId] = useState<string | null>(null);
-  const [formValues, setFormValues] = useState<Education>({
-    educationName: '',
-    subject: '',
-    schoolOrCollege: '',
-    yearOfPassing: '',
-    universityOrBoard: '',
-    markOrGrade: '',
-  });
-  const [errors, setErrors] = useState<any>({});
+  const {       educations,
+    loading,
+    formValues,
+    errors,
+    handleChange,
+    editIndex,
+    handleSubmit,
+    handleEdit,
+    removeEducation,
+ } = useEducation(user?._id);
 
-  const validationSchema = Yup.object().shape({
-    educationName: Yup.string()
-      .min(3, 'Must be at least 3 characters')
-      .required('Required'),
-    subject: Yup.string()
-      .min(3, 'Must be at least 3 characters')
-      .required('Required'),
-    schoolOrCollege: Yup.string()
-      .min(3, 'Must be at least 3 characters')
-      .required('Required'),
-    yearOfPassing: Yup.string()
-      .matches(/^\d{4}$/, 'Enter a valid 4-digit year')
-      .required('Required'),
-    universityOrBoard: Yup.string()
-      .min(3, 'Must be at least 3 characters')
-      .required('Required'),
-    markOrGrade: Yup.string()
-      .matches(
-        /^(\d{1,3}%|[A-F][+-]?)$/,
-        'Enter a valid percentage (e.g., 85%) or grade (e.g., A+)'
-      )
-      .required('Required'),
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormValues({
-      ...formValues,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const validateForm = async () => {
-    try {
-      await validationSchema.validate(formValues, { abortEarly: false });
-      setErrors({});
-      return true;
-    } catch (err: any) {
-      const errorObj: any = {};
-      err.inner.forEach((error: any) => {
-        errorObj[error.path] = error.message;
-      });
-      setErrors(errorObj);
-      return false;
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const isValid = await validateForm();
-    if (!isValid) return;
-
-    try {
-      const res = await axiosInstance.patch(
-        `/user/${user?._id}/add-education`,
-        formValues,
-        {
-          params: { educationId },
-        }
-      );
-      if (res.data.success) {
-        toast.success('Education updated successfully');
-        getEducations();
-        setFormValues({
-          educationName: '',
-          subject: '',
-          schoolOrCollege: '',
-          yearOfPassing: '',
-          universityOrBoard: '',
-          markOrGrade: '',
-        });
-        setEditIndex(null);
-        setEducationId(null);
-      } else {
-        toast.error(res.data.message);
-      }
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Something went wrong');
-    }
-  };
-
-  const handleEdit = (index: number, eduId: string) => {
-    const selectedEducation = educations[index];
-    setFormValues(selectedEducation);
-    setEditIndex(index);
-    setEducationId(eduId);
-  };
-
-  const handleDelete = async (index: number, eduId: string) => {
-    try {
-      const response = await axiosInstance.delete(
-        `/user/${user?._id}/education/${eduId}`
-      );
-      if (response.data.success) {
-        toast.success('Education deleted successfully');
-        setEducations(response.data.data.educations);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error deleting education');
-    }
-  };
-
-  const getEducations = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `/user/${user?._id}/all-education`
-      );
-      if (response.data.success) {
-        setEducations(response.data.data.educations);
-      }
-    } catch (err: any) {
-      console.error(
-        'Error fetching education data:',
-        err.response?.data?.message
-      );
-    }
-  };
-
-  useEffect(() => {
-    getEducations();
-  }, []);
 
   return (
     <>
@@ -266,13 +139,13 @@ const AddEducation: React.FC = () => {
                   </div>
                   <div className="flex space-x-4">
                     <button
-                      onClick={() => handleEdit(index, edu._id as string)}
+                      onClick={() => handleEdit(index, edu._id!)}
                       className="text-blue-600 hover:text-blue-800"
                     >
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(index, edu._id as string)}
+                      onClick={() => removeEducation(edu._id!)}
                       className="text-red-600 hover:text-red-800"
                     >
                       Delete

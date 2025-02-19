@@ -1,159 +1,33 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaTrash, FaUpload } from 'react-icons/fa';
+import { FaUpload } from 'react-icons/fa';
 import Header from '../../Components/Header/Header';
 import Footer from '../../Components/Footer/Footer';
-import { useDispatch, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import { toast } from 'react-toastify';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
-import { validateFile } from '../../../Utils/helperFunctions/fileValidation';
-import { userUpdate } from '../../../redux/slices/authSlice';
 import CompanyHeader from '../../../Compnay/Components/Header/Header';
-import { Area } from 'react-easy-crop/types';
 import CropImageModal from './CropImageModal';
+import useBasicDetails from '../../../CustomHooks/user/useBasicdetails';
 
 const UserProfileForm: React.FC = () => {
   const { user, company } = useSelector((state: RootState) => state.auth);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(
-    user?.profilePhoto?.url || null
-  );
-  const dispatch = useDispatch();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [form, setForm] = useState<{
-    userName: string;
-    dateOfBirth: string;
-    phone: string;
-    address: string;
-    userRole: 'jobSeeker' | 'companyMember' | 'companyAdmin' | 'admin';
-  }>({
-    userName: user?.userName || '',
-    dateOfBirth: user?.dateOfBirth
-      ? new Date(user.dateOfBirth).toISOString().split('T')[0]
-      : '',
-    phone: user?.phone || '',
-    address: user?.address || '',
-    userRole: user?.userRole || 'jobSeeker',
-  });
 
-  const [isCropping, setIsCropping] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: value,
-    }));
-  };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-      const maxFileSize = 5 * 1024 * 1024;
-
-      const validationError = validateFile(file, allowedTypes, maxFileSize);
-
-      if (validationError) {
-        toast.error(validationError);
-        return;
-      }
-
-      setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
-      setIsCropping(true);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const formData = new FormData();
-
-    formData.append('userName', form.userName || '');
-    formData.append('dateOfBirth', form.dateOfBirth || '');
-    formData.append('phone', form.phone || '');
-    formData.append('address', form.address || '');
-    formData.append('userRole', form.userRole || 'jobSeeker');
-
-    try {
-      const response = await axiosInstance.patch(
-        `/user/update-basic-detail/${user?._id}`,
-        formData
-      );
-      if (response.data.success) {
-        const updatedUser = response.data.data.user;
-        toast.success('Updated successfully');
-        dispatch(userUpdate(updatedUser));
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (err: any) {
-      console.error('Error updating details:', err);
-      toast.error(err.response?.data?.message || 'Something went wrong');
-    }
-  };
-
-  const handleCroppedImage = async (croppedImageUrl: string) => {
-    try {
-      const response = await fetch(croppedImageUrl);
-      const blob = await response.blob();
-      const file = new File([blob], 'cropped-image.jpg', {
-        type: 'image/jpeg',
-      });
-
-      setSelectedFile(file);
-      setPreviewUrl(croppedImageUrl);
-
-      const formData = new FormData();
-      formData.append('profilePhoto', file);
-
-      const uploadResponse = await axiosInstance.patch(
-        `/user/upload-profile-image/${user?._id}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-
-      if (uploadResponse.data.success) {
-        toast.success('Profile photo updated successfully!');
-        const updatedUser = uploadResponse.data.data.user;
-        dispatch(userUpdate(updatedUser));
-      }
-    } catch (error: any) {
-      console.error('Error processing cropped image:', error);
-      toast.error(
-        error.response.data.message ||
-          'Error uploading cropped image. Please try again.'
-      );
-    }
-  };
-
-  const handleDeleteImage = async () => {
-    try {
-      const res = await axiosInstance.delete(
-        `/user/delete-profile-image/${user?._id}`
-      );
-      if (res.data.success) {
-        toast.success('Deleted successfully');
-        const updatedUser = res.data.data.user;
-        dispatch(userUpdate(updatedUser));
-        setPreviewUrl(null);
-      } else {
-        toast.error(res.data.message);
-      }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error deleting resume');
-      console.error(error);
-    }
-  };
+  const {
+    form,
+    previewUrl,
+    setPreviewUrl,
+    isCropping,
+    isSubmitting, 
+    setSelectedFile,
+    setIsCropping,
+    handleChange,
+    handleFileChange,
+    handleSubmit,
+    handleCroppedImage,
+    handleDeleteImage,
+  } = useBasicDetails();
 
   return (
     <div>
@@ -256,12 +130,10 @@ const UserProfileForm: React.FC = () => {
                 placeholder="Enter your address"
               ></textarea>
             </div>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition"
-            >
-              Save Changes
-            </button>
+            <button type="submit" disabled={isSubmitting} className={`bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}>
+  {isSubmitting ? 'Saving...' : 'Save Changes'}
+</button>
+
           </form>
 
           <div className="bg-white p-6 rounded-lg shadow flex flex-col items-center justify-center">

@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { connectSocket, socket } from '../../../services/socket';
+import {socket } from '../../../services/socket';
 import { RootState } from '../../../redux/store';
 import {
   FaHome,
@@ -9,14 +9,13 @@ import {
   FaPhoneAlt,
   FaSignInAlt,
   FaUserPlus,
-  FaUserCircle,
   FaBriefcase,
   FaEnvelope,
 } from 'react-icons/fa';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { logout } from '../../../redux/slices/authSlice';
 import { toast } from 'react-toastify';
 import UserProfileDropdown from '../../../Shared/Components/userProfileDropdown/UserProfileDropdown';
+import { logoutUser } from '../../../services/user/authServices';
 
 interface UnreadCounts {
   [key: string]: number;
@@ -37,13 +36,12 @@ const Header: FC = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axiosInstance.post('/user/logout');
+      const data = await logoutUser()
       dispatch(logout());
       navigate('/');
-      toast.success(response.data.message);
+      toast.success(data.message);
     } catch (err: any) {
-      console.error(err);
-      toast.error(err?.response?.data?.message || 'Something went wrong!');
+      toast.error(err);
     }
   };
 
@@ -148,7 +146,7 @@ const Header: FC = () => {
                 label="My Applications"
               />
               <NavItem
-                to={`/user/messages/${user._id}`}
+                to={`/user/messages`}
                 icon={<FaEnvelope />}
                 label="Messages"
                 badgeCount={unreadChatsCount}
@@ -266,7 +264,7 @@ const Header: FC = () => {
                 }}
               />
               <NavItem
-                to={`/user/messages/${user._id}`}
+                to={`/user/messages`}
                 icon={<FaPhoneAlt />}
                 label="Messages"
                 badgeCount={unreadChatsCount}

@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
 import { toast } from 'react-toastify';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
+import { applyForJob } from '../../../services/user/jobServices';
 
 interface ApplyModalProps {
   jobPostId: string;
@@ -11,7 +9,7 @@ interface ApplyModalProps {
   onClose: () => void;
 }
 
-interface CoverLetter {
+export interface CoverLetter {
   salutation: string;
   body: string;
   closing: string;
@@ -23,7 +21,7 @@ const ApplyModal: React.FC<ApplyModalProps> = ({
   companyId,
   onClose,
 }) => {
-  const { user } = useSelector((state: RootState) => state.auth);
+
   const [coverLetter, setCoverLetter] = useState<CoverLetter>({
     salutation: '',
     body: '',
@@ -32,18 +30,14 @@ const ApplyModal: React.FC<ApplyModalProps> = ({
 
   const handleApply = async () => {
     try {
-      const response = await axiosInstance.post(
-        `/user/apply-for-job/${userId}/${jobPostId}/${companyId}`,
-        { coverLetter }
-      );
-      if (response.data.success) {
+const data = await applyForJob(coverLetter, userId, jobPostId, companyId )
+      if (data.success) {
         toast.success('Successfully Applied');
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (err: any) {
-      toast.error(err?.response?.data.message || 'An error occurred');
-      console.error(err);
+      toast.error(err);
     }
     onClose();
   };

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { toast } from 'react-toastify';
 import { validateFile } from '../../../Utils/helperFunctions/fileValidation';
 import Modal from 'react-modal';
 import Header from '../../Components/Header/Header';
+import { deleteResume, getUserResume, uploadResume } from '../../../services/user/userProfileService';
 
 const UploadResume = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -13,20 +13,20 @@ const UploadResume = () => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  const { user, isAuthenticated } = useSelector(
+  const { user } = useSelector(
     (state: RootState) => state.auth
   );
-  const dispatch = useDispatch();
+
 
   useEffect(() => {
     const getResume = async () => {
       try {
-        const res = await axiosInstance.get(`/user/get-resume/${user?._id}`);
-        if (res.data.success) {
-          console.log(res.data.data.jobSeekerProfile.resume.url);
-          setPreviewUrl(res.data.data.jobSeekerProfile.resume.url);
+        const data = await getUserResume(user?._id as string)
+        if (data.success) {
+          console.log(data.data.jobSeekerProfile.resume.url);
+          setPreviewUrl(data.data.jobSeekerProfile.resume.url);
         } else {
-          console.log(res.data.message);
+          console.log(data.message);
         }
       } catch (err: any) {
         console.log(err);
@@ -80,31 +80,17 @@ const UploadResume = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('resume', selectedFile);
-
     try {
-      const response = await axiosInstance.patch(
-        `/user/upload-resume/${user?._id}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-
-      if (response.data.success) {
-        toast.success(response.data.message);
-        setPreviewUrl(response.data.data.jobSeekerProfile.resume.url);
-        console.log(response.data.data.company);
+       const data = await uploadResume(user?._id as string, selectedFile)
+      if (data.success) {
+        toast.success(data.message);
+        setPreviewUrl(data.data.jobSeekerProfile.resume.url);
         setIsUploading(false);
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (error: any) {
-      console.error('Error uploading resume:', error);
-      toast.error(error.response?.data?.message || 'Error uploading resume');
+      toast.error(error);
       setIsUploading(false);
     }
   };
@@ -112,20 +98,19 @@ const UploadResume = () => {
   const handleDeleteDocument = async () => {
     setModalIsOpen(false);
     try {
-      const res = await axiosInstance.patch(`/user/delete-resume/${user?._id}`);
-      if (res.data.success) {
+      const data = await deleteResume(user?._id as string)
+      if (data.success) {
         toast.success('Deleted successfully');
         setPreviewUrl(null);
       } else {
-        toast.error(res.data.message);
+        toast.error(data.message);
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error deleting resume');
-      console.error(error);
+      toast.error(error);
     }
   };
 
-  const openModal = (userId: string) => {
+  const openModal = () => {
     setModalIsOpen(true);
   };
 
@@ -209,7 +194,7 @@ const UploadResume = () => {
           {previewUrl && !isUploading && user?._id && (
             <div className="flex justify-center mb-4">
               <button
-                onClick={() => openModal(user?._id)}
+                onClick={() => openModal()}
                 className="py-1 px-3 text-white text-sm bg-red-600 rounded-md hover:bg-red-700 transition duration-300"
               >
                 Delete Resume

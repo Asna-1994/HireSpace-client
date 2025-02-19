@@ -8,7 +8,6 @@ import {
   FaPhoneAlt,
   FaSignInAlt,
   FaUserPlus,
-  FaUserCircle,
   FaEdit,
   FaCrown,
   FaUsers,
@@ -16,10 +15,10 @@ import {
   FaSignOutAlt,
   FaBriefcase,
 } from 'react-icons/fa';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { logout } from '../../../redux/slices/authSlice';
 import { toast } from 'react-toastify';
 import { getCompanyInitials } from '../../../Utils/helperFunctions/companyName';
+import { logoutUser } from '../../../services/user/authServices';
 
 const CompanyHeader: FC = () => {
   const { company, isAuthenticated, user } = useSelector(
@@ -33,13 +32,12 @@ const CompanyHeader: FC = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axiosInstance.post('/user/logout');
+      const data = await logoutUser()
       dispatch(logout());
       navigate('/');
-      toast.success(response.data.message);
+      toast.success(data.message);
     } catch (err: any) {
-      console.error(err);
-      toast.error(err?.response?.data?.message || 'Something went wrong!');
+      toast.error(err);
     }
   };
 

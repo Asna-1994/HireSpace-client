@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../Components/Header/Header';
 import Footer from '../../Components/Footer/Footer';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { toast } from 'react-toastify';
@@ -14,6 +13,7 @@ import {
 } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { generateRoomId } from '../../../Utils/helperFunctions/companyName';
+import { getAllConnectionFromDB, getPendingRequestFromDB, manageConnectionRequest } from '../../../services/user/requestService';
 
 export interface ConnectionRequest {
   _id: string;
@@ -59,27 +59,19 @@ const Connections = () => {
   const fetchPendingRequests = async (page: number) => {
     try {
       const limit = 8;
-      const response = await axiosInstance.get(
-        `/connection-request/to-user/${user?._id}`,
-        {
-          params: {
-            page,
-            limit,
-          },
-        }
-      );
-      if (response.data.success) {
-        const requests = response.data.data.pendingRequests.map(
+      const data = await getPendingRequestFromDB(user?._id!, page, limit)
+      if (data.success) {
+        const requests = data.data.pendingRequests.map(
           (request: any) => request._doc || request
         );
         console.log('request', requests);
         setPendingRequests(requests);
-        setPendingTotalPages(response.data.data.totalPages);
+        setPendingTotalPages(data.data.totalPages);
       } else {
-        toast.error(response?.data?.message);
+        toast.error(data?.message);
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message);
+      toast.error(error);
     }
   };
 
@@ -98,23 +90,15 @@ const Connections = () => {
     setLoading(true);
     try {
       const limit = 10;
-      const response = await axiosInstance.get(
-        `/connection-request/user/all-connections/${user?._id}`,
-        {
-          params: { page, limit, search },
-        }
-      );
-      if (response.data.success) {
-        setConnections(response.data.data.connections);
-        setConnectionsTotalPages(response.data.data.totalPages);
+      const data = await getAllConnectionFromDB(user?._id!, page, limit, search)
+      if (data.success) {
+        setConnections(data.data.connections);
+        setConnectionsTotalPages(data.data.totalPages);
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (error: any) {
-      toast.error(
-        error.response?.data?.message ||
-          'An error occurred while fetching connections'
-      );
+      toast.error(error);
     } finally {
       setLoading(false);
     }
@@ -133,16 +117,14 @@ const Connections = () => {
 
   const handleRequest = async (requestId: string, action: string) => {
     try {
-      const response = await axiosInstance.put(
-        `/connection-request/${requestId}/${action}`
-      );
-      if (response.data.success) {
+const data = await manageConnectionRequest(requestId, action)
+      if (data.success) {
         fetchPendingRequests(pendingPage);
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (err: any) {
-      toast.error(err.response.data.message);
+      toast.error(err);
     }
   };
 

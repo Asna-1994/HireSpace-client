@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import CompanyHeader from '../../Components/Header/Header';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import axiosInstance from '../../../Utils/Instance/axiosInstance';
 import { toast } from 'react-toastify';
 import { validateFile } from '../../../Utils/helperFunctions/fileValidation';
 import { companyUpdate } from '../../../redux/slices/authSlice';
 import Modal from 'react-modal';
+import { deleteCompanyLogo, uploadCompanyLogo } from '../../../services/company/profileService';
+
 
 const UploadLogo = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -62,46 +63,33 @@ const UploadLogo = () => {
     formData.append('companyLogo', selectedFile);
 
     try {
-      const response = await axiosInstance.patch(
-        `/company/upload-company-logo/${company?._id}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-
-      if (response.data.success) {
-        toast.success(response.data.message);
-        dispatch(companyUpdate(response.data.data.company));
+      const data = await uploadCompanyLogo(selectedFile, company?._id!)
+      if (data.success) {
+        toast.success(data.message);
+        dispatch(companyUpdate(data.data.company));
         setIsUploading(false); // Upload completed
-        console.log('Response data:', response.data.data);
+        console.log('Response data:', data.data);
       } else {
-        toast.error(response.data.message);
-        console.log(response.data.message);
+        toast.error(data.message);
+        console.log(data.message);
       }
     } catch (error: any) {
-      console.error('Error uploading logo:', error);
-      toast.error(error.response?.data?.message || 'Error uploading logo');
+      toast.error(error);
       setIsUploading(false); // Reset upload state on error
     }
   };
 
   const handleDeleteLogoFromProfile = async () => {
     try {
-      const res = await axiosInstance.patch(
-        `/company/delete-logo/${selectedCompanyId}`
-      );
-      if (res.data.success) {
-        toast.success(res.data.message);
-        dispatch(companyUpdate(res.data.data.company));
+const data = await deleteCompanyLogo(selectedCompanyId!)
+      if (data.success) {
+        toast.success(data.message);
+        dispatch(companyUpdate(data.data.company));
       } else {
-        toast.error(res.data.message);
+        toast.error(data.message);
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error deleting logo');
-      console.log(error);
+      toast.error(error);
     } finally {
       setModalIsOpen(false);
       setSelectedCompanyId(null);
