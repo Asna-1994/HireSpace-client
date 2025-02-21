@@ -108,7 +108,7 @@ const SocketManager: React.FC = () => {
 
   return (
     <>
-      {isVideoCallActive && incomingCall && (
+      {/* {isVideoCallActive && incomingCall && (
         <VideoCall
           roomId={incomingCall.roomId}
           callerId={incomingCall.callerId}
@@ -121,7 +121,8 @@ const SocketManager: React.FC = () => {
           setIsVideoCallActive={setIsVideoCallActive}
           setIsCaller={setIsCaller}
         />
-      )}
+      )} */}
+      
     </>
   );
 };

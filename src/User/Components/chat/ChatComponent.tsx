@@ -4,7 +4,6 @@ import { connectSocket, socket } from '../../../services/socket';
 import { Message } from '../../../Utils/Interfaces/interface';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import Header from '../Header/Header';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { IoSendSharp } from 'react-icons/io5';
 import { BsCameraVideo } from 'react-icons/bs';
@@ -31,18 +30,23 @@ const ChatComponent: React.FC = () => {
 
   const [isVideoCallActive, setIsVideoCallActive] = useState(false);
 
-  const handleAcceptCall = () => {
+
+  const handleAcceptCall = async () => {
+    console.log('Accepting call, creating peer connection...');
+    setIsVideoCallActive(true);
+    setIncomingCall(false);
+    setIsCaller(false);
+    
+    // Wait a moment for VideoCall to initialize
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
     socket.emit('acceptCall', {
       roomId,
       callerId,
       receiverId: user?._id,
       answer: true,
     });
-    setIsVideoCallActive(true);
-    setIncomingCall(false);
-    setIsCaller(false);
   };
-
   const handleRejectCall = () => {
     socket.emit('rejectCall', {
       roomId,
@@ -101,6 +105,7 @@ const ChatComponent: React.FC = () => {
           )
         );
       });
+
 
       socket.on('incomingCall', (data) => {
         console.log('Incoming call received:', data);
@@ -404,299 +409,9 @@ const ChatComponent: React.FC = () => {
           setIsCaller={setIsCaller}
         />
       )}
+
     </>
   );
 };
 
 export default ChatComponent;
-// import React, { useEffect, useRef, useState } from 'react';
-// import { useLocation, useParams } from 'react-router-dom';
-// import { socket } from '../../../services/socket';
-// import { Message } from '../../../Utils/Interfaces/interface';
-// import { useSelector } from 'react-redux';
-// import { RootState } from '../../../redux/store';
-// import Header from '../Header/Header';
-// import { AiOutlineCheckCircle } from 'react-icons/ai';
-// import { IoSendSharp } from 'react-icons/io5';
-// import { BsCameraVideo } from 'react-icons/bs';
-
-// const ChatComponent: React.FC = () => {
-//   const location = useLocation();
-//   const { receiver } = location.state || {};
-//   const { roomId, receiverId } = useParams();
-//   const { user } = useSelector((state: RootState) => state.auth);
-  
-//   const [messages, setMessages] = useState<Message[]>([]);
-//   const [newMessage, setNewMessage] = useState('');
-//   const [typing, setTyping] = useState(false);
-//   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-//   // Message grouping and formatting functions
-//   const formatMessageDate = (date: Date) => {
-//     const messageDate = new Date(date);
-//     const today = new Date();
-//     const yesterday = new Date(today);
-//     yesterday.setDate(yesterday.getDate() - 1);
-
-//     if (messageDate.toDateString() === today.toDateString()) {
-//       return 'Today';
-//     } else if (messageDate.toDateString() === yesterday.toDateString()) {
-//       return 'Yesterday';
-//     } else {
-//       return messageDate.toLocaleDateString('en-US', {
-//         month: 'short',
-//         day: 'numeric',
-//         year: messageDate.getFullYear() !== today.getFullYear() ? 'numeric' : undefined,
-//       });
-//     }
-//   };
-
-//   const groupMessagesByDate = (messages: Message[]) => {
-//     const groups: { [key: string]: Message[] } = {};
-//     messages.forEach((message) => {
-//       const date = formatMessageDate(message.createdAt);
-//       if (!groups[date]) {
-//         groups[date] = [];
-//       }
-//       groups[date].push(message);
-//     });
-//     return groups;
-//   };
-
-//   // Scroll to bottom of messages
-//   const scrollToBottom = () => {
-//     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-//   };
-
-//   // Message handlers
-//   const markMessagesAsRead = (messages: Message[]) => {
-//     messages.forEach((message) => {
-//       if (message.status !== 'read' && message.senderId !== user?._id) {
-//         socket.emit('readMessage', { messageId: message._id, roomId });
-//       }
-//     });
-//   };
-
-//   const handleNewMessage = (message: Message) => {
-//     setMessages(prev => [...prev, message]);
-//     scrollToBottom();
-
-//     if (message.senderId !== user?._id) {
-//       socket.emit('readMessage', { messageId: message._id, roomId });
-//     }
-//   };
-
-//   const handleMessageRead = ({ messageId }: { messageId: string }) => {
-//     setMessages(prev =>
-//       prev.map(msg =>
-//         msg._id === messageId ? { ...msg, status: 'read' } : msg
-//       )
-//     );
-//   };
-
-//   const handleChatHistory = ({ roomId: joinedRoomId, chatHistory }: { roomId: string; chatHistory: Message[] }) => {
-//     if (joinedRoomId === roomId) {
-//       setMessages(chatHistory);
-//       scrollToBottom();
-//       markMessagesAsRead(chatHistory);
-//     }
-//   };
-
-//   // Socket event setup
-//   useEffect(() => {
-//     if (roomId && user?._id) {
-//       // Join chat room
-//       socket.emit('joinChat', { senderId: user._id, receiverId });
-
-//       // Set up event listeners
-//       socket.on('chatHistory', handleChatHistory);
-//       socket.on('message', handleNewMessage);
-//       socket.on('messageRead', handleMessageRead);
-
-//       // Cleanup
-//       return () => {
-//         socket.off('chatHistory', handleChatHistory);
-//         socket.off('message', handleNewMessage);
-//         socket.off('messageRead', handleMessageRead);
-//       };
-//     }
-//   }, [roomId, user?._id, receiverId]);
-
-//   // Message sending
-//   const sendMessage = () => {
-//     if (newMessage.trim()) {
-//       const message: Message = {
-//         roomId: roomId || '',
-//         senderId: user?._id || '',
-//         receiverId: receiverId || '',
-//         content: newMessage,
-//         createdAt: new Date(),
-//         updatedAt: new Date(),
-//         status: 'sent',
-//       };
-
-//       socket.emit('message', message, (error: any) => {
-//         if (error) {
-//           console.error('Error sending message:', error);
-//         }
-//       });
-//       setNewMessage('');
-//     }
-//   };
-
-//   // Typing indicator
-//   const handleTyping = () => {
-//     socket.emit('typing', { roomId, userId: user?._id });
-//   };
-
-//   // Video call initiation
-//   const handleInitiateCall = () => {
-//     socket.emit('initiateVideoCall', {
-//       roomId,
-//       callerId: user?._id,
-//       callerName: user?.userName,
-//       receiverId,
-//       receiverName: receiver.userName,
-//     });
-//   };
-
-//   return (
-//     <div className="h-screen flex flex-col overflow-hidden">
-//       <Header />
-//       <div className="flex-1 max-w-5xl w-full mx-auto p-4 overflow-hidden">
-//         <div className="flex flex-col h-full bg-white rounded-lg shadow-lg">
-//           {/* Chat Header */}
-//           <div className="flex justify-between px-6 py-4 bg-gradient-to-r from-green-400 to-blue-500 border-b border-gray-200 rounded-t-lg">
-//             <div className="flex items-center space-x-4">
-//               {receiver?.profilePhoto?.url ? (
-//                 <img
-//                   src={receiver.profilePhoto.url}
-//                   alt={receiver.userName}
-//                   className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
-//                 />
-//               ) : (
-//                 <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xl font-bold rounded-full">
-//                   {receiver?.userName?.charAt(0).toUpperCase() || '?'}
-//                 </div>
-//               )}
-//               <div className="flex-1">
-//                 <h2 className="text-lg font-semibold text-gray-800">
-//                   {receiver.userName}
-//                 </h2>
-//                 <p className="text-sm text-gray-500">{receiver.tagLine}</p>
-//               </div>
-//             </div>
-//             <div>
-//               <button
-//                 onClick={handleInitiateCall}
-//                 className="p-2 rounded-full bg-black text-white hover:bg-blue-600"
-//               >
-//                 <BsCameraVideo size={24} />
-//               </button>
-//             </div>
-//           </div>
-
-//           {/* Messages Container */}
-//           <div className="flex-1 overflow-y-auto px-6 py-4 bg-gray-50">
-//             <div className="space-y-6">
-//               {Object.entries(groupMessagesByDate(messages)).map(
-//                 ([date, dateMessages]) => (
-//                   <div key={date} className="space-y-4">
-//                     <div className="flex justify-center">
-//                       <span className="px-4 py-1 bg-gray-200 rounded-full text-sm text-gray-600">
-//                         {date}
-//                       </span>
-//                     </div>
-//                     {dateMessages.map((message, index) => (
-//                       <div
-//                         key={index}
-//                         className={`flex ${
-//                           message.senderId === user?._id ? 'justify-end' : 'justify-start'
-//                         }`}
-//                       >
-//                         <div
-//                           className={`flex flex-col ${
-//                             message.senderId === user?._id ? 'items-end' : 'items-start'
-//                           }`}
-//                         >
-//                           <div className="flex items-end gap-2 group">
-//                             <div
-//                               className={`relative px-4 py-2 rounded-2xl max-w-md break-words ${
-//                                 message.senderId === user?._id
-//                                   ? 'bg-blue-500 text-white rounded-br-none'
-//                                   : 'bg-gray-200 text-gray-800 rounded-bl-none'
-//                               }`}
-//                             >
-//                               {message.content}
-//                             </div>
-//                             {message.senderId === user?._id && (
-//                               <div className="flex items-center space-x-1">
-//                                 <AiOutlineCheckCircle
-//                                   size={16}
-//                                   className={`transition-all duration-200 ${
-//                                     message.status === 'read'
-//                                       ? 'text-blue-500'
-//                                       : 'text-gray-400'
-//                                   }`}
-//                                 />
-//                               </div>
-//                             )}
-//                           </div>
-//                           <span className="text-xs text-gray-500 mt-1">
-//                             {new Date(message.createdAt).toLocaleTimeString([], {
-//                               hour: '2-digit',
-//                               minute: '2-digit',
-//                               hour12: true,
-//                             })}
-//                           </span>
-//                         </div>
-//                       </div>
-//                     ))}
-//                   </div>
-//                 )
-//               )}
-//               {typing && (
-//                 <div className="flex justify-start">
-//                   <div className="bg-gray-200 text-gray-800 px-4 py-2 rounded-2xl">
-//                     <div className="flex space-x-2">
-//                       <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" />
-//                       <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-100" />
-//                       <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-200" />
-//                     </div>
-//                   </div>
-//                 </div>
-//               )}
-//               <div ref={messagesEndRef} />
-//             </div>
-//           </div>
-
-//           {/* Message Input */}
-//           <div className="p-4 bg-white border-t border-gray-200">
-//             <div className="flex items-center space-x-4">
-//               <input
-//                 type="text"
-//                 value={newMessage}
-//                 onChange={(e) => {
-//                   setNewMessage(e.target.value);
-//                   handleTyping();
-//                 }}
-//                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-//                 placeholder="Type your message..."
-//                 className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-//               />
-//               <button
-//                 onClick={sendMessage}
-//                 disabled={!newMessage.trim()}
-//                 className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-//               >
-//                 <IoSendSharp size={20} />
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ChatComponent;
