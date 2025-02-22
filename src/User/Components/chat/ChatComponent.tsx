@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { connectSocket, socket } from '../../../services/socket';
 import { Message } from '../../../Utils/Interfaces/interface';
@@ -31,14 +31,19 @@ const ChatComponent: React.FC = () => {
   const [isVideoCallActive, setIsVideoCallActive] = useState(false);
 
 
-  const handleAcceptCall = async () => {
+
+  const handleAcceptCall = useCallback(() => {
+    // console.log('Accepting call, creating peer connection...');
+    // setState(prev => ({
+    //     isVideoCallActive: true,
+    //     incomingCall: false,
+    //     isCaller: false
+    // }));
+    
     console.log('Accepting call, creating peer connection...');
     setIsVideoCallActive(true);
     setIncomingCall(false);
     setIsCaller(false);
-    
-    // Wait a moment for VideoCall to initialize
-    await new Promise(resolve => setTimeout(resolve, 100));
     
     socket.emit('acceptCall', {
       roomId,
@@ -46,7 +51,8 @@ const ChatComponent: React.FC = () => {
       receiverId: user?._id,
       answer: true,
     });
-  };
+}, [roomId, callerId, user?._id]);
+
   const handleRejectCall = () => {
     socket.emit('rejectCall', {
       roomId,
@@ -394,19 +400,10 @@ const ChatComponent: React.FC = () => {
           receiverName={receiver.userName}
           callerId={isCaller ? user?._id : receiver._id}
           callerName={isCaller ? user?.userName : receiver.userName}
-          onEndCall={() => {
-            setIsVideoCallActive(false);
-            setIsCaller(false);
-            socket.emit('endCall', {
-              roomId,
-              callerId: isCaller ? user?._id : receiver._id,
-              receiverId: receiver._id,
-            });
-          }}
           isCaller={isCaller}
           isVideoCallActive={isVideoCallActive}
-          setIsVideoCallActive={setIsVideoCallActive} // <-- Pass as prop
-          setIsCaller={setIsCaller}
+          setIsVideoCallActive={setIsVideoCallActive} 
+   
         />
       )}
 
