@@ -6,12 +6,13 @@ import Header from '../../Components/Header/Header';
 import Footer from '../../Components/Footer/Footer';
 import { FaBriefcase, FaTimes } from 'react-icons/fa';
 import { getAllApplication } from '../../../services/user/jobServices';
+import { Application } from '../../../Utils/Interfaces/applicationInterface';
 
 const MyApplications = () => {
   const { user, isAuthenticated } = useSelector(
     (state: RootState) => state.auth
   );
-  const [applications, setApplications] = useState<any[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);

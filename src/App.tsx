@@ -15,7 +15,9 @@ import ErrorPage from './Shared/Pages/ErrorPage';
 import NoAccess from './Shared/Pages/NoAccess';
 import Contact from './Shared/Pages/Contact';
 import About from './Shared/Pages/About';
-import SocketManager from './User/Components/chat/SocketManager';
+import 'global';
+
+// import SocketManager from './User/Components/chat/SocketManager';
 
 function App() {
 

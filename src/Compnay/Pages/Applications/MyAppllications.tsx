@@ -5,13 +5,17 @@ import { FaUser } from 'react-icons/fa';
 import CompanyHeader from '../../Components/Header/Header';
 import Footer from '../../../User/Components/Footer/Footer';
 import { getCompanyApplications } from '../../../services/company/applicationService';
+import { Application } from '../../../Utils/Interfaces/applicationInterface';
+
+
+
 
 const ListApplications = () => {
   const { companyId } = useParams<{ companyId: string }>();
   const location = useLocation();
   const jobPost = location.state?.jobPost || {};
 
-  const [applications, setApplications] = useState<any[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -24,6 +28,7 @@ const ListApplications = () => {
       const data = await getCompanyApplications(companyId!, currentPage, statusFilter, searchTerm,jobPost._id)
       if (data.success) {
         setApplications(data.applications);
+        console.log(data.applications)
         setTotalPages(data.totalPages);
       }
     } catch (error) {

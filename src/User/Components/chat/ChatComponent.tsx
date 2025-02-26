@@ -2,12 +2,14 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { connectSocket, socket } from '../../../services/socket';
 import { Message } from '../../../Utils/Interfaces/interface';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { IoSendSharp } from 'react-icons/io5';
 import { BsCameraVideo } from 'react-icons/bs';
 import VideoCall from './VideoCall';
+import useVideoCall from '../../../CustomHooks/user/useVideoCall';
+// import { connectSocket } from '../../../redux/slices/socketSlice';
 const ChatComponent: React.FC = () => {
   const location = useLocation();
   const { receiver } = location.state || {};
@@ -21,37 +23,104 @@ const ChatComponent: React.FC = () => {
   const [newMessage, setNewMessage] = useState('');
   const [typing, setTyping] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
-
+  // const { socket, connected } = useSelector((state: RootState) => state.socket);
   const [callerName, setCallerName] = useState('');
   const [incomingCall, setIncomingCall] = useState(false);
   const [callerId, setCallerId] = useState('');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [isCaller, setIsCaller] = useState(false);
-
+const dispatch = useDispatch()
   const [isVideoCallActive, setIsVideoCallActive] = useState(false);
+  const [remoteDescription, setRemoteDescription] = useState<RTCSessionDescriptionInit | null>(null);
+
+const {   getLocalMedia,
+  createPeerConnection,
+  peerConnection,
+  localStream,
+  remoteStream,
+  setRemoteStream,
+  setLocalStream,
+  setPeerConnection,
+
+} = useVideoCall(roomId!,isCaller, callerId, receiverId!)
 
 
 
-  const handleAcceptCall = useCallback(() => {
-    // console.log('Accepting call, creating peer connection...');
-    // setState(prev => ({
-    //     isVideoCallActive: true,
-    //     incomingCall: false,
-    //     isCaller: false
-    // }));
+const cleanupCall = useCallback(() => {
+  if (peerConnection) {
+    peerConnection.close();
+    setPeerConnection(null);
+  }
+  if (localStream) {
+    localStream.getTracks().forEach((track) => track.stop());
+    setLocalStream(null);
+  }
+  setRemoteStream(null);
+  setIsVideoCallActive(false);
+  setIsCaller(false);
+  setIncomingCall(false);
+}, [peerConnection, localStream]);
+
+
+//   const handleAcceptCall = useCallback(() => {
+
     
-    console.log('Accepting call, creating peer connection...');
+//     console.log('Accepting call, creating peer connection...');
+//     setIsVideoCallActive(true);
+//     setIncomingCall(false);
+//     setIsCaller(false);
+    
+//     socket.emit('acceptCall', {
+//       roomId,
+//       callerId,
+//       receiverId: user?._id,
+//       answer: true,
+//     });
+// }, [roomId, callerId, user?._id]);
+const handleAcceptCall = useCallback(async () => {
+  try {
+    if (!remoteDescription) {
+      console.error('No remote description available.');
+      return;
+    }
+
+    // Get media first
+    const stream = await getLocalMedia();
+    if (!stream) {
+      console.error('Failed to get local media stream');
+      return;
+    }
+
+    // Create peer connection with the stream
+    const pc = await createPeerConnection(stream);
+    if (!pc) {
+      console.error('Failed to create peer connection');
+      return;
+    }
+
+    console.log('Setting remote description from stored offer');
+    await pc.setRemoteDescription(new RTCSessionDescription(remoteDescription));
+
+    console.log('Creating answer');
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+
+    console.log('Sending answer');
+    socket.emit('signal', {
+      roomId,
+      signalData: { type: 'answer', answer },
+      senderId: user?._id,
+      receiverId: callerId,
+    });
+
     setIsVideoCallActive(true);
     setIncomingCall(false);
     setIsCaller(false);
-    
-    socket.emit('acceptCall', {
-      roomId,
-      callerId,
-      receiverId: user?._id,
-      answer: true,
-    });
-}, [roomId, callerId, user?._id]);
+  } catch (error) {
+    console.error('Error accepting call:', error);
+  }
+}, [remoteDescription, roomId, callerId, user?._id, getLocalMedia, createPeerConnection]);
+
 
   const handleRejectCall = () => {
     socket.emit('rejectCall', {
@@ -63,10 +132,86 @@ const ChatComponent: React.FC = () => {
   };
 
   useEffect(() => {
+    const handleSignal = async (data: any) => {
+      const { signalData, senderId } = data;
+      
+      // Handle offer without a peer connection by storing it for later
+      if (signalData.type === 'offer') {
+        console.log('Received offer, storing for when call is accepted');
+        setRemoteDescription(signalData.offer);
+        return;
+      }
+      
+      // For other signal types, we need a peer connection
+      if (!peerConnection) {
+        console.log('No peer connection available for signal:', signalData.type);
+        return;
+      }
+      
+      try {
+        switch (signalData.type) {
+          case 'answer':
+            console.log('Received answer');
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(signalData.answer));
+            break;
+            
+          case 'candidate':
+            console.log('Received ICE candidate');
+            if (peerConnection.remoteDescription) {
+              await peerConnection.addIceCandidate(new RTCIceCandidate(signalData.candidate));
+            } else {
+              console.log('Skipping ICE candidate - no remote description yet');
+            }
+            break;
+            
+          default:
+            console.error('Unknown signal type:', signalData.type);
+        }
+      } catch (error) {
+        console.error('Error handling signal:', error);
+      }
+    };
+  
+    socket.on('signal', handleSignal);
+    
+    return () => {
+      socket.off('signal', handleSignal);
+    };
+  }, [peerConnection, roomId, callerId, user?._id]);
+
+
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('callEnded', () => {
+        if (peerConnection) {
+          peerConnection.close();
+          setPeerConnection(null);
+        }
+        if (localStream) {
+          localStream.getTracks().forEach((track) => track.stop());
+          setLocalStream(null);
+        }
+        setRemoteStream(null);
+        setIsVideoCallActive(false);
+        setIsCaller(false);
+        setIncomingCall(false);
+      });
+    }
+  
+    return () => {
+      if (socket) {
+        socket.off('callEnded');
+      }
+    };
+  }, [peerConnection, localStream]);
+
+  useEffect(() => {
     if (roomId) {
       if (!socket.connected) {
         connectSocket();
       }
+
 
       if (socket && user?._id) {
         socket.emit('registerUser', user._id);
@@ -113,11 +258,11 @@ const ChatComponent: React.FC = () => {
       });
 
 
-      socket.on('incomingCall', (data) => {
-        console.log('Incoming call received:', data);
+      socket.on('incomingCall', ({ roomId, callerId, callerName }) => {
+        console.log('Incoming call received:');
         setIncomingCall(true);
-        setCallerId(data.callerId);
-        setCallerName(data.callerName);
+        setCallerId(callerId);
+        setCallerName(callerName);
       });
 
       socket.on('callAccepted', ({ receiverId, answer }) => {
@@ -133,11 +278,11 @@ const ChatComponent: React.FC = () => {
         setIsCaller(false);
       });
 
-      socket.on('callEnded', () => {
-        setIsVideoCallActive(false);
-        setIsCaller(false);
-        setIncomingCall(false);
-      });
+      // socket.on('callEnded', () => {
+      //   setIsVideoCallActive(false);
+      //   setIsCaller(false);
+      //   setIncomingCall(false);
+      // });
 
       return () => {
         socket.off('chatHistory');
@@ -146,7 +291,7 @@ const ChatComponent: React.FC = () => {
         socket.off('incomingCall');
         socket.off('callAccepted');
         socket.off('callRejected');
-        socket.off('callEnded');
+        // socket.off('callEnded');
       };
     }
   }, [roomId, user?._id]);
@@ -214,18 +359,64 @@ const ChatComponent: React.FC = () => {
     });
     return groups;
   };
-  const handleInitiateCall = () => {
-    socket.emit('initiateVideoCall', {
-      roomId,
-      callerId: user?._id,
-      callerName: user?.userName,
-      receiverId,
-      receiverName: receiver.userName,
-    });
-    setIsVideoCallActive(true);
-    setIsCaller(true);
+  // const handleInitiateCall = () => {
+  //   socket.emit('initiateVideoCall', {
+  //     roomId,
+  //     callerId: user?._id,
+  //     callerName: user?.userName,
+  //     receiverId,
+  //     receiverName: receiver.userName,
+  //   });
+  //   setIsVideoCallActive(true);
+  //   setIsCaller(true);
+  // };
+  const handleInitiateCall = async () => {
+    try {
+      // Get local media (video/audio stream)
+      const stream = await getLocalMedia();
+      if (!stream) return;
+  
+      // Create a peer connection
+      const pc = await createPeerConnection(stream);
+      if (!pc) return;
+  
+      // Create an offer
+      const offer = await pc.createOffer();
+      console.log('Offer created:', offer);
+      await pc.setLocalDescription(offer);
+  
+      // Send the offer to the receiver
+      socket.emit('signal', {
+        roomId,
+        signalData: { type: 'offer', offer },
+        senderId: user?._id,
+        receiverId: receiverId,
+      });
+      console.log('Offer send from caller ');
+      // Notify the receiver about the incoming call
+      socket.emit('initiateVideoCall', {
+        roomId,
+        callerId: user?._id,
+        callerName: user?.userName,
+        receiverId,
+        receiverName: receiver.userName,
+      });
+  
+      setIsVideoCallActive(true);
+      setIsCaller(true);
+    } catch (error) {
+      console.error('Error initiating call:', error);
+    }
   };
 
+
+  const handleEndCall = () => {
+    cleanupCall(); // Use the new cleanup function from the hook
+    socket.emit('endCall', { roomId, callerId: user?._id, receiverId });
+    setIsVideoCallActive(false);
+    setIsCaller(false);
+    setIncomingCall(false);
+  };
   return (
     <>
       {/* <div className="h-screen flex flex-col overflow-hidden"> */}
@@ -393,7 +584,7 @@ const ChatComponent: React.FC = () => {
         </div>
       )}
 
-      {isVideoCallActive && (
+      {/* {isVideoCallActive && (
         <VideoCall
           roomId={roomId || ''}
           receiverId={receiver._id}
@@ -405,7 +596,17 @@ const ChatComponent: React.FC = () => {
           setIsVideoCallActive={setIsVideoCallActive} 
    
         />
-      )}
+      )} */}
+      {isVideoCallActive && (
+  <VideoCall
+    receiverName={receiver.userName}
+    callerName={isCaller ? user?.userName : receiver.userName}
+    isCaller={isCaller}
+    localStream={localStream}
+    remoteStream={remoteStream}
+    handleEndCall={handleEndCall} // Pass the function to end the call
+  />
+)}
 
     </>
   );

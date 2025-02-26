@@ -1,12 +1,13 @@
-import  { FC, useState } from 'react';
+import { FC, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { logout } from '../../../redux/slices/authSlice';
 import { toast } from 'react-toastify';
-import { FaUserCircle } from 'react-icons/fa';
+import { FaHome, FaUser, FaUserCircle } from 'react-icons/fa';
 import { HiMenuAlt3, HiX } from 'react-icons/hi';
 import { logoutUser } from '../../../services/user/authServices';
+import NavItem from '../../ReusableComponents/Navitem';
 
 const AdminHeader: FC = () => {
   const { user, isAuthenticated } = useSelector(
@@ -19,7 +20,7 @@ const AdminHeader: FC = () => {
 
   const handleLogout = async () => {
     try {
-      const data = await logoutUser()
+      const data = await logoutUser();
       dispatch(logout());
       navigate('/');
       toast.success(data.message);
@@ -97,20 +98,19 @@ const AdminHeader: FC = () => {
 
       {menuOpen && (
         <nav className="md:hidden bg-indigo-600 px-6 py-4 space-y-4">
-          <NavLink
-            to={`/user-home/${user?._id}`}
-            className="block text-white hover:text-gray-200"
+          <NavItem
+            to={`/admin/home/${user?._id}`}
+            icon={<FaHome />}
+            label="Home"
             onClick={() => setMenuOpen(false)}
-          >
-            Home
-          </NavLink>
-          <NavLink
-            to="/profile"
-            className="block text-white hover:text-gray-200"
+          />
+          <NavItem
+            to={`/admin/edit-profile/${user?._id}`}
+            icon={<FaUser />}
+            label="Profile"
             onClick={() => setMenuOpen(false)}
-          >
-            Profile
-          </NavLink>
+          />
+
           <button
             className="block w-full text-left text-white hover:text-gray-200"
             onClick={() => {

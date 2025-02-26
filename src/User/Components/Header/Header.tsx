@@ -90,7 +90,7 @@ const Header: FC = () => {
     }
   }, [user?._id]);
 
-  // NavItem component with responsive icon and text
+
   const NavItem = ({
     to,
     icon,
