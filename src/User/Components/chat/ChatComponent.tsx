@@ -827,11 +827,6 @@ const ChatComponent: React.FC = () => {
     stopRingtone();
   }, [peerConnection, localStream, remoteStream, stopRingtone]);
 
-  useEffect(() => {
-    return () => {
-      cleanupCall();
-    };
-  }, [cleanupCall]);
 
   const handleAcceptCall = useCallback(async () => {
     try {
