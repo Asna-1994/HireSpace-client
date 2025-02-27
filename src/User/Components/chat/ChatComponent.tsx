@@ -791,35 +791,126 @@ const ChatComponent: React.FC = () => {
     toast.dismiss();
   }, []);
 
+
+
+
   const cleanupCall = useCallback(() => {
     if (peerConnection) {
+  
       peerConnection.close();
       setPeerConnection(null);
     }
+    
     if (localStream) {
-      localStream.getTracks().forEach((track) => track.stop());
+
+      localStream.getTracks().forEach((track) => {
+        track.stop();
+        localStream.removeTrack(track);
+      });
       setLocalStream(null);
     }
-    setRemoteStream(null);
+    
+    if (remoteStream) {
+      // Also clean up remote stream tracks
+      remoteStream.getTracks().forEach((track) => {
+        track.stop();
+        remoteStream.removeTrack(track);
+      });
+      setRemoteStream(null);
+    }
+    
+    // Reset all call-related states
     setIsVideoCallActive(false);
     setIsCaller(false);
     setIncomingCall(false);
+    setRemoteDescription(null); // Important to reset this too
     stopRingtone();
-  }, [peerConnection, localStream, stopRingtone]);
+  }, [peerConnection, localStream, remoteStream, stopRingtone]);
+
+  useEffect(() => {
+    return () => {
+      cleanupCall();
+    };
+  }, [cleanupCall]);
+
+  // const handleAcceptCall = useCallback(async () => {
+  //   try {
+  //     stopRingtone();
+
+  //     if (!remoteDescription) {
+  //       console.error('No remote description available.');
+  //       return;
+  //     }
+  //     const devicesAvailable = await checkMediaDevices();
+  //     if (!devicesAvailable){
+  //       console.log('no device available ')
+  //       return
+  //     }
+      
+  //     // Get media first
+  //     const stream = await getLocalMedia();
+  //     if (!stream) {
+  //       console.error('Failed to get local media stream');
+  //       return;
+  //     }
+
+  //     // Create peer connection with the stream
+  //     const pc = await createPeerConnection(stream);
+  //     if (!pc) {
+  //       console.error('Failed to create peer connection');
+  //       return;
+  //     }
+
+  //     console.log('Setting remote description from stored offer');
+  //     await pc.setRemoteDescription(
+  //       new RTCSessionDescription(remoteDescription)
+  //     );
+
+  //     console.log('Creating answer');
+  //     const answer = await pc.createAnswer();
+  //     await pc.setLocalDescription(answer);
+
+  //     console.log('Sending answer');
+  //     socket.emit('signal', {
+  //       roomId,
+  //       signalData: { type: 'answer', answer },
+  //       senderId: user?._id,
+  //       receiverId: callerId,
+  //     });
+
+  //     setIsVideoCallActive(true);
+  //     setIncomingCall(false);
+  //     setIsCaller(false);
+  //   } catch (error) {
+  //     console.error('Error accepting call:', error);
+  //   }
+  // }, [
+  //   remoteDescription,
+  //   roomId,
+  //   callerId,
+  //   user?._id,
+  //   getLocalMedia,
+  //   createPeerConnection,
+  //   stopRingtone
+  // ]);
 
   const handleAcceptCall = useCallback(async () => {
     try {
       stopRingtone();
-
+  
       if (!remoteDescription) {
         console.error('No remote description available.');
         return;
       }
+      
       const devicesAvailable = await checkMediaDevices();
-      if (!devicesAvailable){
-        console.log('no device available ')
-        return
+      if (!devicesAvailable) {
+        console.log('No devices available');
+        return;
       }
+      
+      // Clean up existing streams and connections first
+      cleanupCall();
       
       // Get media first
       const stream = await getLocalMedia();
@@ -827,36 +918,48 @@ const ChatComponent: React.FC = () => {
         console.error('Failed to get local media stream');
         return;
       }
-
+  
       // Create peer connection with the stream
       const pc = await createPeerConnection(stream);
       if (!pc) {
         console.error('Failed to create peer connection');
+        cleanupCall();
         return;
       }
-
+  
       console.log('Setting remote description from stored offer');
-      await pc.setRemoteDescription(
-        new RTCSessionDescription(remoteDescription)
-      );
-
+      try {
+        await pc.setRemoteDescription(new RTCSessionDescription(remoteDescription));
+      } catch (error) {
+        console.error('Error setting remote description:', error);
+        cleanupCall();
+        return;
+      }
+  
       console.log('Creating answer');
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-
-      console.log('Sending answer');
-      socket.emit('signal', {
-        roomId,
-        signalData: { type: 'answer', answer },
-        senderId: user?._id,
-        receiverId: callerId,
-      });
-
+      try {
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+  
+        console.log('Sending answer');
+        socket.emit('signal', {
+          roomId,
+          signalData: { type: 'answer', answer },
+          senderId: user?._id,
+          receiverId: callerId,
+        });
+      } catch (error) {
+        console.error('Error creating or sending answer:', error);
+        cleanupCall();
+        return;
+      }
+  
       setIsVideoCallActive(true);
       setIncomingCall(false);
       setIsCaller(false);
     } catch (error) {
       console.error('Error accepting call:', error);
+      cleanupCall();
     }
   }, [
     remoteDescription,
@@ -865,8 +968,11 @@ const ChatComponent: React.FC = () => {
     user?._id,
     getLocalMedia,
     createPeerConnection,
-    stopRingtone
+    stopRingtone,
+    cleanupCall,
+    checkMediaDevices
   ]);
+
 
   const handleRejectCall = () => {
     stopRingtone();
@@ -880,6 +986,8 @@ const ChatComponent: React.FC = () => {
     setIncomingCall(false);
   };
 
+
+  
   useEffect(() => {
     if (socket) {
       socket.on('incomingCall', ({ roomId, callerId, callerName }) => {
@@ -1132,40 +1240,102 @@ const ChatComponent: React.FC = () => {
     return groups;
   };
 
+  // const handleInitiateCall = async () => {
+  //   try {
+  //     const stream = await getLocalMedia();
+  //     if (!stream) return;
+
+  //     const pc = await createPeerConnection(stream);
+  //     if (!pc) return;
+
+  //     // Create an offer
+  //     const offer = await pc.createOffer();
+  //     console.log('Offer created:', offer);
+  //     await pc.setLocalDescription(offer);
+
+  //     socket.emit('signal', {
+  //       roomId,
+  //       signalData: { type: 'offer', offer },
+  //       senderId: user?._id,
+  //       receiverId: receiverId,
+  //     });
+  //     console.log('Offer send from caller ');
+  //     socket.emit('initiateVideoCall', {
+  //       roomId,
+  //       callerId: user?._id,
+  //       callerName: user?.userName,
+  //       receiverId,
+  //       receiverName: receiver.userName,
+  //     });
+
+  //     setIsVideoCallActive(true);
+  //     setIsCaller(true);
+  //   } catch (error) {
+  //     console.error('Error initiating call:', error);
+  //   }
+  // };
+
   const handleInitiateCall = async () => {
     try {
+      // Clean up any existing call resources first
+      cleanupCall();
+      
+      const devicesAvailable = await checkMediaDevices();
+      if (!devicesAvailable) {
+        console.log('No devices available');
+        return;
+      }
+      
       const stream = await getLocalMedia();
-      if (!stream) return;
-
+      if (!stream) {
+        console.error('Failed to get local media stream');
+        return;
+      }
+  
       const pc = await createPeerConnection(stream);
-      if (!pc) return;
-
-      // Create an offer
-      const offer = await pc.createOffer();
-      console.log('Offer created:', offer);
-      await pc.setLocalDescription(offer);
-
-      socket.emit('signal', {
-        roomId,
-        signalData: { type: 'offer', offer },
-        senderId: user?._id,
-        receiverId: receiverId,
-      });
-      console.log('Offer send from caller ');
-      socket.emit('initiateVideoCall', {
-        roomId,
-        callerId: user?._id,
-        callerName: user?.userName,
-        receiverId,
-        receiverName: receiver.userName,
-      });
-
-      setIsVideoCallActive(true);
-      setIsCaller(true);
+      if (!pc) {
+        console.error('Failed to create peer connection');
+        cleanupCall();
+        return;
+      }
+  
+      try {
+        // Create an offer
+        const offer = await pc.createOffer({
+          offerToReceiveAudio: true,
+          offerToReceiveVideo: true
+        });
+        console.log('Offer created:', offer);
+        await pc.setLocalDescription(offer);
+  
+        socket.emit('signal', {
+          roomId,
+          signalData: { type: 'offer', offer },
+          senderId: user?._id,
+          receiverId: receiverId,
+        });
+        console.log('Offer sent from caller');
+        
+        socket.emit('initiateVideoCall', {
+          roomId,
+          callerId: user?._id,
+          callerName: user?.userName,
+          receiverId,
+          receiverName: receiver.userName,
+        });
+  
+        setIsVideoCallActive(true);
+        setIsCaller(true);
+      } catch (error) {
+        console.error('Error creating or sending offer:', error);
+        cleanupCall();
+      }
     } catch (error) {
       console.error('Error initiating call:', error);
+      cleanupCall();
     }
   };
+  
 
   const handleEndCall = () => {
     cleanupCall();
