@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import { CertificateObject } from "../../User/Pages/Profile/AddCertificates";
-import { deleteCertificate, fetchCertificate, addOrUpdate } from "../../services/user/certificateService";
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { CertificateObject } from '../../User/Pages/Profile/AddCertificates';
+import {
+  deleteCertificate,
+  fetchCertificate,
+  addOrUpdate,
+} from '../../services/user/certificateService';
 import * as yup from 'yup';
-
 
 const certificateSchema = yup.object().shape({
   certificateTitle: yup.string().required('Certificate Title is required'),
@@ -32,8 +35,6 @@ const certificateSchema = yup.object().shape({
     .required('Issued Date is required'),
 });
 
-
-
 const useCertificate = (userId: string | undefined) => {
   const [certificates, setCertificates] = useState<CertificateObject[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -58,7 +59,7 @@ const useCertificate = (userId: string | undefined) => {
         setCertificates(data.data.certificates);
       }
     } catch (err: any) {
-      console.error("Error fetching certificate data:", err);
+      console.error('Error fetching certificate data:', err);
     } finally {
       setLoading(false);
     }
@@ -74,14 +75,18 @@ const useCertificate = (userId: string | undefined) => {
 
       const data = await addOrUpdate(form, userId, certificateId ?? undefined);
       if (data.success) {
-        toast.success(certificateId ? "Certificate updated successfully" : "Certificate added successfully");
+        toast.success(
+          certificateId
+            ? 'Certificate updated successfully'
+            : 'Certificate added successfully'
+        );
         resetForm();
         getCertificates();
       } else {
         toast.error(data.message);
       }
     } catch (err: any) {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         const validationErrors: { [key: string]: string } = {};
         err.inner.forEach((error: any) => {
           validationErrors[error.path] = error.message;
@@ -100,7 +105,7 @@ const useCertificate = (userId: string | undefined) => {
     try {
       const data = await deleteCertificate(userId, certId);
       if (data.success) {
-        toast.success("Deleted successfully");
+        toast.success('Deleted successfully');
         setCertificates(data.data.certificates);
       } else {
         toast.error(data.message);

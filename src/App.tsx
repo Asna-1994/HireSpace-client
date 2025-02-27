@@ -3,9 +3,6 @@ import './App.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { useSelector } from 'react-redux';
-import { RootState } from './redux/store';
-import { useEffect } from 'react';
 import UserRoutes from './routes/UserRoutes';
 import CompanyRoutes from './routes/CompanyRoutes';
 import AdminRoutes from './routes/AdminRoutes';
@@ -16,21 +13,27 @@ import NoAccess from './Shared/Pages/NoAccess';
 import Contact from './Shared/Pages/Contact';
 import About from './Shared/Pages/About';
 import 'global';
+import { useEffect } from 'react';
+import { connectSocket, socket } from './services/socket';
 
-// import SocketManager from './User/Components/chat/SocketManager';
+
+
 
 function App() {
 
-  const theme = useSelector((state: RootState) => state.theme.theme);
+useEffect(() => {
+        if (!socket.connected) {
+          connectSocket();
+        }
+},[])
 
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-  }, [theme]);
+
+
+
 
   const client_id = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   return (
     <>
-    {/* <SocketManager/> */}
       <ToastContainer autoClose={1500} />
       <GoogleOAuthProvider clientId={client_id}>
         <Routes>

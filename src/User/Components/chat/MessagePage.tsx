@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { connectSocket, socket } from '../../../services/socket';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import Header from '../Header/Header';
 import { setTotalUnreadChats } from '../../../redux/slices/chatSlice';
 import { truncateMessage } from '../../../Utils/helperFunctions/companyName';
 
@@ -103,6 +102,8 @@ const MessagesPage: React.FC = () => {
         socket.emit('getUnreadCount', { userId: user._id });
       });
 
+
+      
       socket.on('error', (error) => {
         console.error('Socket error:', error);
       });

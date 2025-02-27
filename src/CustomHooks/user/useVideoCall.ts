@@ -16,17 +16,49 @@ const useVideoCall = (
   
   const { user } = useSelector((state: RootState) => state.auth);
   
-  const getLocalMedia = async () => {
+
+  const getLocalMedia = async (): Promise<MediaStream | null> => {
+    const permissions = await navigator.permissions.query({ name: 'camera' as PermissionName });
+      if (permissions.state === 'denied') {
+        console.error('Media device permissions are denied.');
+        return null;
+      }
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      setLocalStream(stream);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
       return stream;
-    } catch (error) {
+    } catch (error : any) {
       console.error('Error accessing media devices:', error);
+  
+      // Retry after a delay if the error is due to permission delays
+      if (error.name === 'AbortError' || error.name === 'NotAllowedError') {
+        console.log('Retrying to access media devices...');
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second
+        return getLocalMedia(); // Retry
+      }
+  
       return null;
     }
   };
 
+  const checkMediaDevices = async () => {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const hasVideo = devices.some((device) => device.kind === 'videoinput');
+    const hasAudio = devices.some((device) => device.kind === 'audioinput');
+  
+    if (!hasVideo) {
+      console.error('No video input device found.');
+      alert('No camera found. Please connect a camera and try again.');
+    }
+    if (!hasAudio) {
+      console.error('No audio input device found.');
+      alert('No microphone found. Please connect a microphone and try again.');
+    }
+  
+    return hasVideo && hasAudio;
+  };
   const createPeerConnection = async (stream: MediaStream | null = null) => {
     // Use the passed stream or the current localStream
     const mediaStream = stream || localStream;
@@ -80,6 +112,7 @@ const useVideoCall = (
     localStream,
     remoteStream,
     setRemoteStream,
+    checkMediaDevices,
     setLocalStream,
     setPeerConnection,
 

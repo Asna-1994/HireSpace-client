@@ -4,7 +4,11 @@ import { RootState } from '../../redux/store';
 import { toast } from 'react-toastify';
 import { validateFile } from '../../Utils/helperFunctions/fileValidation';
 import { userUpdate } from '../../redux/slices/authSlice';
-import { deleteProfilePictureFromDB, updateUserDetails, uploadProfilePictureToDB } from '../../services/user/basicDetailsService';
+import {
+  deleteProfilePictureFromDB,
+  updateUserDetails,
+  uploadProfilePictureToDB,
+} from '../../services/user/basicDetailsService';
 
 const useBasicDetails = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -55,14 +59,20 @@ const useBasicDetails = () => {
     }
   };
 
-
-const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isSubmitting) return; 
-  
+    if (isSubmitting) return;
+
     setIsSubmitting(true);
     try {
-      const data = await updateUserDetails(user?._id!, form.userName, form.dateOfBirth, form.phone, form.address, form.userRole);
+      const data = await updateUserDetails(
+        user?._id!,
+        form.userName,
+        form.dateOfBirth,
+        form.phone,
+        form.address,
+        form.userRole
+      );
       if (data.success) {
         dispatch(userUpdate(data.data.user));
         toast.success('Updated successfully');
@@ -81,13 +91,14 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       const response = await fetch(croppedImageUrl);
       const blob = await response.blob();
-      const file = new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' });
+      const file = new File([blob], 'cropped-image.jpg', {
+        type: 'image/jpeg',
+      });
 
       setSelectedFile(file);
       setPreviewUrl(croppedImageUrl);
 
-
-      const data = await uploadProfilePictureToDB(user?._id!, file)
+      const data = await uploadProfilePictureToDB(user?._id!, file);
 
       if (data.success) {
         dispatch(userUpdate(data.data.user));
@@ -101,7 +112,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   // Handle profile image deletion
   const handleDeleteImage = async () => {
     try {
-      const data = await deleteProfilePictureFromDB(user?._id!)
+      const data = await deleteProfilePictureFromDB(user?._id!);
       if (data.success) {
         dispatch(userUpdate(data.data.user));
         toast.success('Deleted successfully');
@@ -119,7 +130,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     previewUrl,
     selectedFile,
     isCropping,
-    isSubmitting, 
+    isSubmitting,
     setSelectedFile,
     setIsSubmitting,
     setPreviewUrl,

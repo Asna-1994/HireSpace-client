@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
-import { getSkills, deleteSkill, addOrUpdateSkills } from '../../services/user/skillService';
+import {
+  getSkills,
+  deleteSkill,
+  addOrUpdateSkills,
+} from '../../services/user/skillService';
 import { Skills } from '../../Utils/Interfaces/jobSeekerInterface';
-
-
 
 const validationSchema = Yup.object({
   softSkills: Yup.array().of(
