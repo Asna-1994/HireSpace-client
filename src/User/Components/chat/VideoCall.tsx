@@ -44,18 +44,30 @@ const VideoCall: React.FC<VideoCallProps> = ({
     return `${minutes}:${secs}`;
   };
 
-  // Set up local video
-  useEffect(() => {
-    if (localStream && localVideoRef.current) {
-      localVideoRef.current.srcObject = localStream;
-    }
 
-    return () => {
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = null;
-      }
+
+
+useEffect(() => {
+  console.log("Local stream in VideoCall:", localStream ? "exists" : "null");
+  console.log("Local video ref:", localVideoRef.current ? "exists" : "null");
+  
+  if (localStream && localVideoRef.current) {
+    console.log("Setting local video source object");
+    localVideoRef.current.srcObject = localStream;
+    
+    // Add this check
+    localVideoRef.current.onloadedmetadata = () => {
+      console.log("Local video metadata loaded, starting playback");
+      localVideoRef.current?.play().catch(e => console.error("Error playing local video:", e));
     };
-  }, [localStream]);
+  }
+
+  return () => {
+    if (localVideoRef.current) {
+      localVideoRef.current.srcObject = null;
+    }
+  };
+}, [localStream]);
 
   // Set up remote video
   useEffect(() => {
@@ -121,7 +133,7 @@ const VideoCall: React.FC<VideoCallProps> = ({
           />
 
           {/* Local video (picture-in-picture) */}
-          <div className="absolute bottom-4 right-4 w-1/4 max-w-xs">
+          {/* <div className="absolute bottom-4 right-4 w-1/4 max-w-xs">
             <video
               ref={localVideoRef}
               autoPlay
@@ -129,7 +141,16 @@ const VideoCall: React.FC<VideoCallProps> = ({
               muted
               className="w-full rounded-lg shadow-lg border-2 border-white"
             />
-          </div>
+          </div> */}
+          <div className="absolute bottom-4 right-4 w-1/4 max-w-xs" style={{zIndex: 10}}>
+  <video
+    ref={localVideoRef}
+    autoPlay
+    playsInline
+    muted
+    className="w-full rounded-lg shadow-lg border-2 border-white"
+  />
+</div>
         </div>
 
         {/* Controls */}

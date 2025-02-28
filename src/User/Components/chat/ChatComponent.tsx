@@ -1158,14 +1158,22 @@ const ChatComponent: React.FC = () => {
   const handleInitiateCall = async () => {
     try {
       const stream = await getLocalMedia();
-      if (!stream) return;
+      console.log('local media', stream)
+      if (!stream)
+      {
+        console.error("Failed to get local media stream");
+        return;
+      }
+  
 
+      console.log("Stream video tracks:", stream.getVideoTracks().length);
+      console.log("First video track enabled:", stream.getVideoTracks()[0]?.enabled);
       const pc = await createPeerConnection(stream);
       if (!pc) return;
 
       // Create an offer
       const offer = await pc.createOffer();
-      console.log('Offer created:', offer);
+      console.log('Offer created:');
       await pc.setLocalDescription(offer);
 
       socket.emit('signal', {

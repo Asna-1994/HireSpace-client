@@ -1,4 +1,4 @@
-// useVideoCall.tsx
+
 import { useEffect, useState } from 'react';
 import { socket } from '../../services/socket';
 import { useSelector } from 'react-redux';
@@ -28,11 +28,17 @@ const useVideoCall = (
         video: true,
         audio: true,
       });
+
+    //   stream.getVideoTracks().forEach(track => {
+    //     console.log("Video track enabled:", track.enabled);
+    //     track.enabled = true;
+    //   });
+      setLocalStream(stream);
       return stream;
     } catch (error : any) {
       console.error('Error accessing media devices:', error);
   
-      // Retry after a delay if the error is due to permission delays
+
       if (error.name === 'AbortError' || error.name === 'NotAllowedError') {
         console.log('Retrying to access media devices...');
         await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second
@@ -78,6 +84,11 @@ const useVideoCall = (
             username: 'open',
             credential: 'open',
           },
+          {
+            urls: 'turn:relay.metered.ca:443',
+            username: 'open',
+            credential: 'open'
+        },
         ],
         iceCandidatePoolSize: 10
       });
