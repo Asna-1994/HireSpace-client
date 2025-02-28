@@ -11,5 +11,5 @@ export const validateFile = (
     return `File size exceeds the ${(maxFileSize / (1024 * 1024)).toFixed(2)}MB limit.`;
   }
 
-  return null; // File is valid
+  return null; 
 };

@@ -2,7 +2,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import authReducer from './slices/authSlice';
-import themeReducer from './slices/themeSlice';
 import chatReducer from './slices/chatSlice';
 // import socketReducer from './slices/socketSlice'
 
@@ -16,7 +15,6 @@ const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 const store = configureStore({
   reducer: {
     auth: persistedAuthReducer,
-    theme: themeReducer,
     chat: chatReducer,
     // socket: socketReducer,
   },

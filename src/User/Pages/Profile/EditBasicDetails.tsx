@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { FaUpload } from 'react-icons/fa';
 import Header from '../../Components/Header/Header';

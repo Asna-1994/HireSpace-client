@@ -27,10 +27,6 @@ useEffect(() => {
         }
 },[])
 
-
-
-
-
   const client_id = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   return (
     <>
