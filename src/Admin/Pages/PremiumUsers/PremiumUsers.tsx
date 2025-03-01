@@ -65,7 +65,7 @@ const PremiumUserList = () => {
     setSelectedAction(action);
     setModalIsOpen(true);
   };
-
+//close modal
   const closeModal = () => {
     setModalIsOpen(false);
     setSelectedUserId(null);
