@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { toast } from 'react-toastify';
@@ -8,6 +7,7 @@ import SideBar from '../../Components/SideBar/SideBar';
 import { Plans } from '../../../Utils/Interfaces/interface';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import ReusableTable from '../../ReusableComponents/ReusableTable';
+import { deletePlans , fetchPlansFromDB} from '../../../services/admin/planService';
 
 Modal.setAppElement('#root');
 
@@ -31,9 +31,7 @@ const ManagePlans = () => {
 
   const fetchPlans = async (searchTerm?: string) => {
     try {
-      const response = await axiosInstance.get('/plans/all-plans', {
-        params: { page, limit, search: searchTerm },
-      });
+      const response =  await fetchPlansFromDB(page , limit , searchTerm)
       setPlans(response.data.data.plans);
       setTotalPages(response.data.data.totalPages);
     } catch (error: any) {
@@ -117,9 +115,7 @@ const ManagePlans = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await axiosInstance.delete(
-        `/plans/delete/${selectedPlanId}`
-      );
+      const response = await deletePlans(selectedPlanId as string)
       if (response.data.success) {
         toast.success('Plan deleted successfully.');
         fetchPlans();
@@ -142,7 +138,7 @@ const ManagePlans = () => {
         <div className="flex">
           <button
             onClick={() => openModal(item._id)}
-            className="text-white text-sm w-6 flex justify-center ml-2 hover:bg-green-500 border bg-green-700 py-1 rounded-md"
+            className="flex justify-center w-6 py-1 ml-2 text-sm text-white bg-green-700 border rounded-md hover:bg-green-500"
           >
             <FaEdit />
           </button>
@@ -151,7 +147,7 @@ const ManagePlans = () => {
               setSelectedPlanId(item._id!);
               setConfirmationModalIsOpen(true);
             }}
-            className="text-white text-sm flex justify-center w-6 ml-2 hover:bg-red-500 border bg-red-700 py-1 rounded-md"
+            className="flex justify-center w-6 py-1 ml-2 text-sm text-white bg-red-700 border rounded-md hover:bg-red-500"
           >
             <FaTrash />
           </button>
@@ -166,12 +162,12 @@ const ManagePlans = () => {
         isOpen={confirmationModalIsOpen}
         onRequestClose={closeModal}
         contentLabel="Delete Plan Confirmation"
-        className="bg-white p-6 rounded shadow-md w-11/12 max-w-sm mx-auto"
+        className="w-11/12 max-w-sm p-6 mx-auto bg-white rounded shadow-md"
         overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
       >
-        <h2 className="text-lg font-bold mb-4">Confirm Delete</h2>
+        <h2 className="mb-4 text-lg font-bold">Confirm Delete</h2>
         <p>Are you sure you want to delete this plan?</p>
-        <div className="mt-4 flex justify-end space-x-4">
+        <div className="flex justify-end mt-4 space-x-4">
           <button
             onClick={closeModal}
             className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
@@ -180,7 +176,7 @@ const ManagePlans = () => {
           </button>
           <button
             onClick={handleDelete}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700"
           >
             Delete
           </button>
@@ -191,10 +187,10 @@ const ManagePlans = () => {
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
         contentLabel="Create/Edit Plan"
-        className="bg-white p-6 rounded shadow-md w-11/12 max-w-sm mx-auto"
+        className="w-11/12 max-w-sm p-6 mx-auto bg-white rounded shadow-md"
         overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
       >
-        <h2 className="text-lg font-bold mb-4">
+        <h2 className="mb-4 text-lg font-bold">
           {selectedPlanId ? 'Edit Plan' : 'Create New Plan'}
         </h2>
         <form
@@ -212,7 +208,7 @@ const ManagePlans = () => {
               name="planType"
               value={formData.planType}
               onChange={handleFormChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
+              className="block w-full px-4 py-2 mt-1 border border-gray-300 rounded-md"
               required
             />
           </div>
@@ -226,7 +222,7 @@ const ManagePlans = () => {
               name="price"
               value={formData.price}
               onChange={handleFormChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
+              className="block w-full px-4 py-2 mt-1 border border-gray-300 rounded-md"
               required
             />
           </div>
@@ -239,7 +235,7 @@ const ManagePlans = () => {
               name="durationInDays"
               value={formData.durationInDays}
               onChange={handleFormChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
+              className="block w-full px-4 py-2 mt-1 border border-gray-300 rounded-md"
               required
             />
           </div>
@@ -251,7 +247,7 @@ const ManagePlans = () => {
               name="features"
               value={formData.features}
               onChange={handleFormChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
+              className="block w-full px-4 py-2 mt-1 border border-gray-300 rounded-md"
               rows={3}
               required
             ></textarea>
@@ -265,7 +261,7 @@ const ManagePlans = () => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
             >
               Save
             </button>
@@ -273,26 +269,26 @@ const ManagePlans = () => {
         </form>
       </Modal>
 
-      <div className="fixed top-0 w-full z-50 ">
+      <div className="fixed top-0 z-50 w-full ">
         <AdminHeader />
       </div>
-      <div className="flex flex-col lg:flex-row h-auto bg-gray-100 min-h-screen mt-16">
+      <div className="flex flex-col h-auto min-h-screen mt-16 bg-gray-100 lg:flex-row">
         <div className="lg:fixed top-16 left-0 lg:w-64 h-auto lg:h-[calc(100vh-4rem)]">
           <SideBar />
         </div>
-        <div className="flex-grow lg:ml-64 p-4 lg:p-6 bg-white rounded-lg shadow-md">
-          <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
-            <h2 className="text-xl sm:text-2xl font-bold">Manage Plans</h2>
+        <div className="flex-grow p-4 bg-white rounded-lg shadow-md lg:ml-64 lg:p-6">
+          <div className="flex flex-col items-center justify-between mb-4 sm:flex-row">
+            <h2 className="text-xl font-bold sm:text-2xl">Manage Plans</h2>
             <input
               type="text"
               placeholder="Search Plans..."
               value={searchTerm}
               onChange={handleSearchChange}
-              className="mt-2 sm:mt-0 px-4 py-2 border rounded-md w-full sm:w-auto"
+              className="w-full px-4 py-2 mt-2 border rounded-md sm:mt-0 sm:w-auto"
             />
             <button
               onClick={() => openModal()}
-              className="px-2 py-1 bg-green-600 text-sm text-white rounded hover:bg-green-700"
+              className="px-2 py-1 text-sm text-white bg-green-600 rounded hover:bg-green-700"
             >
               Add New Plan
             </button>

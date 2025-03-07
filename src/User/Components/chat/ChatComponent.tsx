@@ -418,19 +418,6 @@ const ChatComponent: React.FC = () => {
           console.warn('Attempted to mark message without ID as read');
         }
       });
-      // socket.on('chatHistory', ({ roomId: joinedRoomId, chatHistory }) => {
-      //   if (joinedRoomId === roomId) {
-      //     setMessages(chatHistory);
-      //     scrollToBottom();
-
-      //     console.log('chat history', chatHistory);
-      //     chatHistory.forEach((message: Message) => {
-      //       if (message.status !== 'read' && message.senderId !== user?._id && message._id) {
-      //         socket.emit('readMessage', { messageId: message._id, roomId });
-      //       }
-      //     });
-      //   }
-      // });
 socket.on('chatHistory', ({ roomId: joinedRoomId, chatHistory }) => {
 
 
@@ -453,14 +440,7 @@ socket.on('chatHistory', ({ roomId: joinedRoomId, chatHistory }) => {
       }
     });
 
-      // socket.on('message', (message: Message) => {
-      //   setMessages((prev) => [...prev, message]);
-      //   scrollToBottom();
-      //   if (message.senderId !== user?._id && message._id) {
-      //     socket.emit('readMessage', { messageId: message._id, roomId });
-      //   }
-      // });
-  
+
 socket.on('message', (message: Message) => {
   setMessages((prev) => [...prev, message]);
   scrollToBottom();

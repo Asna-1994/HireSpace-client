@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useStripe, useElements, CardElement, Elements} from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { motion } from 'framer-motion';
-import { FaCheck, FaCrown } from 'react-icons/fa';
 import { Plans } from '../../../Utils/Interfaces/interface';
 import { toast } from 'react-toastify';
 import Header from '../../Components/Header/Header';
@@ -48,7 +47,7 @@ const CheckoutForm: React.FC<{ selectedPlan: Plans }> = ({ selectedPlan }) => {
         return;
       }
   
-      // Call the API to create a payment intent
+
       const { clientSecret, message } = await createPaymentIntentService(
         selectedPlan.price, 
         selectedPlan.durationInDays, 
@@ -115,8 +114,8 @@ const CheckoutForm: React.FC<{ selectedPlan: Plans }> = ({ selectedPlan }) => {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-8">
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h3 className="text-xl font-semibold mb-4">Payment Details</h3>
+      <div className="p-6 bg-white rounded-lg shadow-md">
+        <h3 className="mb-4 text-xl font-semibold">Payment Details</h3>
         <div className="mb-4">
           <CardElement
             options={{
@@ -130,12 +129,12 @@ const CheckoutForm: React.FC<{ selectedPlan: Plans }> = ({ selectedPlan }) => {
             }}
           />
         </div>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
+        {error && <p className="mb-4 text-red-500">{error}</p>}
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           disabled={loading}
-          className="w-full bg-gradient-to-r from-purple-400 to-blue-500 text-white py-3 rounded-lg font-semibold"
+          className="w-full py-3 font-semibold text-white rounded-lg bg-gradient-to-r from-purple-400 to-blue-500"
         >
           {loading ? 'Processing...' : `Pay $${selectedPlan.price}`}
         </motion.button>
@@ -154,9 +153,9 @@ const PremiumPlans: React.FC = () => {
   useEffect(() => {
     const fetchPlans = async () => {
       try {
-        const data = await fetchPremiumPlans()
-        setPlans(data.data.plans);
-        console.log(data.data.plans);
+        const plansData = await fetchPremiumPlans()
+        setPlans(plansData);
+        console.log(plansData);
       } catch (error: any) {
         toast.error('Failed to fetch plans. Please try again.');
       } finally {
@@ -175,42 +174,42 @@ const PremiumPlans: React.FC = () => {
   return (
     <>
       <Header />
-      <div className="container mx-auto px-6 py-12">
+      <div className="container px-6 py-12 mx-auto">
         {/* Header Section */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-gray-900 mb-4">
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 text-4xl font-extrabold text-gray-900">
             Upgrade to Premium
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="max-w-2xl mx-auto text-lg text-gray-600">
             Unlock exclusive features and accelerate your success with our
             premium plans.
           </p>
         </div>
 
         {/* Plans Section */}
-        <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
+        <div className="grid max-w-6xl gap-8 mx-auto mb-12 lg:grid-cols-3 md:grid-cols-2">
           {/* Basic Plan */}
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg shadow-lg p-8 border-2 border-blue-400 text-center">
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Basic Plan</h3>
-            <p className="text-gray-600 mb-6">
+          <div className="p-8 text-center border-2 border-blue-400 rounded-lg shadow-lg bg-gradient-to-br from-gray-50 to-gray-100">
+            <h3 className="mb-2 text-xl font-bold text-gray-900">Basic Plan</h3>
+            <p className="mb-6 text-gray-600">
               Your current plan with essential features for beginners.
             </p>
-            <p className="text-3xl font-bold text-gray-800 mb-4">₹0</p>
-            <ul className="text-left text-gray-700 mb-6 space-y-3">
+            <p className="mb-4 text-3xl font-bold text-gray-800">₹0</p>
+            <ul className="mb-6 space-y-3 text-left text-gray-700">
               <li className="flex items-center">
-                <span className="text-green-500 mr-2">✔</span> Basic job search
+                <span className="mr-2 text-green-500">✔</span> Basic job search
               </li>
               <li className="flex items-center">
-                <span className="text-green-500 mr-2">✔</span> Limited
+                <span className="mr-2 text-green-500">✔</span> Limited
                 applications
               </li>
               <li className="flex items-center">
-                <span className="text-green-500 mr-2">✔</span> Email support
+                <span className="mr-2 text-green-500">✔</span> Email support
               </li>
             </ul>
             <button
               disabled
-              className="px-6 py-2 bg-gray-300 text-gray-500 rounded-full cursor-not-allowed"
+              className="px-6 py-2 text-gray-500 bg-gray-300 rounded-full cursor-not-allowed"
             >
               Current Plan
             </button>
@@ -233,8 +232,8 @@ const PremiumPlans: React.FC = () => {
 
         {/* Checkout Section */}
         {showCheckout && selectedPlan && (
-          <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Checkout</h3>
+          <div className="max-w-3xl p-6 mx-auto bg-white rounded-lg shadow-lg">
+            <h3 className="mb-4 text-2xl font-bold text-gray-900">Checkout</h3>
             <Elements stripe={stripePromise}>
               <CheckoutForm selectedPlan={selectedPlan} />
             </Elements>
