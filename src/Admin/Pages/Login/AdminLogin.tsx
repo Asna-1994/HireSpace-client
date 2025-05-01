@@ -39,7 +39,7 @@ const AdminLogin = () => {
 
   const handleLogin = async (data: { email: string; password: string }) => {
     try {
-      // const response = await axiosInstance.post('/admin/login', data);
+  
 const result = await adminLogin(data)
       if (result.success) {
         const { token, user } = result.data;
@@ -57,9 +57,9 @@ const result = await adminLogin(data)
   return (
     <>
       <Header />
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-3">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-xl">
+          <h2 className="mb-3 text-2xl font-bold text-center text-gray-800">
             Admin Login
           </h2>
           <form
@@ -77,7 +77,7 @@ const result = await adminLogin(data)
               placeholder="Enter Email"
             />
             {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email.message}</p>
+              <p className="text-sm text-red-500">{errors.email.message}</p>
             )}
 
             <input
@@ -91,12 +91,12 @@ const result = await adminLogin(data)
               placeholder="Enter Password"
             />
             {errors.password && (
-              <p className="text-red-500 text-sm">{errors.password.message}</p>
+              <p className="text-sm text-red-500">{errors.password.message}</p>
             )}
 
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition duration-300"
+              className="w-full px-4 py-2 text-white transition duration-300 bg-blue-600 rounded-lg hover:bg-blue-700"
             >
               Login
             </button>
