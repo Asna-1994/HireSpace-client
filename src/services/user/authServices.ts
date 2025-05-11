@@ -35,7 +35,7 @@ export const googleSignin = async (idToken: string) => {
   
   export const logoutUser = async () => {
     try {
-        const response = await axiosInstance.post('/user/logout');
+        const response = await axiosInstance.post('/auth/logout');
       return response.data;
     } catch (error: any) {
       console.log(error)

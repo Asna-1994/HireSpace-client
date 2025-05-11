@@ -29,10 +29,11 @@ const useVideoCall = (
         audio: true,
       });
 
-    //   stream.getVideoTracks().forEach(track => {
-    //     console.log("Video track enabled:", track.enabled);
-    //     track.enabled = true;
-    //   });
+      stream.getVideoTracks().forEach(track => {
+        console.log("Video track enabled:", track.enabled   ,'tack muted : ' , track.muted );
+        track.enabled = true;
+        
+      });
       setLocalStream(stream);
       return stream;
     } catch (error : any) {
