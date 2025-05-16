@@ -42,9 +42,9 @@ const AdminLogin = () => {
   
 const result = await adminLogin(data)
       if (result.success) {
-        const { token, user } = result.data;
+        const { user } = result.data;
         toast.success(result.message);
-        dispatch(userLogin({ user, token }));
+        dispatch(userLogin({ user }));
         navigate(`/admin/home/${user._id}`);
       } else {
         toast.error(result.message);
