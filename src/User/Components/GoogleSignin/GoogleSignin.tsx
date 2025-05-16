@@ -16,9 +16,8 @@ const GoogleSignInButton: React.FC = () => {
       const data = await googleSignin(idToken)
 
       if (data.success) {
-        const { token, user } = data.data;
-        console.log(token);
-        dispatch(userLogin({ user, token }));
+        const {  user } = data.data;
+        dispatch(userLogin({ user }));
         console.log('User details:', user);
         navigate(`/user/home/${user._id}`);
         toast.success('Login successful');
