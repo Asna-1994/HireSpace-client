@@ -32,9 +32,9 @@ const AddEducation: React.FC = () => {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-r from-blue-100 to-blue-200 p-6">
+      <div className="min-h-screen p-6 bg-gradient-to-r from-blue-100 to-blue-200">
         <motion.div
-          className="bg-gradient-to-r from-purple-400 to-blue-500 shadow-lg text-white rounded-lg p-6"
+          className="p-6 text-white rounded-lg shadow-lg bg-gradient-to-r from-purple-400 to-blue-500"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -42,9 +42,9 @@ const AddEducation: React.FC = () => {
           <h2 className="text-3xl font-semibold">Add Education</h2>
         </motion.div>
 
-        <div className="max-w-6xl mx-auto mt-2 bg-white p-8 rounded-xl shadow-lg grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-            <h3 className="text-2xl font-semibold text-blue-700 mb-6 text-center">
+        <div className="grid max-w-6xl grid-cols-1 gap-8 p-8 mx-auto mt-2 bg-white shadow-lg rounded-xl lg:grid-cols-2">
+          <div className="p-4 rounded-lg shadow-md bg-gray-50">
+            <h3 className="mb-4 text-2xl font-semibold text-center text-blue-700">
               {editIndex !== null ? 'Update Education' : 'Add Education'}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -94,10 +94,10 @@ const AddEducation: React.FC = () => {
                     value={formValues[field.name as keyof Education]}
                     onChange={handleChange}
                     placeholder={field.placeholder}
-                    className="mt-1 w-full px-1 py-1 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full px-1 py-1 mt-1 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   {errors[field.name] && (
-                    <p className="text-red-500 text-sm mt-2">
+                    <p className="mt-2 text-sm text-red-500">
                       {errors[field.name]}
                     </p>
                   )}
@@ -107,7 +107,7 @@ const AddEducation: React.FC = () => {
               <div className="text-center">
                 <button
                   type="submit"
-                  className="px-4 py-1 text-lg text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
+                  className="px-3 py-1 text-lg text-white bg-blue-600 rounded-lg hover:bg-blue-700"
                 >
                   {editIndex !== null ? 'Update Education' : 'Add Education'}
                 </button>
@@ -115,15 +115,17 @@ const AddEducation: React.FC = () => {
             </form>
           </div>
 
-          <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold text-blue-700 mb-4">
+          {/* <div className="p-6 rounded-lg shadow-md bg-gray-50"> */}
+          <div className="p-6 rounded-lg shadow-md bg-gray-50 h-[600px] overflow-y-auto">
+
+            <h3 className="mb-4 text-xl font-semibold text-blue-700">
               Your Education
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-4 overflow-y-auto">
               {educations.map((edu, index) => (
                 <li
                   key={edu._id}
-                  className="bg-white p-6 rounded-lg shadow-md flex justify-between items-start"
+                  className="flex items-start justify-between p-6 bg-white rounded-lg shadow-md"
                 >
                   <div>
                     <p className="text-lg font-semibold text-gray-800">

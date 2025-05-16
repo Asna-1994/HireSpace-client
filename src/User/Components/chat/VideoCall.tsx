@@ -71,23 +71,7 @@ useEffect(() => {
   };
 }, [localStream]);
 
-  // Set up remote video
-  // useEffect(() => {
-  //   if (remoteStream && remoteVideoRef.current) {
-  //     remoteVideoRef.current.srcObject = remoteStream;
-  //     remoteVideoRef.current.muted = false; 
-  //     remoteVideoRef.current.volume = 1.0;  //
-  //     setConnectionStatus('Connected');
-  //   } else {
-  //     setConnectionStatus('Connecting...');
-  //   }
 
-  //   return () => {
-  //     if (remoteVideoRef.current) {
-  //       remoteVideoRef.current.srcObject = null;
-  //     }
-  //   };
-  // }, [remoteStream]);
 
 
   useEffect(() => {
@@ -96,19 +80,19 @@ useEffect(() => {
     if (remoteStream && remoteVideoRef.current) {
       console.log("Setting remote video source object");
       remoteVideoRef.current.srcObject = remoteStream;
-      remoteVideoRef.current.muted = false; // Make sure not muted
-      remoteVideoRef.current.volume = 1.0;  // Set volume to max
+      remoteVideoRef.current.muted = false; 
+      remoteVideoRef.current.volume = 1.0;  
       
-      // Also add a separate audio element for the remote stream
+   
       if (remoteAudioRef.current) {
         remoteAudioRef.current.srcObject = remoteStream;
         remoteAudioRef.current.volume = 1.0;
       }
       
-      // Handle metadata loaded event for remote video
+ 
       remoteVideoRef.current.onloadedmetadata = () => {
         console.log("Remote video metadata loaded, starting playback");
-        // Attempt to play the video
+  
         remoteVideoRef.current?.play()
           .then(() => {
             console.log("Remote video playback started successfully");
@@ -122,7 +106,7 @@ useEffect(() => {
           });
       };
       
-      // Also try to play the audio element
+  
       if (remoteAudioRef.current) {
         remoteAudioRef.current.onloadedmetadata = () => {
           remoteAudioRef.current?.play()
@@ -134,7 +118,7 @@ useEffect(() => {
       setConnectionStatus('Connecting...');
     }
 
-    // Monitor audio tracks
+
     if (remoteStream) {
       const audioTracks = remoteStream.getAudioTracks();
       console.log(`Remote stream has ${audioTracks.length} audio tracks`);
@@ -142,7 +126,7 @@ useEffect(() => {
       audioTracks.forEach(track => {
         console.log(`Audio track: ${track.id}, enabled: ${track.enabled}, muted: ${track.muted}, readyState: ${track.readyState}`);
         
-        // Make sure the track is enabled
+       
         if (!track.enabled) {
           track.enabled = true;
           console.log(`Enabled audio track ${track.id}`);

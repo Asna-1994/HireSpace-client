@@ -1,4 +1,4 @@
-import { Company } from './../../Utils/Interfaces/interface';
+
 
 import axiosInstance from "../../Utils/Instance/axiosInstance";
 

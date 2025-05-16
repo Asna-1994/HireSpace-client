@@ -11,11 +11,11 @@ import * as yup from 'yup';
 const certificateSchema = yup.object().shape({
   certificateTitle: yup.string().required('Certificate Title is required'),
   description: yup.string().optional(),
-  certificateUrl: yup
-    .string()
-    .nullable()
-    .notRequired()
-    .matches(/^(https?:\/\/[^\s]+)?$/, 'Must be a valid URL (if provided)'),
+certificateUrl: yup
+  .string()
+  .nullable()
+  .optional(),
+
   issuer: yup.string().required('Issuer is required'),
   issuedDate: yup
     .string()

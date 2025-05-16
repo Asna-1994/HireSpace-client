@@ -74,6 +74,7 @@ const useBasicDetails = () => {
         form.userRole
       );
       if (data.success) {
+        console.log(data.data.user)
         dispatch(userUpdate(data.data.user));
         toast.success('Updated successfully');
       } else {
@@ -101,6 +102,7 @@ const useBasicDetails = () => {
       const data = await uploadProfilePictureToDB(user?._id!, file);
 
       if (data.success) {
+        console.log(data.data.user)
         dispatch(userUpdate(data.data.user));
         toast.success('Profile photo updated successfully!');
       }
@@ -112,13 +114,14 @@ const useBasicDetails = () => {
   // Handle profile image deletion
   const handleDeleteImage = async () => {
     try {
-      const data = await deleteProfilePictureFromDB(user?._id!);
-      if (data.success) {
-        dispatch(userUpdate(data.data.user));
+      const response = await deleteProfilePictureFromDB(user?._id!);
+      if (response.success) {
+        console.log(response.data.user)
+        dispatch(userUpdate(response.data.user));
         toast.success('Deleted successfully');
         setPreviewUrl(null);
       } else {
-        toast.error(data.message);
+        toast.error(response.message);
       }
     } catch (error: any) {
       toast.error(error);

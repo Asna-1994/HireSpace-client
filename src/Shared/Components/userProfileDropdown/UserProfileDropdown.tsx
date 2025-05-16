@@ -30,6 +30,7 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
     setUserProfileDropdownOpen((prev) => !prev);
   };
 
+ 
   const dropdownOptions = [
     // { to: `/user/settings/${user._id}`, label: 'User Settings', icon: FaCrown },
     {
@@ -77,10 +78,10 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
           <img
             src={user.profilePhoto.url}
             alt="User Profile"
-            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
+            className="object-cover w-10 h-10 rounded-full sm:w-12 sm:h-12"
           />
         ) : (
-          <span className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-500 text-white text-sm sm:text-base font-bold">
+          <span className="flex items-center justify-center w-10 h-10 text-sm font-bold text-white bg-blue-500 rounded-full sm:w-12 sm:h-12 sm:text-base">
             {user?.userName.slice(0, 2).toUpperCase()}
           </span>
         )}
@@ -88,26 +89,26 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
 
       {userProfileDropdownOpen && (
         <div
-          className="absolute right-0 mt-2 w-56 sm:w-64 bg-white text-black rounded shadow-lg border border-gray-300 z-10"
+          className="absolute right-0 z-10 w-56 mt-2 text-black bg-white border border-gray-300 rounded shadow-lg sm:w-64"
           role="menu"
           aria-label="User Dropdown Menu"
         >
-          <div className="py-3 px-4">
+          <div className="px-4 py-3">
             {/* User Details */}
             <Link
               to={`/user/view-profile/${user._id}`}
               onClick={() => setUserProfileDropdownOpen(false)}
             >
-              <div className="flex items-center space-x-3 mb-3">
+              <div className="flex items-center mb-3 space-x-3">
                 {/* User Avatar */}
-                <span className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-800 text-white text-lg font-bold">
+                <span className="flex items-center justify-center w-12 h-12 text-lg font-bold text-white bg-gray-800 rounded-full">
                   {user?.userName.slice(0, 2).toUpperCase()}
                 </span>
                 <div>
-                  <h3 className="font-bold text-base sm:text-lg flex items-center space-x-2">
+                  <h3 className="flex items-center space-x-2 text-base font-bold sm:text-lg">
                     <span>{user?.userName}</span>
                   </h3>
-                  <p className="text-xs sm:text-sm text-gray-500">
+                  <p className="text-xs text-gray-500 sm:text-sm">
                     {user?.email}
                   </p>
                   {user?.isPremium && (
@@ -124,7 +125,7 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
               </div>
             </Link>
 
-            <hr className="border-gray-300 mb-2" />
+            <hr className="mb-2 border-gray-300" />
 
             {/* Dropdown Links */}
             {dropdownOptions.map(({ to, label, icon: Icon }, index) => (
@@ -132,7 +133,7 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
                 key={index}
                 to={to}
                 onClick={() => setUserProfileDropdownOpen(false)}
-                className="flex items-center px-4 py-2 text-xs sm:text-sm hover:bg-gray-100 transition-colors"
+                className="flex items-center px-4 py-2 text-xs transition-colors sm:text-sm hover:bg-gray-100"
                 role="menuitem"
               >
                 <Icon className="mr-3 text-gray-600" />
@@ -147,7 +148,7 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
                   setUserProfileDropdownOpen(false);
                   handleLogout();
                 }}
-                className="flex items-center w-full text-left px-4 py-2 text-xs sm:text-sm hover:bg-gray-100 transition-colors"
+                className="flex items-center w-full px-4 py-2 text-xs text-left transition-colors sm:text-sm hover:bg-gray-100"
                 role="menuitem"
               >
                 <FaSignOutAlt className="mr-3 text-gray-600" />

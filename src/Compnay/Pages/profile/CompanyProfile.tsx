@@ -60,6 +60,8 @@ const CompanyProfile = () => {
     }
   };
 
+  console.log(company?.verificationDocument.url)
+
   const getCompanyProfileDetails = async () => {
     try {
 
@@ -81,39 +83,39 @@ const CompanyProfile = () => {
     <div className="font-sans bg-gray-50">
       <CompanyHeader />
       <main>
-        <section className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-12">
+        <section className="py-12 text-white bg-gradient-to-r from-blue-500 to-purple-600">
           <div className="max-w-6xl mx-auto text-center">
             {company?.companyLogo?.url ? (
               <img
                 src={company.companyLogo.url}
                 alt="Company Logo"
-                className="mx-auto mb-4 w-24 h-24 rounded-full shadow-lg"
+                className="w-24 h-24 mx-auto mb-4 rounded-full shadow-lg"
               />
             ) : (
-              <div className="mx-auto mb-4 w-24 h-24 rounded-full shadow-lg bg-gray-500 flex items-center justify-center text-4xl font-bold">
+              <div className="flex items-center justify-center w-24 h-24 mx-auto mb-4 text-4xl font-bold bg-gray-500 rounded-full shadow-lg">
                 {getCompanyInitials(company?.companyName as string)}
               </div>
             )}
-            <h1 className="text-5xl font-extrabold mb-2">
+            <h1 className="mb-2 text-5xl font-extrabold">
               {company?.companyName}
             </h1>
-            <p className="text-lg flex items-center justify-center">
+            <p className="flex items-center justify-center text-lg">
               <FaEnvelope className="mr-2" />
               {company?.email}
             </p>
-            <p className="mt-2 text-lg flex items-center justify-center">
+            <p className="flex items-center justify-center mt-2 text-lg">
               <FaIndustry className="mr-2" />
               Trusted in{' '}
-              <span className="font-semibold ml-1">
+              <span className="ml-1 font-semibold">
                 {company?.industry}
               </span>{' '}
               industry
             </p>
-            <p className="mt-2 text-lg flex items-center justify-center">
+            <p className="flex items-center justify-center mt-2 text-lg">
               <FaMapMarkerAlt className="mr-2" />
               {company?.address}
             </p>
-            <p className="mt-2 text-lg flex items-center justify-center">
+            <p className="flex items-center justify-center mt-2 text-lg">
               <FaCalendarAlt className="mr-2" />
               Established:{' '}
               {company?.establishedDate
@@ -130,8 +132,8 @@ const CompanyProfile = () => {
           </div>
         </section>
 
-        <section className="py-12 px-6">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <section className="px-6 py-12">
+          <div className="grid max-w-6xl grid-cols-1 gap-8 mx-auto md:grid-cols-2 lg:grid-cols-3">
             {[
               {
                 title: 'Mission',
@@ -167,10 +169,10 @@ const CompanyProfile = () => {
             ].map((item, index) => (
               <div
                 key={index}
-                className="bg-white shadow-lg p-6 rounded-lg hover:shadow-2xl transition"
+                className="p-6 transition bg-white rounded-lg shadow-lg hover:shadow-2xl"
               >
                 <div className="flex items-center mb-2">
-                  <div className="text-3xl text-blue-600 mr-3">{item.icon}</div>
+                  <div className="mr-3 text-3xl text-blue-600">{item.icon}</div>
                   <h2 className="text-2xl font-bold">{item.title}</h2>
                 </div>
                 <p className="text-gray-600">{item.content}</p>
@@ -179,10 +181,10 @@ const CompanyProfile = () => {
           </div>
         </section>
 
-        <section className="py-12 px-6 bg-gray-100">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white shadow-lg p-6 rounded-lg">
-              <h2 className="text-2xl font-bold mb-2">Uploaded Documents</h2>
+        <section className="px-6 py-12 bg-gray-100">
+          <div className="grid max-w-6xl grid-cols-1 gap-8 mx-auto md:grid-cols-2">
+            <div className="p-6 bg-white rounded-lg shadow-lg">
+              <h2 className="mb-2 text-2xl font-bold">Uploaded Documents</h2>
               {/* <img src={company?.verificationDocument.url}></img> */}
 
               {company?.verificationDocument.url?.endsWith('.pdf') ? (
@@ -195,18 +197,18 @@ const CompanyProfile = () => {
                 <img
                   src={company?.verificationDocument.url}
                   alt="Uploaded Document"
-                  className="w-96 object-cover rounded-md"
+                  className="object-cover rounded-md w-96"
                 />
               )}
             </div>
-            <div className="bg-white shadow-lg p-6 rounded-lg">
-              <h2 className="text-2xl font-bold mb-2">Members</h2>
-              <ul className="list-disc list-inside text-gray-600">
+            <div className="p-6 bg-white rounded-lg shadow-lg">
+              <h2 className="mb-2 text-2xl font-bold">Members</h2>
+              <ul className="text-gray-600 list-disc list-inside">
                 {members.map((member, index) => (
                   <li key={index} className="flex items-center">
                     {member.userName}{' '}
                     {member.role === 'companyAdmin' && (
-                      <span className="ml-2 text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
+                      <span className="px-2 py-1 ml-2 text-sm text-blue-600 bg-blue-100 rounded-full">
                         Admin
                       </span>
                     )}
@@ -217,41 +219,41 @@ const CompanyProfile = () => {
           </div>
         </section>
 
-        <section className="bg-gray-100 py-12 px-6">
+        <section className="px-6 py-12 bg-gray-100">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-semibold text-center mb-8">
+            <h2 className="mb-8 text-3xl font-semibold text-center">
               Connect with Us
             </h2>
             <div className="flex justify-center space-x-6">
               <a
-                href={additionalDetails.socialLinks.facebook}
+                href={additionalDetails?.socialLinks?.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 text-4xl hover:text-blue-700 transition"
+                className="text-4xl text-blue-600 transition hover:text-blue-700"
               >
                 <FaFacebook />
               </a>
               <a
-                href={additionalDetails.socialLinks.twitter}
+                href={additionalDetails?.socialLinks?.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 text-4xl hover:text-blue-500 transition"
+                className="text-4xl text-blue-400 transition hover:text-blue-500"
               >
                 <FaTwitter />
               </a>
               <a
-                href={additionalDetails.socialLinks.linkedin}
+                href={additionalDetails?.socialLinks?.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-800 text-4xl hover:text-blue-900 transition"
+                className="text-4xl text-blue-800 transition hover:text-blue-900"
               >
                 <FaLinkedin />
               </a>
               <a
-                href={additionalDetails.socialLinks.instagram}
+                href={additionalDetails?.socialLinks?.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-pink-600 text-4xl hover:text-pink-700 transition"
+                className="text-4xl text-pink-600 transition hover:text-pink-700"
               >
                 <FaInstagram />
               </a>

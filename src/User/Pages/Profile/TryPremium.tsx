@@ -48,16 +48,17 @@ const CheckoutForm: React.FC<{ selectedPlan: Plans }> = ({ selectedPlan }) => {
       }
   
 
-      const { clientSecret, message } = await createPaymentIntentService(
+      const response = await createPaymentIntentService(
         selectedPlan.price, 
         selectedPlan.durationInDays, 
         user?._id as string, 
         selectedPlan._id as string
       );
-  
-      if (!clientSecret) {
-        toast.error(message || 'Failed to create payment intent');
-        return;
+      console.log(response)
+  console.log('client secret',response.data.clientSecret)
+
+      if (!response.data.clientSecret) {
+        toast.error('Payment failed');
       }
   
       const cardElement = elements.getElement(CardElement);
@@ -67,7 +68,7 @@ const CheckoutForm: React.FC<{ selectedPlan: Plans }> = ({ selectedPlan }) => {
   
 
       const { paymentIntent, error } = await stripe.confirmCardPayment(
-        clientSecret,
+        response.data.clientSecret,
         {
           payment_method: { card: cardElement },
         }
@@ -245,3 +246,4 @@ const PremiumPlans: React.FC = () => {
 };
 
 export default PremiumPlans;
+

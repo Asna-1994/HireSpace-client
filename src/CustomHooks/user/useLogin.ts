@@ -25,8 +25,9 @@ const useLogin = () => {
 
       if (response.data.success) {
         const { token, user } = response.data.data;
+        console.log(user)
         toast.success(response.data.message);
-        dispatch(userLogin({ user, token }));
+        dispatch(userLogin({ user}));
         console.log('User details:', user);
         if (
           user.userRole === 'companyAdmin' ||

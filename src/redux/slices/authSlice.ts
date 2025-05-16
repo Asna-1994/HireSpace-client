@@ -4,16 +4,12 @@ import { Company, User } from '../../Utils/Interfaces/interface';
 interface AuthState {
   user: User | null;
   company: Company | null;
-  token: string | null;
-  // jobSeekerProfile: JobSeekerProfile | null;
   isAuthenticated: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
   company: null,
-  token: null,
-  // jobSeekerProfile :null,
   isAuthenticated: false,
 };
 
@@ -23,37 +19,30 @@ const authSlice = createSlice({
   reducers: {
     userLogin: (
       state,
-      action: PayloadAction<{ user: User; token: string }>
+      action: PayloadAction<{ user: User }>
     ) => {
       state.user = action.payload.user;
-      state.token = action.payload.token;
       state.isAuthenticated = true;
-      // state.jobSeekerProfile = action.payload.jobSeekerProfile;
     },
     companyLogin: (
       state,
-      action: PayloadAction<{ company: Company; token: string; user?: User }>
+      action: PayloadAction<{ company: Company; user?: User }>
     ) => {
       state.company = action.payload.company;
       state.user = action.payload.user || null;
-      state.token = action.payload.token;
       state.isAuthenticated = true;
     },
     companyUpdate: (state, action: PayloadAction<Company>) => {
       state.company = action.payload;
     },
     userUpdate: (state, action: PayloadAction<User>) => {
+      console.log("user reached in redx",action.payload)
       state.user = action.payload;
     },
-    // jobSeekerProfileUpdate: (state, action: PayloadAction<JobSeekerProfile>) => {
-    //   state.jobSeekerProfile = action.payload;
-    // },
     logout: (state) => {
       state.user = null;
       state.company = null;
-      state.token = null;
       state.isAuthenticated = false;
-      // state.jobSeekerProfile = null;
     },
   },
 });

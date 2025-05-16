@@ -17,12 +17,12 @@ const axiosInstance = axios.create({
   },
 });
 
-// Flag to prevent multiple refresh requests
+
 let isRefreshing = false;
-// Queue of requests to retry after token refresh
+
 let failedQueue : any = [];
 
-// Process the queue of failed requests
+
 const processQueue = (error  :any, token = null) => {
   failedQueue.forEach((prom : any) => {
     if (error) {
@@ -32,19 +32,19 @@ const processQueue = (error  :any, token = null) => {
     }
   });
   
-  // Reset the queue
+
   failedQueue = [];
 };
 
-// Response interceptor
+
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // If the error is not a 401 or we've already tried to refresh, reject
+
     if (!error.response || error.response.status !== 401 || originalRequest._retry) {
-      // Handle specific error cases
+
       if (error.response) {
         const { status, data } = error.response;
 
@@ -53,7 +53,6 @@ axiosInstance.interceptors.response.use(
           toast.error('Your account is blocked. You have been logged out.');
           window.location.href = '/';
         } else if (status === 401 && data.message === 'Invalid refresh token, please login again') {
-          // If refresh token is invalid, logout
           store.dispatch(logout());
           toast.error('Session expired. Please log in again.');
           window.location.href = '/';
@@ -62,10 +61,10 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Mark that we've attempted to retry this request
+
     originalRequest._retry = true;
 
-    // If we're already refreshing, add this request to the queue
+
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
         failedQueue.push({ resolve, reject });
@@ -76,35 +75,28 @@ axiosInstance.interceptors.response.use(
         .catch(err => Promise.reject(err));
     }
 
-    // Start refreshing
+  
     isRefreshing = true;
 
     try {
-      // Call refresh token endpoint
-      await axiosInstance.post('/auth/refresh');
-      
-      // Process the queue with success
-      processQueue(null);
-      
-      // Reset refreshing flag
-      isRefreshing = false;
-      
-      // Retry the original request
-      return axiosInstance(originalRequest);
-    } catch (refreshError) {
-      // Process the queue with error
-      processQueue(refreshError);
-      
-      // Reset refreshing flag
-      isRefreshing = false;
+  const { data } = await axiosInstance.post('/auth/refresh');
+  processQueue(null, data.token);
 
-      // If refresh token request fails, logout the user
-      store.dispatch(logout());
-      toast.error('Session expired. Please log in again.');
-      window.location.href = '/';
-      
-      return Promise.reject(refreshError);
-    }
+  isRefreshing = false;
+
+  return axiosInstance(originalRequest);
+} catch (refreshError) {
+  processQueue(refreshError);
+
+  isRefreshing = false;
+
+  store.dispatch(logout());
+  toast.error('Session expired. Please log in again.');
+  window.location.href = '/';
+
+  return Promise.reject(refreshError);
+}
+
   }
 );
 
