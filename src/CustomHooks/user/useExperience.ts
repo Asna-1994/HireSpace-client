@@ -178,7 +178,7 @@ const useExperience = (userId: string | undefined) => {
         toast.error(data.message);
       }
     } catch (error: any) {
-      toast.error('Error deleting experience');
+      toast.error(error.message || 'Error deleting experience');
     }
   };
 

@@ -31,7 +31,7 @@ const data = await loginCompany(email, password)
         toast.success(data.message);
         dispatch(companyLogin({ company,  user }));
         console.log('User details:',user, company);
-        navigate(`/company/home/${company._id}`);
+        navigate(`/company/home`);
       } else {
         toast.error(data.message);
       }

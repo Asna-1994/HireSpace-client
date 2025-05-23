@@ -107,9 +107,9 @@ const Header: FC = () => {
     <NavLink
       to={to}
       onClick={onClick}
-      className="relative flex flex-col items-center text-gray-300 hover:text-white transition duration-300 space-y-1"
+      className="relative flex flex-col items-center space-y-1 text-gray-300 transition duration-300 hover:text-white"
     >
-      <div className="text-lg relative">
+      <div className="relative text-lg">
         {icon}
         {badgeCount !== undefined && badgeCount > 0 && (
           <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs sm:text-[10px] rounded-full h-5 w-5 flex items-center justify-center">
@@ -122,21 +122,21 @@ const Header: FC = () => {
   );
 
   return (
-    <header className="bg-black text-white shadow-md px-4">
-      <div className="container mx-auto flex items-center justify-between py-4 px-6">
+    <header className="px-4 text-white bg-black shadow-md">
+      <div className="container flex items-center justify-between px-6 py-4 mx-auto">
         <Link
-          to={`/user/home/${user?._id}`}
+          to={`/user/home`}
           className="text-2xl font-bold text-white hover:text-gray-300"
         >
           HireSpace
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-4 items-center">
+        <nav className="items-center hidden space-x-4 md:flex">
           {isAuthenticated && user ? (
             <>
               <NavItem
-                to={`/user/home/${user._id}`}
+                to={`/user/home`}
                 icon={<FaHome />}
                 label="Home"
               />
@@ -179,11 +179,11 @@ const Header: FC = () => {
         </nav>
 
         {/* Desktop User Profile / CTA */}
-        <div className="hidden md:flex items-center space-x-4">
+        <div className="items-center hidden space-x-4 md:flex">
           {isAuthenticated && user ? (
             <UserProfileDropdown user={user} handleLogout={handleLogout} />
           ) : (
-            <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
+            <button className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">
               Get Started
             </button>
           )}
@@ -223,7 +223,7 @@ const Header: FC = () => {
 
       {/* Mobile Navigation */}
       {menuOpen && (
-        <nav className="md:hidden bg-gray-800 text-white px-6 py-4 space-y-4">
+        <nav className="px-6 py-4 space-y-4 text-white bg-gray-800 md:hidden">
           {isAuthenticated && user ? (
             <>
               {/* Mobile Profile Display with Dropdown Toggle */}
@@ -246,7 +246,7 @@ const Header: FC = () => {
               </div>
 
               <NavItem
-                to={`/user/home/${user._id}`}
+                to={`/user/home`}
                 icon={<FaHome />}
                 label="Home"
                 onClick={() => {
@@ -298,7 +298,7 @@ const Header: FC = () => {
                   setMenuOpen(false);
                   setMobileProfileDropdownOpen(false);
                 }}
-                className="flex items-center text-gray-300 hover:text-white transition duration-300 space-x-2 text-xs"
+                className="flex items-center space-x-2 text-xs text-gray-300 transition duration-300 hover:text-white"
               >
                 <FaSignInAlt className="w-5 h-5" />
                 <span>Logout</span>

@@ -19,7 +19,7 @@ const GoogleSignInButton: React.FC = () => {
         const {  user } = data.data;
         dispatch(userLogin({ user }));
         console.log('User details:', user);
-        navigate(`/user/home/${user._id}`);
+        navigate(`/user/home`);
         toast.success('Login successful');
       } else {
         toast.error(data.message);

@@ -522,7 +522,9 @@ const SpamList: React.FC = () => {
           {/* Conditionally render table or cards based on screen size */}
           <div className="overflow-x-auto">
             {loading ? (
-              <div className="flex justify-center p-4">Loading...</div>
+             <div className="flex items-center justify-center py-8">
+                <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+              </div>
             ) : (
               isMobileView ? renderMobileView() : <ReusableTable columns={columns} data={spams} />
             )}

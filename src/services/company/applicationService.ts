@@ -52,7 +52,8 @@ export const updateStatus = async (applicationId: string, status : string) => {
       return response.data;
     } catch (error: any) {
       console.log(error)
-      throw error.response?.data?.message || 'Something went wrong';
+        const message = error.response?.data?.message || 'Something went wrong';
+    throw new Error(message); // Make it a real Error object
     }
   };
 

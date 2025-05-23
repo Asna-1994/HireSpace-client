@@ -24,7 +24,7 @@ const useLogin = () => {
       });
 
       if (response.data.success) {
-        const { token, user } = response.data.data;
+        const {  user } = response.data.data;
         console.log(user)
         toast.success(response.data.message);
         dispatch(userLogin({ user}));
@@ -39,12 +39,13 @@ const useLogin = () => {
         }
       } else {
         toast.error(response.data.message);
+        console.log(response)
       }
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message || 'Something went wrong';
       toast.error(errorMessage);
-      console.error('Login error:', error);
+      console.error(error);
     } finally {
       setLoading(false);
     }

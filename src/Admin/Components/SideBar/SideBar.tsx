@@ -179,7 +179,7 @@ const SideBar = () => {
           <ul className="p-4 space-y-2">
             <li>
               <NavLink
-                to={`/admin/home/${user?._id}`}
+                to={`/admin/home`}
                 className={({ isActive }) => 
                   `flex items-center py-2 px-4 rounded transition ${
                     isActive ? 'bg-blue-700' : 'hover:bg-blue-700'

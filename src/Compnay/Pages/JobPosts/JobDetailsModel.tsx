@@ -53,26 +53,30 @@ const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
         toast.error(data.message);
       }
     } catch (err: any) {
-      toast.error(err);
+    const errorMessage =
+      err?.response?.data?.message ||
+      err?.message ||
+      'Something went wrong while deleting the job post.';
+    toast.error(errorMessage);
 
     }
   };
 
   return (
-    <div className="fixed  inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full max-h-screen overflow-y-auto">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold mb-4">{jobPost.jobTitle}</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="w-full max-w-2xl max-h-screen p-8 overflow-y-auto bg-white rounded-lg shadow-lg">
+        <div className="flex items-center justify-between">
+          <h2 className="mb-4 text-2xl font-bold">{jobPost.jobTitle}</h2>
           <div className="flex gap-2">
             <button
               onClick={handleEdit}
-              className="bg-green-600 text-white px-3 py-1 rounded-lg "
+              className="px-3 py-1 text-white bg-green-600 rounded-lg "
             >
               Edit
             </button>
             <button
               onClick={handleDelete}
-              className="bg-red-800 text-white px-3 py-1 rounded-lg "
+              className="px-3 py-1 text-white bg-red-800 rounded-lg "
             >
               Delete
             </button>
@@ -137,10 +141,10 @@ const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
         <p>
           <strong>Status:</strong> {jobPost.status}
         </p>
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <button
             onClick={onClose}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg mt-4"
+            className="px-4 py-2 mt-4 text-white bg-blue-600 rounded-lg"
           >
             Close
           </button>

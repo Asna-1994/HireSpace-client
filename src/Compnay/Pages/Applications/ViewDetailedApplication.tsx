@@ -22,17 +22,17 @@ const ApplicationDetails = () => {
         toast.error(data.message);
       }
     } catch (err: any) {
-      toast.error(err);
+      toast.error(err.message);
     }
   };
 
   return (
     <>
       <CompanyHeader />
-      <div className="container mx-auto px-6 py-12 space-y-8">
+      <div className="container px-6 py-12 mx-auto space-y-8">
         {/* Header Section */}
         <motion.div
-          className="bg-gradient-to-r from-indigo-500 to-purple-600 shadow-lg text-white rounded-lg p-8"
+          className="p-8 text-white rounded-lg shadow-lg bg-gradient-to-r from-indigo-500 to-purple-600"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -44,7 +44,7 @@ const ApplicationDetails = () => {
         </motion.div>
 
         {/* Content Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
           {/* Applicant Information */}
           <motion.div
             className="space-y-6"
@@ -52,8 +52,8 @@ const ApplicationDetails = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            <div className="p-8 bg-white border border-gray-100 shadow-lg rounded-2xl">
+              <h3 className="mb-4 text-2xl font-bold text-gray-900">
                 Applicant Information
               </h3>
               <div className="space-y-3 text-gray-700">
@@ -113,7 +113,7 @@ const ApplicationDetails = () => {
 
                 <button
                   onClick={handleStatusUpdate}
-                  className="mt-4 bg-indigo-500 text-white px-6 py-2 rounded-lg hover:bg-indigo-600"
+                  className="px-6 py-2 mt-4 text-white bg-indigo-500 rounded-lg hover:bg-indigo-600"
                 >
                   Update Status
                 </button>
@@ -122,16 +122,16 @@ const ApplicationDetails = () => {
 
             {/* Resume Section */}
             {application.resumeUrl && (
-              <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-                <h4 className="text-2xl font-bold text-gray-900 mb-4">
+              <div className="p-8 bg-white border border-gray-100 shadow-lg rounded-2xl">
+                <h4 className="mb-4 text-2xl font-bold text-gray-900">
                   Resume
                 </h4>
-                <div className="mt-4 flex flex-col space-y-4">
+                <div className="flex flex-col mt-4 space-y-4">
                   {application.resumeUrl.endsWith('.pdf') ? (
                     <iframe
                       src={application.resumeUrl}
                       title="Resume PDF"
-                      className="w-full h-96 border rounded-md"
+                      className="w-full border rounded-md h-96"
                     />
                   ) : (
                     <div className="flex items-center space-x-2">
@@ -140,7 +140,7 @@ const ApplicationDetails = () => {
                         href={application.resumeUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-lg text-indigo-600 hover:text-indigo-800 font-medium flex items-center space-x-1"
+                        className="flex items-center space-x-1 text-lg font-medium text-indigo-600 hover:text-indigo-800"
                       >
                         <span>View Resume</span>
                       </a>
@@ -149,7 +149,7 @@ const ApplicationDetails = () => {
                   <a
                     href={application.resumeUrl}
                     download
-                    className="bg-indigo-500 text-white px-6 py-2 rounded-lg hover:bg-indigo-600 text-center"
+                    className="px-6 py-2 text-center text-white bg-indigo-500 rounded-lg hover:bg-indigo-600"
                   >
                     Download Resume
                   </a>
@@ -160,20 +160,20 @@ const ApplicationDetails = () => {
 
           {/* Cover Letter Section */}
           <motion.div
-            className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100"
+            className="p-8 bg-white border border-gray-100 shadow-lg rounded-2xl"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">
+            <h3 className="mb-6 text-2xl font-bold text-gray-900">
               Cover Letter
             </h3>
-            <div className="space-y-4 text-gray-700 leading-relaxed">
+            <div className="space-y-4 leading-relaxed text-gray-700">
               <p className="font-semibold text-gray-800">
                 {application.coverLetter.salutation},
               </p>
               <p>{application.coverLetter.body}</p>
-              <p className="font-semibold mt-4 text-gray-800">Sincerely,</p>
+              <p className="mt-4 font-semibold text-gray-800">Sincerely,</p>
               <p className="font-semibold text-gray-800">
                 {application.userId.userName}
               </p>

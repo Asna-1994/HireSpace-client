@@ -63,7 +63,7 @@ const OtpVerification = () => {
         toast.error(data.message);
       }
     } catch (error: any) {
-      toast.error(error);
+      toast.error(error.message);
       console.error(error);
     }
   };
@@ -85,9 +85,11 @@ const OtpVerification = () => {
         localStorage.removeItem('otpExpiry');
         navigate('/user/login');
       } else {
+        console.log(data)
         toast.error(data.message);
       }
     } catch (error: any) {
+      console.log(error)
       toast.error(error);
     }
   };
@@ -95,16 +97,16 @@ const OtpVerification = () => {
   return (
     <>
       <Header />
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 px-4">
-        <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-3">
+      <div className="flex items-center justify-center min-h-screen px-4 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-xl">
+          <h2 className="mb-3 text-2xl font-bold text-center text-gray-800">
             OTP Verification
           </h2>
 
-          <h2 className="text-center text-lg text-gray-700 mb-4">
+          <h2 className="mb-4 text-lg text-center text-gray-700">
             OTP has been sent to <span className="font-semibold">{email}</span>
           </h2>
-          <h2 className="text-center text-sm text-gray-600 mb-6">
+          <h2 className="mb-6 text-sm text-center text-gray-600">
             Your OTP will expire after{' '}
             <span className="font-semibold">{timer} seconds</span>
           </h2>
@@ -118,12 +120,12 @@ const OtpVerification = () => {
               name="otp"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              className="w-full rounded-md p-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Enter OTP"
             />
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition duration-300"
+              className="w-full px-4 py-2 text-white transition duration-300 bg-blue-600 rounded-lg hover:bg-blue-700"
             >
               Submit
             </button>
@@ -132,7 +134,7 @@ const OtpVerification = () => {
           <button
             type="button"
             onClick={handleResendOtp}
-            className="mt-4 w-full bg-blue-900 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition duration-300 disabled:opacity-50"
+            className="w-full px-4 py-2 mt-4 text-white transition duration-300 bg-blue-900 rounded-lg hover:bg-blue-700 disabled:opacity-50"
             disabled={timer > 0}
           >
             Resend OTP

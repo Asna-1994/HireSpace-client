@@ -14,6 +14,7 @@ import EditProfile from '../Compnay/Pages/profile/EditProfile';
 import UploadLogo from '../Compnay/Pages/profile/uploadLogo';
 import UploadVerificationDocument from '../Compnay/Pages/profile/UploadVerificationDocument';
 import AddMembers from '../Compnay/Pages/profile/AddMembres';
+import PublicRoute from '../Shared/Pages/RestrictLogin';
 const CreateJobPost = lazy(() => import('../Compnay/Pages/JobPosts/CreateJobPost'));
 const CompanyJobPosts = lazy(() => import('../Compnay/Pages/JobPosts/AllJobPosts'));
 const ListApplications = lazy(() => import('../Compnay/Pages/Applications/MyAppllications'));
@@ -25,10 +26,14 @@ const CompanyRoutes = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
-        <Route path="signin" element={<CompanySignup />} />
+
+          <Route element={<PublicRoute redirectPath="/company/home" />}>
+      <Route path="signin" element={<CompanySignup />} />
         <Route path="login" element={<CompanyLogin />} />
         <Route path="otp-verification" element={<OtpVerificationCompany />} />
         <Route path="forgot-password" element={<ForgotPasswordCompany />} />
+  </Route>
+   
         <Route
           element={
             <ProtectedRoute
@@ -39,7 +44,7 @@ const CompanyRoutes = () => {
             />
           }
         >
-          <Route path="home/:companyId" element={<CompanyHome />} />
+          <Route path="home" element={<CompanyHome />} />
           <Route path="profile/:companyId" element={<CompanyProfilePage />} />
           <Route path="edit-profile/:companyId" element={<EditProfile />} />
           <Route path="upload-logo/:companyId" element={<UploadLogo />} />

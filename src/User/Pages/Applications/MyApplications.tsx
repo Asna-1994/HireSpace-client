@@ -40,22 +40,25 @@ const MyApplications = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div
-          className="spinner-border animate-spin inline-block w-12 h-12 border-4 rounded-full"
-          role="status"
-        >
-          <span className="sr-only">Loading...</span>
-        </div>
-      </div>
+      // <div className="flex items-center justify-center h-screen">
+      //   <div
+      //     className="inline-block w-12 h-12 border-4 rounded-full spinner-border animate-spin"
+      //     role="status"
+      //   >
+      //     <span className="sr-only">Loading...</span>
+      //   </div>
+      // </div>
+            <div className="flex items-center justify-center py-8">
+                <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+              </div>
     );
   }
 
   return (
     <>
       <Header />
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen">
-        <div className="bg-gradient-to-r from-green-400 to-blue-500 shadow-lg text-white rounded-lg p-6 sm:p-8">
+      <div className="container min-h-screen px-4 py-8 mx-auto sm:px-6 lg:px-8">
+        <div className="p-6 text-white rounded-lg shadow-lg bg-gradient-to-r from-green-400 to-blue-500 sm:p-8">
           <h2 className="text-3xl font-semibold">Your Job Applications</h2>
           <p className="mt-2 text-lg">
             View and manage your applications to various jobs.
@@ -63,39 +66,39 @@ const MyApplications = () => {
         </div>
 
         <div className="mt-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <h3 className="text-2xl font-semibold text-gray-800">
               Applications
             </h3>
             <input
               type="text"
               placeholder="Search Application.."
-              className="p-2 border border-gray-300 rounded-lg w-full sm:w-1/3"
+              className="w-full p-2 border border-gray-300 rounded-lg sm:w-1/3"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
 
           {applications.length === 0 ? (
-            <div className="mt-4 p-4 bg-yellow-100 text-yellow-800 rounded-lg">
+            <div className="p-4 mt-4 text-yellow-800 bg-yellow-100 rounded-lg">
               You haven't applied to any jobs yet. Explore new opportunities!
             </div>
           ) : (
-            <div className="space-y-4 mt-6">
+            <div className="mt-6 space-y-4">
               {applications.map((application) => (
                 <div
                   key={application._id}
-                  className="bg-white p-6 rounded-lg shadow hover:shadow-lg flex flex-col sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col p-6 bg-white rounded-lg shadow hover:shadow-lg sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex items-center gap-4">
                     {application.jobPostId?.companyId.companyLogo.url ? (
                       <img
                         src={application.jobPostId?.companyId.companyLogo.url}
                         alt="Company Logo"
-                        className="h-11 w-11 object-cover rounded-full"
+                        className="object-cover rounded-full h-11 w-11"
                       />
                     ) : (
-                      <div className="h-11 w-11 flex items-center justify-center bg-gray-200 rounded-full">
+                      <div className="flex items-center justify-center bg-gray-200 rounded-full h-11 w-11">
                         <FaBriefcase className="text-2xl text-gray-500" />
                       </div>
                     )}
@@ -106,7 +109,7 @@ const MyApplications = () => {
                       <h5 className="text-lg font-medium text-gray-700">
                         {application.jobPostId?.companyId.companyName}
                       </h5>
-                      <p className="text-gray-600 text-sm">
+                      <p className="text-sm text-gray-600">
                         Applied on{' '}
                         <span className="font-semibold">
                           {new Date(
@@ -116,7 +119,7 @@ const MyApplications = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4 mt-4 sm:mt-0">
+                  <div className="flex items-center mt-4 space-x-4 sm:mt-0">
                     {user?.isPremium && (
                       <span
                         className={`${
@@ -133,7 +136,7 @@ const MyApplications = () => {
                     <Link
                       to={`/user/applications/${application._id}`}
                       state={{ application }}
-                      className="text-blue-600 hover:underline text-sm"
+                      className="text-sm text-blue-600 hover:underline"
                     >
                       View Details
                     </Link>
@@ -148,11 +151,11 @@ const MyApplications = () => {
         </div>
 
         {/* Pagination */}
-        <div className="flex flex-col sm:flex-row justify-between items-center mt-6 p-5">
+        <div className="flex flex-col items-center justify-between p-5 mt-6 sm:flex-row">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 mb-2 sm:mb-0"
+            className="px-4 py-2 mb-2 text-white bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-50 sm:mb-0"
           >
             Previous
           </button>
@@ -162,7 +165,7 @@ const MyApplications = () => {
           <button
             onClick={() => setCurrentPage((prev) => prev + 1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+            className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-50"
           >
             Next
           </button>

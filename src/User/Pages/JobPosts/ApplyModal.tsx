@@ -37,22 +37,22 @@ const data = await applyForJob(coverLetter, userId, jobPostId, companyId )
         toast.error(data.message);
       }
     } catch (err: any) {
-      toast.error(err);
+      toast.error(err.message);
     }
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
-      <div className="bg-white p-6 sm:p-8 rounded-lg w-full max-w-md relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+      <div className="relative w-full max-w-md p-6 bg-white rounded-lg sm:p-8">
         <button
-          className="absolute top-2 right-2 text-gray-600 text-xl focus:outline-none"
+          className="absolute text-xl text-gray-600 top-2 right-2 focus:outline-none"
           onClick={onClose}
           aria-label="Close modal"
         >
           &times;
         </button>
-        <h2 className="text-xl font-semibold mb-4">Add Cover Letter</h2>
+        <h2 className="mb-4 text-xl font-semibold">Add Cover Letter</h2>
 
         <div>
           <input
@@ -62,7 +62,7 @@ const data = await applyForJob(coverLetter, userId, jobPostId, companyId )
             onChange={(e) =>
               setCoverLetter({ ...coverLetter, salutation: e.target.value })
             }
-            className="w-full p-2 border border-gray-300 rounded-md mb-4"
+            className="w-full p-2 mb-4 border border-gray-300 rounded-md"
           />
           <textarea
             placeholder="Cover letter body..."
@@ -80,13 +80,13 @@ const data = await applyForJob(coverLetter, userId, jobPostId, companyId )
             onChange={(e) =>
               setCoverLetter({ ...coverLetter, closing: e.target.value })
             }
-            className="w-full p-2 border border-gray-300 rounded-md mb-4"
+            className="w-full p-2 mb-4 border border-gray-300 rounded-md"
           />
         </div>
 
-        <div className="mt-6 flex justify-end">
+        <div className="flex justify-end mt-6">
           <button
-            className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+            className="px-6 py-2 text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600"
             onClick={handleApply}
           >
             Submit

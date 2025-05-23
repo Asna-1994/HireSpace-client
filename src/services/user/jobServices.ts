@@ -24,6 +24,7 @@ export const applyForJob = async (coverLetter : CoverLetter, userId : string, jo
       return response.data;
     } catch (err: any) {
       console.log(err)
+      console.log(err.response?.data?.message)
       throw new Error(err.response?.data?.message || 'Error fetching skills');
     }
   };

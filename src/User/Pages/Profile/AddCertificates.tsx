@@ -29,13 +29,20 @@ const AddCertificates: React.FC = () => {
     handleEdit,
     } = useCertificate(user?._id)
 
+    if(loading){
+      return (
+              <div className="flex items-center justify-center py-8">
+                <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+              </div>
+      )
+    }
 
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-r from-blue-100 to-blue-200 p-6">
+      <div className="min-h-screen p-6 bg-gradient-to-r from-blue-100 to-blue-200">
         <motion.div
-          className="bg-gradient-to-r from-purple-400 to-blue-500 shadow-lg text-white rounded-lg p-6"
+          className="p-6 text-white rounded-lg shadow-lg bg-gradient-to-r from-purple-400 to-blue-500"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -43,10 +50,10 @@ const AddCertificates: React.FC = () => {
           <h2 className="text-3xl font-semibold">Add Certificates</h2>
         </motion.div>
 
-        <div className="max-w-6xl mx-auto mt-2 bg-white p-8 rounded-xl shadow-lg grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid max-w-6xl grid-cols-1 gap-8 p-8 mx-auto mt-2 bg-white shadow-lg rounded-xl lg:grid-cols-2">
           {/* Form Section */}
-          <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-            <h3 className="text-2xl font-semibold text-blue-700 mb-6 text-center">
+          <div className="p-6 rounded-lg shadow-md bg-gray-50">
+            <h3 className="mb-6 text-2xl font-semibold text-center text-blue-700">
               {editIndex !== null ? 'Update Certificate' : 'Add Certificate'}
             </h3>
 
@@ -98,10 +105,10 @@ const AddCertificates: React.FC = () => {
                     value={form[field.name as keyof CertificateObject]}
                     onChange={handleChange}
                     placeholder={field.placeholder}
-                    className="mt-1 w-full px-1 py-1 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full px-1 py-1 mt-1 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   {errors[field.name] && (
-                    <p className="text-red-500 text-sm mt-1">
+                    <p className="mt-1 text-sm text-red-500">
                       {errors[field.name]}
                     </p>
                   )}
@@ -111,7 +118,7 @@ const AddCertificates: React.FC = () => {
               <div className="text-center">
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white py-1 px-6 rounded-lg shadow-md hover:bg-blue-700 transition"
+                  className="px-6 py-1 text-white transition bg-blue-600 rounded-lg shadow-md hover:bg-blue-700"
                 >
                   {editIndex !== null ? 'Update' : 'Add'} Certificate
                 </button>
@@ -121,11 +128,11 @@ const AddCertificates: React.FC = () => {
 
           {/* List Section */}
           <div>
-            <h3 className="text-2xl font-semibold text-blue-700 mb-6 text-center">
+            <h3 className="mb-6 text-2xl font-semibold text-center text-blue-700">
               Certificates
             </h3>
             {certificates.length === 0 ? (
-              <p className="text-gray-600 text-center">
+              <p className="text-center text-gray-600">
                 No certificates added yet.
               </p>
             ) : (
@@ -133,7 +140,7 @@ const AddCertificates: React.FC = () => {
                 {certificates.map((cert, index) => (
                   <li
                     key={cert._id}
-                    className="bg-white p-6 rounded-lg shadow-md flex justify-between items-start"
+                    className="flex items-start justify-between p-6 bg-white rounded-lg shadow-md"
                   >
                     <div>
                       <p className="text-lg font-semibold text-gray-800">

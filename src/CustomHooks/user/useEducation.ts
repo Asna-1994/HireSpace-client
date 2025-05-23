@@ -113,7 +113,7 @@ const useEducation = (userId: string | undefined) => {
         toast.error(data.message);
       }
     } catch (err: any) {
-      toast.error(err);
+      toast.error(err.message);
     }
   };
 
@@ -129,7 +129,7 @@ const useEducation = (userId: string | undefined) => {
         toast.error(data.message);
       }
     } catch (error: any) {
-      toast.error('Error deleting education');
+      toast.error(error.message || 'Error deleting education');
     }
   };
 

@@ -218,7 +218,15 @@ const PremiumPlans: React.FC = () => {
 
           {/* Premium Plans */}
           {loading ? (
-            <p className="text-center col-span-full">Loading plans...</p>
+
+
+
+              <div className="flex items-center justify-center py-8">
+                <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+              </div>
+      
+    
+      
           ) : (
             plans.map((plan) => (
               <PricingCard

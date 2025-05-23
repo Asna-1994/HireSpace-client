@@ -111,7 +111,7 @@ const useCertificate = (userId: string | undefined) => {
         toast.error(data.message);
       }
     } catch (error: any) {
-      toast.error(error);
+      toast.error(error.message);
     }
   };
 

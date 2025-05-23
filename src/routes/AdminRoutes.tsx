@@ -10,6 +10,7 @@ import AdminLogin from '../Admin/Pages/Login/AdminLogin';
 import AdminHome from '../Admin/Pages/Home/AdminHome';
 import UserList from '../Admin/Pages/UsersList/UserList';
 import CompanyList from '../Admin/Pages/CompanyList/CompanyList';
+import PublicRoute from '../Shared/Pages/RestrictLogin';
 const AdminProfile = lazy(() => import('../Admin/Pages/Profile/EditBasicDetails'));
 const ManagePlans = lazy(() => import('../Admin/Pages/ManagePlans/ManagePlans'));
 const PremiumUserList = lazy(() => import('../Admin/Pages/PremiumUsers/PremiumUsers'));
@@ -21,7 +22,10 @@ const AdminRoutes = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
-        <Route path="login" element={<AdminLogin />} />
+          <Route element={<PublicRoute redirectPath="/admin/home" />}>
+    <Route path="login" element={<AdminLogin />} />
+  </Route>
+    
         <Route
           element={
             <ProtectedRoute
@@ -32,7 +36,7 @@ const AdminRoutes = () => {
             />
           }
         >
-          <Route path="home/:adminId" element={<AdminHome />} />
+          <Route path="home" element={<AdminHome />} />
           <Route path="all-users" element={<UserList />} />
           <Route path="all-companies" element={<CompanyList />} />
           <Route path="edit-profile/:adminId" element={<AdminProfile />} />

@@ -181,7 +181,7 @@ const AdminHeader: FC = () => {
     <header className="z-50 w-full shadow bg-gradient-to-r from-indigo-600 to-purple-600">
       <div className="container flex items-center justify-between px-4 py-3 mx-auto">
         <Link
-          to={`/user-home/${user?._id}`}
+          to={`/admin/home`}
           className="text-xl font-bold text-white transition md:text-2xl hover:text-gray-200"
         >
           HireSpace
@@ -190,7 +190,7 @@ const AdminHeader: FC = () => {
         {isAuthenticated && (
           <nav className="items-center hidden space-x-6 md:flex">
             <NavLink
-              to={`/admin/home/${user?._id}`}
+              to={`/admin/home`}
               className={({ isActive }) => 
                 `text-white hover:text-gray-200 transition duration-300 ${
                   isActive ? 'font-semibold border-b-2 border-white pb-1' : ''
@@ -254,7 +254,7 @@ const AdminHeader: FC = () => {
         <div ref={menuRef} className="z-50 bg-indigo-600 md:hidden">
           <nav className="px-4 py-3 space-y-3 border-t border-indigo-500">
             <NavItem
-              to={`/admin/home/${user?._id}`}
+              to={`/admin/home`}
               icon={<FaHome size={16} />}
               label="Home"
               onClick={() => setMenuOpen(false)}

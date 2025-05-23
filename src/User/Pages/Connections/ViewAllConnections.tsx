@@ -77,9 +77,10 @@ const data = await sendConnectionRequest(sender, receiver)
         toast.success('Request has been sent');
       } else {
         toast.error(data.message);
+        console.log(data)
       }
     } catch (error: any) {
-      toast.error(error);
+      toast.error(error.message);
     }
   };
 
@@ -118,12 +119,12 @@ const data = await sendConnectionRequest(sender, receiver)
   return (
     <>
       <Header />
-      <section className="bg-gray-50 py-12 sm:py-16 min-h-screen">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-8">
+      <section className="min-h-screen py-12 bg-gray-50 sm:py-16">
+        <div className="container px-4 mx-auto sm:px-6 lg:px-8">
+          <h1 className="mb-8 text-3xl font-bold text-center text-gray-800 sm:text-4xl">
             People You May Know
           </h1>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* Recommendations Section */}
             <div className="md:col-span-2">
               <div className="grid grid-cols-1 gap-6">
@@ -133,21 +134,21 @@ const data = await sendConnectionRequest(sender, receiver)
                     .map((recommendation) => (
                       <div
                         key={recommendation._id}
-                        className="bg-white shadow-md rounded-lg p-4 sm:p-6 flex flex-col sm:flex-row items-center"
+                        className="flex flex-col items-center p-4 bg-white rounded-lg shadow-md sm:p-6 sm:flex-row"
                       >
                         {recommendation.profilePhoto?.url ? (
                           <img
                             src={recommendation.profilePhoto.url}
                             alt="User"
-                            className="w-16 h-16 rounded-full mr-0 sm:mr-4 mb-4 sm:mb-0"
+                            className="w-16 h-16 mb-4 mr-0 rounded-full sm:mr-4 sm:mb-0"
                           />
                         ) : (
-                          <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center mr-0 sm:mr-4 mb-4 sm:mb-0">
-                            <FaUser className="text-gray-500 w-8 h-8" />
+                          <div className="flex items-center justify-center w-16 h-16 mb-4 mr-0 bg-gray-200 rounded-full sm:mr-4 sm:mb-0">
+                            <FaUser className="w-8 h-8 text-gray-500" />
                           </div>
                         )}
                         <div className="flex-1">
-                          <h3 className="text-gray-800 font-semibold">
+                          <h3 className="font-semibold text-gray-800">
                             {recommendation.userName}
                           </h3>
                           <p className="text-sm text-gray-500">
@@ -161,7 +162,7 @@ const data = await sendConnectionRequest(sender, receiver)
                               recommendation._id
                             )
                           }
-                          className="mt-2 sm:mt-0 bg-blue-500 text-white px-4 py-2 rounded-full text-sm hover:bg-blue-600 transition duration-300"
+                          className="px-4 py-2 mt-2 text-sm text-white transition duration-300 bg-blue-500 rounded-full sm:mt-0 hover:bg-blue-600"
                         >
                           Connect
                         </button>
@@ -174,20 +175,20 @@ const data = await sendConnectionRequest(sender, receiver)
                 )}
               </div>
               {/* Recommendations Pagination */}
-              <div className="flex justify-between items-center mt-8">
+              <div className="flex items-center justify-between mt-8">
                 <button
                   onClick={() =>
                     setRecommendationsPage((prev) => Math.max(prev - 1, 1))
                   }
                   disabled={recommendationsPage === 1}
-                  className="px-3 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 disabled:bg-gray-300"
+                  className="px-3 py-2 text-white bg-blue-500 rounded-full hover:bg-blue-600 disabled:bg-gray-300"
                 >
                   <FaChevronLeft />
                 </button>
                 <button
                   onClick={() => setRecommendationsPage((prev) => prev + 1)}
                   disabled={recommendationsPage === recommendationsTotalPages}
-                  className="px-3 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 disabled:bg-gray-300"
+                  className="px-3 py-2 text-white bg-blue-500 rounded-full hover:bg-blue-600 disabled:bg-gray-300"
                 >
                   <FaChevronRight />
                 </button>
@@ -205,10 +206,12 @@ const data = await sendConnectionRequest(sender, receiver)
                   className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-              <div className="bg-white shadow-md rounded-lg p-4 sm:p-6">
-                <h2 className="text-lg font-bold mb-4">Search Results</h2>
+              <div className="p-4 bg-white rounded-lg shadow-md sm:p-6">
+                <h2 className="mb-4 text-lg font-bold">Search Results</h2>
                 {loading ? (
-                  <p className="text-center">Loading...</p>
+                      <div className="flex items-center justify-center py-8">
+                <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+              </div>
                 ) : searchResult.filter((result) => result._id !== user?._id)
                     .length > 0 ? (
                   searchResult
@@ -216,17 +219,17 @@ const data = await sendConnectionRequest(sender, receiver)
                     .map((result) => (
                       <div
                         key={result._id}
-                        className="flex flex-col sm:flex-row items-center mb-4"
+                        className="flex flex-col items-center mb-4 sm:flex-row"
                       >
                         {result.profilePhoto?.url ? (
                           <img
                             src={result.profilePhoto.url}
                             alt="User"
-                            className="w-12 h-12 rounded-full mr-0 sm:mr-4 mb-2 sm:mb-0"
+                            className="w-12 h-12 mb-2 mr-0 rounded-full sm:mr-4 sm:mb-0"
                           />
                         ) : (
-                          <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-0 sm:mr-4 mb-2 sm:mb-0">
-                            <FaUser className="text-gray-500 w-6 h-6" />
+                          <div className="flex items-center justify-center w-12 h-12 mb-2 mr-0 bg-gray-200 rounded-full sm:mr-4 sm:mb-0">
+                            <FaUser className="w-6 h-6 text-gray-500" />
                           </div>
                         )}
                         <div className="flex-1">
@@ -240,7 +243,7 @@ const data = await sendConnectionRequest(sender, receiver)
                             onClick={() =>
                               handleMessageButtonClick(result as Connections)
                             }
-                            className="mt-2 sm:mt-0 bg-green-500 text-white px-4 py-2 rounded-full text-sm hover:bg-green-600"
+                            className="px-4 py-2 mt-2 text-sm text-white bg-green-500 rounded-full sm:mt-0 hover:bg-green-600"
                           >
                             Message
                           </button>
@@ -252,7 +255,7 @@ const data = await sendConnectionRequest(sender, receiver)
                                 result._id
                               )
                             }
-                            className="mt-2 sm:mt-0 bg-blue-500 text-white px-4 py-2 rounded-full text-sm hover:bg-blue-600"
+                            className="px-4 py-2 mt-2 text-sm text-white bg-blue-500 rounded-full sm:mt-0 hover:bg-blue-600"
                           >
                             Connect
                           </button>
@@ -263,20 +266,20 @@ const data = await sendConnectionRequest(sender, receiver)
                   <p className="text-center text-gray-500">No results found.</p>
                 )}
                 {/* Search Pagination */}
-                <div className="flex justify-between items-center mt-8">
+                <div className="flex items-center justify-between mt-8">
                   <button
                     onClick={() =>
                       setSearchPage((prev) => Math.max(prev - 1, 1))
                     }
                     disabled={searchPage === 1}
-                    className="px-3 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 disabled:bg-gray-300"
+                    className="px-3 py-2 text-white bg-blue-500 rounded-full hover:bg-blue-600 disabled:bg-gray-300"
                   >
                     <FaChevronLeft />
                   </button>
                   <button
                     onClick={() => setSearchPage((prev) => prev + 1)}
                     disabled={searchPage === searchTotalPages}
-                    className="px-3 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 disabled:bg-gray-300"
+                    className="px-3 py-2 text-white bg-blue-500 rounded-full hover:bg-blue-600 disabled:bg-gray-300"
                   >
                     <FaChevronRight />
                   </button>
