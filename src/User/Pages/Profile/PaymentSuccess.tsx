@@ -10,10 +10,10 @@ const PaymentSuccess: React.FC = () => {
   return (
     <>
       <Header />
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+            <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-8 h-8 text-green-500"
@@ -30,15 +30,15 @@ const PaymentSuccess: React.FC = () => {
               </svg>
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-800 text-center mb-4">
+          <h2 className="mb-4 text-3xl font-bold text-center text-gray-800">
             Payment Successful 🎉
           </h2>
-          <p className="text-gray-600 text-center mb-6">
+          <p className="mb-6 text-center text-gray-600">
             Thank you for upgrading! Your premium subscription is now active.
           </p>
           <Link
-            to={`/user/home/${user?._id}`}
-            className="block w-full text-center py-3 bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-lg font-semibold transition-transform transform hover:scale-105"
+            to={`/user/home`}
+            className="block w-full py-3 font-semibold text-center text-white transition-transform transform rounded-lg bg-gradient-to-r from-green-400 to-blue-500 hover:scale-105"
           >
             Go to Dashboard
           </Link>

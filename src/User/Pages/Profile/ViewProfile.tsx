@@ -38,9 +38,9 @@ const ViewProfile = () => {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-r from-blue-600 to-purple-600 p-6">
+      <div className="min-h-screen p-6 bg-gradient-to-r from-blue-600 to-purple-600">
         <motion.div
-          className="bg-white shadow-lg rounded-lg p-6 mb-6"
+          className="p-6 mb-6 bg-white rounded-lg shadow-lg"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -48,9 +48,9 @@ const ViewProfile = () => {
           {/* Profile Header */}
           <div className="flex items-center space-x-6">
             <img
-              src={user?.profilePhoto?.url}
+              src={user?.profilePhoto?.url || 'https://www.w3schools.com/howto/img_avatar.png'}
               alt="Profile"
-              className="w-32 h-32 rounded-full object-cover"
+              className="object-cover w-32 h-32 rounded-full"
             />
             <div>
               <h2 className="text-3xl font-semibold">{user?.userName}</h2>
@@ -75,13 +75,13 @@ const ViewProfile = () => {
         </motion.div>
 
         {/* Certificates */}
-        <section className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h3 className="text-2xl font-semibold mb-4">Certificates</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className="p-6 mb-6 bg-white rounded-lg shadow-md">
+          <h3 className="mb-4 text-2xl font-semibold">Certificates</h3>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {profile.certificates.map((cert, index) => (
               <div
                 key={index}
-                className="p-4 bg-gradient-to-r from-purple-400 to-blue-500 text-white rounded-lg"
+                className="p-4 text-white rounded-lg bg-gradient-to-r from-purple-400 to-blue-500"
               >
                 <h4 className="text-lg font-semibold">
                   {cert.certificateTitle}
@@ -104,8 +104,8 @@ const ViewProfile = () => {
         </section>
 
         {/* Education */}
-        <section className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h3 className="text-2xl font-semibold mb-4">Education</h3>
+        <section className="p-6 mb-6 bg-white rounded-lg shadow-md">
+          <h3 className="mb-4 text-2xl font-semibold">Education</h3>
           <ul>
             {profile.education.map((edu, index) => (
               <li key={index} className="mb-4">
@@ -124,8 +124,8 @@ const ViewProfile = () => {
         </section>
 
         {/* Work Experience */}
-        <section className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h3 className="text-2xl font-semibold mb-4">Work Experience</h3>
+        <section className="p-6 mb-6 bg-white rounded-lg shadow-md">
+          <h3 className="mb-4 text-2xl font-semibold">Work Experience</h3>
           <ul>
             {profile.workExperience.map((exp, index) => (
               <li key={index} className="mb-4">
@@ -143,14 +143,14 @@ const ViewProfile = () => {
 
         {/* Skills */}
         <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-6">
-            <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">
+          <div className="container px-6 mx-auto">
+            <h2 className="mb-10 text-3xl font-bold text-center text-gray-800">
               Skills
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
               {/* Soft Skills */}
-              <div className="bg-white shadow-md rounded-lg p-6 text-center">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+              <div className="p-6 text-center bg-white rounded-lg shadow-md">
+                <h3 className="mb-4 text-xl font-semibold text-gray-800">
                   Soft Skills
                 </h3>
                 <ul className="text-gray-600">
@@ -166,8 +166,8 @@ const ViewProfile = () => {
               </div>
 
               {/* Hard Skills */}
-              <div className="bg-white shadow-md rounded-lg p-6 text-center">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+              <div className="p-6 text-center bg-white rounded-lg shadow-md">
+                <h3 className="mb-4 text-xl font-semibold text-gray-800">
                   Hard Skills
                 </h3>
                 <ul className="text-gray-600">
@@ -183,8 +183,8 @@ const ViewProfile = () => {
               </div>
 
               {/* Technical Skills */}
-              <div className="bg-white shadow-md rounded-lg p-6 text-center">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+              <div className="p-6 text-center bg-white rounded-lg shadow-md">
+                <h3 className="mb-4 text-xl font-semibold text-gray-800">
                   Technical Skills
                 </h3>
                 <ul className="text-gray-600">
