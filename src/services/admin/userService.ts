@@ -27,10 +27,10 @@ export const blockOrUnblockUser = async (selectedUserId: string,selectedAction :
   };
 
 
-  export const getAllSpam = async (query :string, page: number , limit : number) => {
+  export const getAllSpam = async (query :string, page: number , limit : number, date : string) => {
     try {
       const response = await axiosInstance.get(`/admin/spam-reports`, {
-        params: { search: query, page, limit },
+        params: { search: query, page, limit, date },
       });
       return response.data
     } catch (error: any) {
@@ -41,10 +41,10 @@ export const blockOrUnblockUser = async (selectedUserId: string,selectedAction :
 
 
 
-  export const getPremiumUsers = async (query :string, page: number , limit : number) => {
+  export const getPremiumUsers = async (query :string, page: number , limit : number,filterStartDate :string, filterEndDate : string) => {
     try {
       const response = await axiosInstance.get(`/admin/premium-users`, {
-        params: { search: query, page, limit },
+        params: { search: query, page, limit , startDate : filterStartDate, endDate : filterEndDate},
       });
       return response.data
     } catch (error: any) {
@@ -52,4 +52,7 @@ export const blockOrUnblockUser = async (selectedUserId: string,selectedAction :
       throw error.response?.data?.message || `Error while getting premium `;
     }
   };
+
+
+
 

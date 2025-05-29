@@ -1,4 +1,6 @@
 
+
+
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { toast } from 'react-toastify';
@@ -20,6 +22,11 @@ const PremiumUserList = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [selectedAction, setSelectedAction] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
+  
+  // New filter states
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [showFilters, setShowFilters] = useState<boolean>(false);
 
   const [isMobileView, setIsMobileView] = useState<boolean>(false);
 
@@ -29,21 +36,16 @@ const PremiumUserList = () => {
       setIsMobileView(window.innerWidth < 768);
     };
     
-    // Set initial value
     handleResize();
-    
-    // Add event listener
     window.addEventListener('resize', handleResize);
-    
-    // Cleanup
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  
-  const fetchUsers = async (query = '') => {
+  const fetchUsers = async (query = '', filterStartDate = '', filterEndDate = '', ) => {
     try {
-      const data = await getPremiumUsers(query, page, limit);
+      const data = await getPremiumUsers(query, page, limit, filterStartDate, filterEndDate);
       const { users, totalPages, currentPage } = data.data;
+      console.log(users);
       setUsers(users);
       setTotalPages(totalPages);
       setPage(currentPage);
@@ -68,7 +70,7 @@ const PremiumUserList = () => {
         toast.success(
           `User successfully ${selectedAction === 'block' ? 'blocked' : 'unblocked'}`
         );
-               setUsers(prevUsers => 
+        setUsers(prevUsers => 
           prevUsers.map(user => 
             user._id === selectedUserId 
               ? { ...user, isBlocked: selectedAction === 'block' } 
@@ -101,19 +103,37 @@ const PremiumUserList = () => {
     setSearchTerm(event.target.value);
   };
 
+  const handleStartDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStartDate(event.target.value);
+  };
+
+  const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEndDate(event.target.value);
+  };
+
+
+  const handleClearFilters = () => {
+    setStartDate('');
+    setEndDate('');
+    setSearchTerm('');
+    setPage(1);
+  };
+
+  const handleApplyFilters = () => {
+    setPage(1);
+  };
+
+  // Debounced search effect
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      if (searchTerm) {
-        fetchUsers(searchTerm);
-      } else {
-        fetchUsers();
-      }
+      fetchUsers(searchTerm, startDate, endDate);
     }, 500);
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm]);
+  }, [searchTerm,startDate, endDate]);
 
 
-    const renderMobileView = () => {
+
+  const renderMobileView = () => {
     return (
       <div className="space-y-4">
         {users.map((user, index) => (
@@ -122,6 +142,9 @@ const PremiumUserList = () => {
             <div className="mt-2 space-y-1">
               <p className="text-sm"><span className="font-medium">Email:</span> {user.email}</p>
               <p className="text-sm"><span className="font-medium">Role:</span> {user.userRole}</p>
+              <p className="text-sm"><span className="font-medium">Plan:</span> {user.appPlan?.planType || 'N/A'}</p>
+              <p className="text-sm"><span className="font-medium">Start Date:</span> {user.appPlan?.startDate ? new Date(user.appPlan.startDate).toLocaleDateString() : 'N/A'}</p>
+              <p className="text-sm"><span className="font-medium">End Date:</span> {user.appPlan?.endDate ? new Date(user.appPlan.endDate).toLocaleDateString() : 'N/A'}</p>
             </div>
             <div className="mt-4">
               <button
@@ -137,36 +160,11 @@ const PremiumUserList = () => {
     );
   };
 
-  // const columns = [
-  
-  //   { header: 'Name', accessor: 'userName' },
-  //   { header: 'Email', accessor: 'email' },
-  //   { header: 'Role', accessor: 'userRole' },
-  //   { header: 'Plan', accessor: 'appPlan.planType' },
-  //   { header: 'Start Date', accessor: '', render: (item: any) => item.appPlan?.startDate ? new Date(item.appPlan.startDate).toLocaleDateString() : 'N/A' },
-  //   { header: 'End Date', accessor: '', render: (item: any) => item.appPlan?.endDate ? new Date(item.appPlan.endDate).toLocaleDateString() : 'N/A' },
-  //   {
-  //     header: 'Actions',
-  //     accessor: '',
-  //     render: (item: any) => (
-  //       <button
-  //         onClick={() => openModal(item._id, item.isBlocked ? 'unblock' : 'block')}
-  //         className="w-20 px-3 py-1 text-sm text-white bg-blue-700 border rounded-md hover:underline"
-  //       >
-  //         {item.isBlocked ? 'Unblock' : 'Block'}
-  //       </button>
-  //     ),
-  //   },
-  // ];
-
-
-
   const columns = [
-
     { header: 'Name', accessor: 'userName' },
     { header: 'Email', accessor: 'email' },
     { header: 'Role', accessor: 'userRole' },
-    { header: 'Plan', accessor: 'appPlan.planType' },
+    { header: 'Plan', accessor: '', render: (item: any) => item.appPlan?.planType || 'N/A' },
     { header: 'Start Date', accessor: '', render: (item: any) => item.appPlan?.startDate ? new Date(item.appPlan.startDate).toLocaleDateString() : 'N/A' },
     { header: 'End Date', accessor: '', render: (item: any) => item.appPlan?.endDate ? new Date(item.appPlan.endDate).toLocaleDateString() : 'N/A' },
     {
@@ -183,199 +181,185 @@ const PremiumUserList = () => {
     },
   ];
 
-  
-
   return (
     <>
-
       <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <div className="fixed top-0 z-50 w-full">
-        <AdminHeader />
-      </div>
-
-      {/* Content area with sidebar */}
-      <div className="flex flex-col pt-16 lg:flex-row">
-        {/* Sidebar */}
-        <div className="lg:fixed top-16 left-0 lg:w-64 h-auto lg:h-[calc(100vh-4rem)]">
-          <SideBar />
+        {/* Header */}
+        <div className="fixed top-0 z-50 w-full">
+          <AdminHeader />
         </div>
 
-        {/* Main content */}
-        <div className="flex-1 p-4 transition-all duration-300 lg:ml-64">
-          <div className="p-4 bg-white rounded-lg shadow-md md:p-6">
-                 <div className="flex flex-col items-center justify-between mb-4 sm:flex-row">
-            <h2 className="text-xl font-bold sm:text-2xl">PremiumUsers List</h2>
-            <input
-              type="text"
-              placeholder="Search users..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="w-full px-4 py-2 mt-2 border rounded-md sm:mt-0 sm:w-auto"
-            />
+        {/* Content area with sidebar */}
+        <div className="flex flex-col pt-16 lg:flex-row">
+          {/* Sidebar */}
+          <div className="lg:fixed top-16 left-0 lg:w-64 h-auto lg:h-[calc(100vh-4rem)]">
+            <SideBar />
           </div>
 
-            {/* Loading indicator */}
-            {loading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+          {/* Main content */}
+          <div className="flex-1 p-4 transition-all duration-300 lg:ml-64">
+            <div className="p-4 bg-white rounded-lg shadow-md md:p-6">
+              {/* Header with search and filter toggle */}
+              <div className="flex flex-col items-center justify-between mb-4 sm:flex-row">
+                <h2 className="text-xl font-bold sm:text-2xl">Premium Users List</h2>
+                <div className="flex flex-col gap-2 mt-2 sm:flex-row sm:mt-0">
+                  <input
+                    type="text"
+                    placeholder="Search users..."
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    className="px-4 py-2 border rounded-md"
+                  />
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="px-4 py-2 text-sm text-white bg-gray-600 rounded-md hover:bg-gray-700"
+                  >
+                    {showFilters ? 'Hide Filters' : 'Show Filters'}
+                  </button>
+                </div>
               </div>
-            ) : (
-              <>
-                {/* Conditionally render table or cards based on screen size */}
-                <div className="overflow-x-auto">
-                  {isMobileView ? renderMobileView() : <ReusableTable columns={columns} data={users} />}
-                </div>
 
-                {/* Pagination */}
-                <div className="flex flex-col items-center justify-between gap-4 mt-6 sm:flex-row">
-                  <button
-                    onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={page === 1}
-                    className="w-full px-4 py-2 text-white bg-blue-600 rounded sm:w-auto hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Previous
-                  </button>
-                  <span className="text-sm text-gray-600">
-                    Page {page} of {totalPages || 1}
-                  </span>
-                  <button
-                    onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-                    disabled={page === totalPages || totalPages === 0}
-                    className="w-full px-4 py-2 text-white bg-blue-600 rounded sm:w-auto hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Next
-                  </button>
+              {/* Filters Section */}
+              {showFilters && (
+                <div className="p-4 mb-4 rounded-lg bg-gray-50">
+                  <h3 className="mb-3 text-lg font-medium">Filters</h3>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    {/* Start Date Filter */}
+                    <div>
+                      <label className="block mb-1 text-sm font-medium text-gray-700">
+                        Start Date From:
+                      </label>
+                      <input
+                        type="date"
+                        value={startDate}
+                        onChange={handleStartDateChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+
+                    {/* End Date Filter */}
+                    <div>
+                      <label className="block mb-1 text-sm font-medium text-gray-700">
+                        End Date Until:
+                      </label>
+                      <input
+                        type="date"
+                        value={endDate}
+                        onChange={handleEndDateChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+
+     
+
+                    {/* Filter Actions */}
+                    <div className="flex items-end gap-2">
+                      <button
+                        onClick={handleApplyFilters}
+                        className="px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                      >
+                        Apply
+                      </button>
+                      <button
+                        onClick={handleClearFilters}
+                        className="px-4 py-2 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Active Filters Display */}
+                  {(startDate || endDate ) && (
+                    <div className="mt-3">
+                      <h4 className="mb-2 text-sm font-medium text-gray-700">Active Filters:</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {startDate && (
+                          <span className="px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">
+                            Start: {new Date(startDate).toLocaleDateString()}
+                          </span>
+                        )}
+                        {endDate && (
+                          <span className="px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">
+                            End: {new Date(endDate).toLocaleDateString()}
+                          </span>
+                        )}
+          
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </>
-            )}
+              )}
+
+              {/* Loading indicator */}
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+                </div>
+              ) : (
+                <>
+                  {/* Conditionally render table or cards based on screen size */}
+                  <div className="overflow-x-auto">
+                    {isMobileView ? renderMobileView() : <ReusableTable columns={columns} data={users} />}
+                  </div>
+
+                  {/* Pagination */}
+                  <div className="flex flex-col items-center justify-between gap-4 mt-6 sm:flex-row">
+                    <button
+                      onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                      disabled={page === 1}
+                      className="w-full px-4 py-2 text-white bg-blue-600 rounded sm:w-auto hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Previous
+                    </button>
+                    <span className="text-sm text-gray-600">
+                      Page {page} of {totalPages || 1}
+                    </span>
+                    <button
+                      onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+                      disabled={page === totalPages || totalPages === 0}
+                      className="w-full px-4 py-2 text-white bg-blue-600 rounded sm:w-auto hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      <Modal
-           isOpen={modalIsOpen}
-           onRequestClose={closeModal}
-           contentLabel="Block user Confirmation"
-           className="w-11/12 max-w-sm p-6 mx-auto bg-white rounded shadow-md"
-           overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
-         >
-           <h2 className="mb-4 text-lg font-bold">Confirm Action</h2>
-           <p>
-             Are you sure you want to{' '}
-             {selectedAction === 'block' ? 'block' : 'unblock'} this user?
-           </p>
-           <div className="flex justify-end mt-4 space-x-4">
-             <button
-               onClick={closeModal}
-               className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-             >
-               Cancel
-             </button>
-             <button
-               onClick={handleAction}
-               className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700"
-             >
-               {selectedAction === 'block' ? 'Block' : 'Unblock'}
-             </button>
-           </div>
-         </Modal>
-      {/* <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        contentLabel="Block User Confirmation"
-        className="w-11/12 max-w-sm p-6 mx-auto mt-24 bg-white rounded shadow-lg"
-        overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center z-50"
-      >
-        <h2 className="mb-4 text-lg font-bold">Confirm Action</h2>
-        <p>
-          Are you sure you want to{' '}
-          {selectedAction === 'block' ? 'block' : 'unblock'} this user?
-        </p>
-        <div className="flex flex-col justify-end mt-4 space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4">
-          <button
-            onClick={closeModal}
-            className="w-full px-4 py-2 transition bg-gray-300 rounded sm:w-auto hover:bg-gray-400"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleAction}
-            className="w-full px-4 py-2 text-white transition bg-red-600 rounded sm:w-auto hover:bg-red-700"
-          >
-            {selectedAction === 'block' ? 'Block' : 'Unblock'}
-          </button>
-        </div>
-      </Modal> */}
-    </div>
-      {/* <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        contentLabel="Block User Confirmation"
-        className="max-w-sm p-6 mx-auto bg-white rounded shadow-md"
-        overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
-      >
-        <h2 className="mb-4 text-lg font-bold">Confirm Action</h2>
-        <p>
-          Are you sure you want to {selectedAction === 'block' ? 'block' : 'unblock'} this user?
-        </p>
-        <div className="flex justify-end mt-4 space-x-4">
-          <button
-            onClick={closeModal}
-            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleAction}
-            className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700"
-          >
-            {selectedAction === 'block' ? 'Block' : 'Unblock'}
-          </button>
-        </div>
-      </Modal>
-      <div className="fixed top-0 z-50 w-full">
-        <AdminHeader />
-      </div>
-      <div className="flex flex-col h-auto min-h-screen mt-16 bg-gray-100 lg:flex-row">
-        <div className="lg:fixed top-16 left-0 lg:w-64 h-auto lg:h-[calc(100vh-4rem)]">
-          <SideBar />
-        </div>
-        <div className="flex-grow p-6 mt-16 bg-white rounded-lg shadow-md md:mt-0 md:ml-64">
-          <div className="flex flex-col items-center justify-between mb-4 md:flex-row">
-            <h2 className="mb-2 text-2xl font-bold md:mb-0">Premium Users</h2>
-            <input
-              type="text"
-              placeholder="Search users..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="w-full px-4 py-2 border rounded-md md:w-auto"
-            />
-          </div>
-          <ReusableTable columns={columns} data={users} />
-          <div className="flex items-center justify-between mt-4">
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          contentLabel="Block user Confirmation"
+          className="w-11/12 max-w-sm p-6 mx-auto bg-white rounded shadow-md"
+          overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
+        >
+          <h2 className="mb-4 text-lg font-bold">Confirm Action</h2>
+          <p>
+            Are you sure you want to{' '}
+            {selectedAction === 'block' ? 'block' : 'unblock'} this user?
+          </p>
+          <div className="flex justify-end mt-4 space-x-4">
             <button
-              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-              disabled={page === 1}
-              className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-50"
+              onClick={closeModal}
+              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
             >
-              Previous
+              Cancel
             </button>
-            <span>
-              Page {page} of {totalPages}
-            </span>
             <button
-              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-              disabled={page === totalPages}
-              className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-50"
+              onClick={handleAction}
+              className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700"
             >
-              Next
+              {selectedAction === 'block' ? 'Block' : 'Unblock'}
             </button>
           </div>
-        </div>
-      </div> */}
+        </Modal>
+      </div>
     </>
   );
 };
 
 export default PremiumUserList;
+
