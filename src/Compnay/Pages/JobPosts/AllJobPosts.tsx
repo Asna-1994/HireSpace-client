@@ -107,49 +107,61 @@ const CompanyJobPosts = () => {
   return (
     <div>
       <CompanyHeader />
-      <main className="bg-gray-50 min-h-screen">
-        <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12 px-4 text-center">
+      <main className="min-h-screen bg-gray-50">
+        <section className="px-4 py-12 text-center text-white bg-gradient-to-r from-blue-600 to-purple-600">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+            <h1 className="mb-4 text-3xl font-bold md:text-4xl">
               Your Job Posts
             </h1>
-            <p className="text-lg mb-6">
+            <p className="mb-6 text-lg">
               Manage all your job posts in one place.
             </p>
-            <Link
-              to={`/company/${company?._id}/create-job-posts`}
-              className="bg-white text-blue-600 px-6 py-2 rounded-lg font-medium shadow-lg hover:bg-gray-200 transition"
-            >
-              Create Job Post
-            </Link>
+            {company?.isVerified ? (
+  <Link
+    to={`/company/${company?._id}/create-job-posts`}
+    className="px-6 py-2 font-medium text-blue-600 transition bg-white rounded-lg shadow-lg hover:bg-gray-200"
+  >
+    Create Job Post
+  </Link>
+) : (
+  <div className="max-w-xl p-4 mx-auto mt-4 text-yellow-800 bg-yellow-100 rounded-lg shadow-md">
+    <p className="font-semibold">Your company verification is pending.</p>
+    <p className="mt-1 text-sm">
+      You can start creating job posts once your company is verified by the admin.
+    </p>
+    <p className="text-sm">You will receive a confirmation email once the verification is complete.</p>
+  </div>
+)}
+
+       
           </div>
         </section>
 
-        <section className="py-12 px-4 md:px-6">
+        <section className="px-4 py-12 md:px-6">
           <div className="max-w-6xl mx-auto">
             {jobPosts.length === 0 ? (
               <p className="text-center text-gray-600">
                 No job posts available.
               </p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {jobPosts.map((job) => (
                   <div
                     key={job?._id}
-                    className="bg-white shadow-md p-6 rounded-lg flex flex-col"
+                    className="flex flex-col p-6 bg-white rounded-lg shadow-md"
                   >
-                    <div className="flex justify-between items-center mb-4">
+                    <div className="flex items-center justify-between mb-4">
                       <h3 className="text-xl font-bold">{job.jobTitle}</h3>
                       <Link
                         to={`/company/${company?._id}/all-applications`}
                         state={{ jobPost: job }}
-                        className="text-blue-600 hover:underline flex items-center gap-1"
+                        className="flex items-center gap-1 text-blue-600 hover:underline"
                       >
                         <HiOutlineEye /> View Applications
                       </Link>
                     </div>
 
-                    <div className="text-gray-600 mb-4 space-y-2">
+                    <div className="mb-4 space-y-2 text-gray-600">
                       <p className="flex items-center gap-2">
                         <FaMapMarkerAlt className="text-blue-600" />
                         <strong>Location:</strong> {job.location.city},{' '}
@@ -174,13 +186,13 @@ const CompanyJobPosts = () => {
                       </p>
                     </div>
 
-                    <div className="mt-auto flex justify-end">
+                    <div className="flex justify-end mt-auto">
                       <button
                         onClick={() => {
                           setSelectedJobPost(job);
                           setIsModalOpen(true);
                         }}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                        className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
                       >
                         <HiOutlineEye /> View Details
                       </button>
