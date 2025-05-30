@@ -9,6 +9,21 @@ import SideBar from '../../Components/SideBar/SideBar';
 import ReusableTable from '../../ReusableComponents/ReusableTable';
 import { User } from '../../../Utils/Interfaces/interface';
 import { blockOrUnblockUser, getPremiumUsers } from '../../../services/admin/userService';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+export function convertToDateString (date : Date){
+         let dateString = '';
+    
+   
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      dateString = `${year}-${month}-${day}`;
+      return dateString
+    
+}
+
 
 Modal.setAppElement('#root');
 
@@ -24,8 +39,8 @@ const PremiumUserList = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   
   // New filter states
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const [showFilters, setShowFilters] = useState<boolean>(false);
 
   const [isMobileView, setIsMobileView] = useState<boolean>(false);
@@ -103,30 +118,19 @@ const PremiumUserList = () => {
     setSearchTerm(event.target.value);
   };
 
-  const handleStartDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setStartDate(event.target.value);
-  };
-
-  const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEndDate(event.target.value);
-  };
-
-
-  const handleClearFilters = () => {
-    setStartDate('');
-    setEndDate('');
-    setSearchTerm('');
-    setPage(1);
-  };
-
-  const handleApplyFilters = () => {
-    setPage(1);
-  };
 
   // Debounced search effect
   useEffect(() => {
+    let startDateStr = ''
+    let endDateStr = ''
     const delayDebounceFn = setTimeout(() => {
-      fetchUsers(searchTerm, startDate, endDate);
+      if(startDate){
+      startDateStr = convertToDateString(startDate)
+      }
+      if(endDate){
+       endDateStr = convertToDateString(endDate)
+      }
+      fetchUsers(searchTerm, startDateStr, endDateStr);
     }, 500);
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm,startDate, endDate]);
@@ -224,49 +228,33 @@ const PremiumUserList = () => {
                 <div className="p-4 mb-4 rounded-lg bg-gray-50">
                   <h3 className="mb-3 text-lg font-medium">Filters</h3>
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    {/* Start Date Filter */}
-                    <div>
-                      <label className="block mb-1 text-sm font-medium text-gray-700">
-                        Start Date From:
-                      </label>
-                      <input
-                        type="date"
-                        value={startDate}
-                        onChange={handleStartDateChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
+            
+                                    <DatePicker
+                      selected={startDate}
+                      onChange={(date: Date | null) => setStartDate(date)}
+                      placeholderText="Select start date"
+                      className="w-full px-4 py-2 border rounded-md"
+                      dateFormat="yyyy-MM-dd"
+                      isClearable
+                      showYearDropdown
+                      showMonthDropdown
+                      dropdownMode="select"
+                    />
 
-                    {/* End Date Filter */}
-                    <div>
-                      <label className="block mb-1 text-sm font-medium text-gray-700">
-                        End Date Until:
-                      </label>
-                      <input
-                        type="date"
-                        value={endDate}
-                        onChange={handleEndDateChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
+          
+                                    <DatePicker
+                      selected={endDate}
+                      onChange={(date: Date | null) => setEndDate(date)}
+                      placeholderText="Select end date"
+                      className="w-full px-4 py-2 border rounded-md"
+                      dateFormat="yyyy-MM-dd"
+                      isClearable
+                      showYearDropdown
+                      showMonthDropdown
+                      dropdownMode="select"
+                    />
 
      
-
-                    {/* Filter Actions */}
-                    <div className="flex items-end gap-2">
-                      <button
-                        onClick={handleApplyFilters}
-                        className="px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700"
-                      >
-                        Apply
-                      </button>
-                      <button
-                        onClick={handleClearFilters}
-                        className="px-4 py-2 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
-                      >
-                        Clear
-                      </button>
-                    </div>
                   </div>
 
                   {/* Active Filters Display */}

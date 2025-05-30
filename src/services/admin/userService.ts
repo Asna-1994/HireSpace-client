@@ -27,8 +27,9 @@ export const blockOrUnblockUser = async (selectedUserId: string,selectedAction :
   };
 
 
-  export const getAllSpam = async (query :string, page: number , limit : number, date : string) => {
+  export const getAllSpam = async (query :string, page: number , limit : number, date:  string) => {
     try {
+      console.log('date' , date)
       const response = await axiosInstance.get(`/admin/spam-reports`, {
         params: { search: query, page, limit, date },
       });

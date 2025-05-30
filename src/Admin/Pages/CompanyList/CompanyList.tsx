@@ -579,8 +579,10 @@ const CompanyList = () => {
         isOpen={verifyModalIsOpen}
         onRequestClose={closeVerifyModal}
         contentLabel="Company Details"
-        className="w-11/12 max-w-lg p-6 mx-auto bg-white rounded shadow-md"
-        overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
+         className="w-11/12 max-w-lg p-6 mx-auto mt-20 bg-white rounded shadow-md max-h-[90vh] overflow-y-auto"
+  overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center overflow-hidden"
+        // className="w-11/12 max-w-lg p-6 mx-auto overflow-y-auto bg-white rounded shadow-md"
+        // overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
       >
         {selectedCompany ? (
           <div>

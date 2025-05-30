@@ -8,8 +8,15 @@ import SideBar from '../../Components/SideBar/SideBar';
 import ReusableTable from '../../ReusableComponents/ReusableTable';
 import { blockOrUnblock } from '../../../services/admin/companyServices';
 import { getAllSpam } from '../../../services/admin/userService';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { convertToDateString } from '../PremiumUsers/PremiumUsers';
 
 Modal.setAppElement('#root');
+
+
+
+
 
 export interface Spam {
   reportedByUser: {
@@ -41,7 +48,9 @@ const SpamList: React.FC = () => {
   const [selectedAction, setSelectedAction] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isMobileView, setIsMobileView] = useState<boolean>(false);
-  const [filter, setFilter] = useState<string>('')
+  // const [filter, setFilter] = useState<string>('')
+  const [filter, setFilter] = useState<Date | null>(null);
+
   // Check for mobile view
   useEffect(() => {
     const handleResize = () => {
@@ -114,23 +123,23 @@ const SpamList: React.FC = () => {
     setSearchTerm(event.target.value);
   };
 
-    const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilter(event.target.value);
-  };
+
 
 
  useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      fetchSpams(searchTerm, filter);
+       let dateString = '';
+    if(filter){
+      dateString = convertToDateString(filter)
+    }
+
+      fetchSpams(searchTerm,dateString);
     }, 500);
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm, filter]);
   
 
-  const clearFilters = () => {
-    setSearchTerm('')
-    setFilter('')
-  }
+
 
   // Mobile view renders card-based layout for each spam report
   const renderMobileView = () => {
@@ -279,16 +288,7 @@ const SpamList: React.FC = () => {
         <div className="flex-grow p-4 bg-white rounded-lg shadow-md lg:ml-64 lg:p-6">
           <div className="flex flex-col items-center justify-between mb-4 sm:flex-row">
             <h2 className="text-xl font-bold sm:text-2xl">Spam Reports</h2>
-            {/* <input
-              type="text"
-              placeholder="Search users..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="w-full px-4 py-2 mt-2 border rounded-md sm:mt-0 sm:w-auto"
-            />
-            <input className='w-full px-4 py-2 mt-2 border rounded-md sm:mt-0 sm:w-auto'
-                   onChange={handleFilterChange}
-            type='date' value={filter}/> */}
+      
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
                 <input
@@ -298,21 +298,20 @@ const SpamList: React.FC = () => {
                   onChange={handleSearchChange}
                   className="px-4 py-2 border rounded-md"
                 />
-                <input
-                  type="date"
-                  value={filter}
-                  onChange={handleFilterChange}
-                  className="px-4 py-2 border rounded-md"
-                  title="Filter by report date"
-                />
-                {(searchTerm || filter) && (
-                  <button
-                    onClick={clearFilters}
-                    className="px-4 py-2 text-sm text-white bg-gray-500 rounded-md hover:bg-gray-600"
-                  >
-                    Clear Filters
-                  </button>
-                )}
+     
+                <DatePicker
+  selected={filter}
+  onChange={(date: Date | null) => setFilter(date)}
+  placeholderText="Filter by report date"
+  className="w-full px-4 py-2 border rounded-md"
+  dateFormat="yyyy-MM-dd"
+  isClearable
+  showYearDropdown
+  showMonthDropdown
+  dropdownMode="select"
+/>
+
+    
               </div>
             </div>
           </div>
@@ -355,3 +354,7 @@ const SpamList: React.FC = () => {
 };
 
 export default SpamList;
+
+
+
+
