@@ -6,7 +6,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import UserRoutes from './routes/UserRoutes';
 import CompanyRoutes from './routes/CompanyRoutes';
 import AdminRoutes from './routes/AdminRoutes';
-import Home from './User/Pages/Home/Home';
+import Home from './Shared/Pages/Home/Home';
 import NotFound from './Shared/Pages/NotFound';
 import ErrorPage from './Shared/Pages/ErrorPage';
 import NoAccess from './Shared/Pages/NoAccess';
@@ -33,7 +33,8 @@ useEffect(() => {
       <ToastContainer autoClose={1500} />
       <GoogleOAuthProvider clientId={client_id}>
         <Routes>
-          <Route path="/" element={<Home />} />
+   
+          <Route path='/' element={<Home/>}/>
           <Route path="*" element={<NotFound />} />
           <Route path="/error" element={<ErrorPage />} />
           <Route path="/no-access" element={<NoAccess />} />
