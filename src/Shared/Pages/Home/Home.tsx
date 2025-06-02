@@ -1,12 +1,23 @@
 
 import Header from '../../../User/Components/Header/Header';
 import Footer from '../../../User/Components/Footer/Footer';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 
 const Home = () => {
-    const { company, isAuthenticated } = useSelector( (state: RootState) => state.auth);
+    const { company, isAuthenticated , user} = useSelector( (state: RootState) => state.auth);
+
+  if (isAuthenticated && user?.userRole === 'admin') {
+    return <Navigate to='/admin/home' replace />;
+  }
+if (
+  isAuthenticated &&
+  (user?.userRole === 'companyAdmin' || user?.userRole === 'companyMember')
+) {
+  return <Navigate to="/company/home" replace />;
+}
+
   return (
     <>
       <Header />
